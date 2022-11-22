@@ -9,12 +9,12 @@ output:
 bibliography: Annex.bib
 link-citations: true
 vignette: >
-%\VignetteIndexEntry{Annex: Annex86 Data Analysis Package}
+  %\VignetteIndexEntry{Annex: Annex86 Data Analysis Package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteDepends{Formula}
   %\VignetteKeywords{Annex86}
   %\VignettePackage{Annex}
-```
+---
 
 ## Reading Demo Data
 

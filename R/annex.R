@@ -17,9 +17,9 @@
 #' of one study, home, and room, the fomula has two parts, looking
 #' e.g., as follows:
 #'
-#' \begin{itemize}
+#' \itemize{
 #'    \item \code{co2 + voc ~ datetime}
-#' \end{itemize}
+#' }
 #'
 #' The left hand side of the formula (left of \code{~}) specifies
 #' the names of the variables of the observations to be processed,
@@ -32,9 +32,9 @@
 #' the information is in the data frame \code{x}, this would allow
 #' to process multiple at once.
 #' 
-#' \begin{itemize}
+#' \itemize{
 #'    \item \code{co2 + voc ~ datetime | study + home + room}
-#' \end{itemize}
+#' }
 #'
 #' @importFrom Formula is.Formula as.Formula
 #' @author Reto Stauffer
