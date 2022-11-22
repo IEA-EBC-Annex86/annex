@@ -19,17 +19,13 @@ vignette: >
 ## Reading Demo Data
 
 This article is using a tiny demo data set called
-[`demo_01.csv`](../inst/data/demo_01.csv) (shipped
+[`Bedroom.txt`](../inst/data/Bedroom.txt) (shipped
 with the package).
 
 ```{r, include = FALSE}
 # Make a copy when building the article
-file.copy("../inst/data/demo_01.csv", "demo_01.csv")
-```
-
-```{r}
-# Define input file to read
-INPUT_FILE <- "demo_01.csv"
+file <- system.file("data/Bedroom.txt", package = "Annex")
+file.copy(file, "Bedroom.txt")
 ```
 
 As the data sets from the different campagnes will
@@ -39,103 +35,170 @@ demos are provided to read some common formats.
 
 In this case, the data set comes as a text/CSV file
 which can easily be read using _R_s `read.table()`
-function.
+function (see `?read.table`). The demo data set
+comes in the format expected by the convenience
+funtion `read.csv()`, thus all needed is ...
 
 ```{r}
-data <- read.table(INPUT_FILE, heade = TRUE, sep = "\t")
+raw <- read.csv("Bedroom.txt")
 ```
 
-The return is a `r class(data)` with `r nrow(data)` observations
-and `r ncol(data)` variables.
+The return is a `r class(raw)` with `r nrow(raw)` observations
+and `r ncol(raw)` variables.
 
 ```{r}
-dim(data)           # Dimension of the object
-summary(data)       # Object summary
-print(data)         # Content of the demo object
-names(data)         # Names of the variables
+dim(raw)           # Dimension of the object
+summary(raw)       # Object summary
+print(raw)         # Content of the demo object
+names(raw)         # Names of the variables
 ```
 
-For the further analysis step, the data set has to be brought in a 
-'longer' format. The following steps are performed:
+## Preparing data
 
-1. Separate the different rooms (here we have `WZ.W1` and `WZ.W2`
-2. Rename the existing variables (columns)
-3. Append two additional columns `home` and `room` (identifier)
+The function [Annex::annex()] is used to prepare the data
+for the further analysis. It requires a \code{formula} which
+specifies what the (numeric) variables are, where the date
+and time information is stored, and (if available) what
+the grouping information is. The grouping is based on
+the study, home (building), and room.
+
+This can be done in two ways:
+
+1. This information is _not_ in the data set (`raw`); in this
+   case the data can be provided via an argument \code{meta} when
+   calling [Annex::annex()].
+2. The information _is_ already stored in the data set (`raw`).
+   In this case, they can be used directly. This allows to
+   process multiple 'rooms' at once.
+
+**Preparing date and time information**
+
+The function [Annex::annex()] requires the date and time
+information to be in one variable (one column) and be
+of class `POSIXt`. At the moment, the information is
+of class `r class(raw$datetime)`:
 
 ```{r}
-# (1) Separate room data
-room1 <- subset(data, select = c(Zeitraum.ab, T.WZ.W1, rH.WZ.W1, CO2.WZ.W1))
-room2 <- subset(data, select = c(Zeitraum.ab, T.WZ.W2, rH.WZ.W2, CO2.WZ.W2))
-# TODO(R): There are 'nicer' ways to do that.
-
-# (2) Renaming existing columns
-names(room1) <- names(room2) <- c("time", "temp", "rH", "co2")
-
-# (3) Transform objects; add additional variables
-room1 <- transform(room1, home = "WZ", room = "W1")
-room2 <- transform(room1, home = "WZ", room = "W2")
-
-# Modified objects
-head(room1, n = 2)
-head(room2, n = 2)
+class(raw$datetime)
 ```
 
-The two objects can now be combined; this only works if the two objects
-do have the same structure/same variables.
+... and must be converted first; using the
+function `as.POSIXct()` (see `?as.POSIXct()` for more details).
 
 ```{r}
-final <- rbind(room1, room2)     # Row-bind both objects
-dim(final)
-head(final, n = 2)
-```
-
-TODO(R): Else show an example for `dplyr::bind_rows()` (!?).
-
-## Preparing time?
-
-Not sure if I need this, I just try it :)
-
-```{r}
-### NO ### final$time <- as.POSIXct(final$time, format = "%d.%m.%y %H:%M", tz = "UTC")
-### NO ### head(final)
+raw <- transform(raw, datetime = as.POSIXct(raw$datetime),
+                 format = "%Y-%m-%d %H:%M:%S", tz = "UTC")
+class(raw$datetime)
 ```
 
 
-## Pre-formatting data
+**Information about study, home, and room not included**
 
-TODO(R): I am not sure if I use the functions correctly; I do not want
-to spend too much time. But this seems to ignore `home` and `room` from
-above (which I think is good anyways) but would require to adjust this
-demo.
+Currently, the object `raw` does not contain the grouping
+information (study, home, and room). In this case, they can
+be provided via the `meta` argument.
+
+The `formula` specifies how the variables to be aggregated
+are named and where the date and time information is stored.
+_Note:_ The date information must be of class `POSIXt`
+(datetime object).
 
 ```{r}
 library("Annex")
-y <- formatting(final, format = "%d.%m.%y %H:%M",
-                formula = temp + co2 + rH ~ time,
-                user = "Demo",
-                study = "001",
-                room = "Wohnzimmer")
-head(y)
+data1 <- annex(temp + co2 + voc ~ datetime,
+               data = raw,
+               meta = list(study = 51, home = "foo", room = "WZ"))
 ```
 
-## Analysis
+The function [Annex::annex()] will (based on the formula) check
+if all required information is available and of the correct type,
+modify the data set, and returns an object of class
+`r deparse(class(data1))` which looks as follows:
 
 ```{r}
-tmp <- tempfile(fileext = ".CSV")
-# TODO(R): Not working as expected?
-##evaluate(final, formula = temp + co2 + rH ~ time, path = tmp, write = TRUE)
+class(data1)
+head(data1, n = 2)
 ```
 
 
+**Information about study, home, and room already included**
+
+In case the information about study, home, and room is already included,
+they can be specified in the `formula`. Note that this also allows to
+process data sets containing observations from multiple studies, homes,
+or rooms.
+
+As our data set `raw` does not yet contain this information, they are
+added in the following just for demonstration.
+
+```{r}
+raw2 <- transform(raw, study = 9901, home = "bar", room = "Garage")
+head(raw2, n = 2)
+```
+
+When calling [Annex::annex()] the grouping can now be specified as follows:
+
+```{r}
+data2 <- annex(temp + co2 + voc ~ datetime | study + home + room,
+               data = raw2)
+class(data2)
+head(data2, n = 2)
+```
+
+Note that `meta` is no longer required (will be ignored if set).
+
+**Description of the variables in `data1` and `data2`**
+
+* `datetime`: Unmodified time information
+* `study`, `home`, `room`: Information (from `meta`; constant in this case)
+* `season`: Additional season information the observation falls into
+* `tod`: Time of day information the observation falls into
+* ... followed by the numeric variables to be analyzed in the next step.
+
+Note that the naming (except `season` and `tod`) may differ
+as they do follow the `formula` specification and the original data set.
+
+
+## Checking regularity
+
+The S3 method [Annex::is.regular()] can be used to check whether or
+not the observations of an `annex` object is strictly regular
+(or at least regular). Regularity means that the intervals
+between observations are always a multiple of the shortest
+interval recorded (e.g., hourly data).
+
+Strictly regular checks if the intervals are all the same,
+i.e. hourly without any gaps.
+
+The return of the function is a logical vector where the name
+corresponds to 'study - home - room'.
+
+```{r}
+is.regular(data1)                     # by default strict = TRUE
+is.regular(data2, strict = FALSE)
+```
+
+In this case the time series is regular, but not strictly regular
+which indicates that there are some gaps in the time series.
 
 
 
+## Object Summary
+
+TODO(R)
+
+```{r}
+summary(data1)
+```
 
 
+## Performing the analysis
+
+TODO(R)
 
 
 ```{r, include = FALSE}
 # Getting rid of the copy of the demo file
-file.remove("demo_01.csv")
+file.remove("Bedroom.txt")
 ```
 

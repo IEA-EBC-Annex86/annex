@@ -3,17 +3,17 @@
 #' @description Creates a statistic containing \code{mean}, \code{sd}, etc. of the
 #' data frame provided
 #'
-#' @param data_frame a data frame in specific form [ADA::formatting()]
+#' @param data_frame a data frame in specific form [Annex::formatting()]
 #' @param formula a formula describing the specific layout of the data frame
 #' @param path a path with the file name for the generated .csv file
 #'
-#' @details The data frame must be formatted with [ADA::formatting()]
+#' @details The data frame must be formatted with [Annex::formatting()]
 #' beforehand. Depending on the number of levels the size of the resulting
 #' statistic varies.
 #'
 #' The data set is successively broken down into user, study, home, room, and
 #' pollutant id and then summarized using statistical variables.
-#' The statistical parameters used are contained in [ADA::statistics()].
+#' The statistical parameters used are contained in [Annex::statistics()].
 #'
 #' The output is saved in .csv format.
 #'
@@ -21,7 +21,7 @@
 #'
 #' @import Formula
 #'
-#' @seealso [ADA::formatting()], [base::data.frame()]
+#' @seealso [Annex::formatting()], [base::data.frame()]
 #' @export
 #'
 evaluate <- function(data_frame, formula, path) {

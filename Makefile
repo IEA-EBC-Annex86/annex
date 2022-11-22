@@ -1,8 +1,12 @@
 
 
+.PHONY: document
+document:
+	Rscript -e "devtools::document()"
 
 .PHONY: install
 install:
+	make document
 	Rscript -e "devtools::install()"
 
 .PHONY: docs

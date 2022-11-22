@@ -1,6 +1,6 @@
 Package: Annex
 Title: Annex86 Data Analysis Package
-Version: 0.0-9000
+Version: 0.1-0
 Date: 2022-11-22
 Authors@R: 
     c(person(given = "Gabriel", family = "Rojas-Kopeinig", role = c("fnd", "aut"),
@@ -13,11 +13,11 @@ Authors@R:
              email = "reto.stauffer@uibk.ac.at",
               comment = c(ORCID = "YOUR-ORCID-ID")))
 Description: What the package does (one paragraph).
-Depends: R (>= 4.0.0), Formula
+Depends: R (>= 4.0.0), Formula, zoo
 License: MIT, GPL-3, or friends to pick a license
 URL: https://ada.some-url.com
 BugReports: https://ada.some-url.com/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0.9000
 NeedsCompilation: no

@@ -1,12 +1,12 @@
 #' Generates compact statistical summary for data frame
 #'
-#' @description Creates the statistical summary used by [ADA::evaluate()]
+#' @description Creates the statistical summary used by [Annex::evaluate()]
 #'
-#' @param data_frame a data frame in specific form [ADA::formatting()]
+#' @param data_frame a data frame in specific form [Annex::formatting()]
 #' @param season a character referring to the specific season
 #' @param tod a character referring to the specific time of day
 #'
-#' @details Using [ADA::evaluate()], the data set is suitably divided and then
+#' @details Using [Annex::evaluate()], the data set is suitably divided and then
 #' combined with this function. Grouping is based on user, study, home, room,
 #' season, and tod.
 #'

@@ -33,8 +33,14 @@ navbar:
       href: contact.html
 
 references:
-  - title: "Reference"
+  - title: "Original functions"
     desc: Function reference.
     contents: 
     - evaluate
     - formatting
+  - title: "Retos implementation"
+    desc: Function reference.
+    contents: 
+    - annex
+    - is.regular.annex
+    - is.summary.annex
