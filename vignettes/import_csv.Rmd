@@ -1,0 +1,23 @@
+---
+title: "Importing data from CSV files"
+author: "John Doe"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+bibliography: Annex.bib
+link-citations: true
+---
+
+```{r, include = FALSE}
+# TODO(R): Just dropping it here for now
+#vignette: >
+#  %\VignetteIndexEntry{colorspace: A Toolbox for Manipulating and Assessing Colors and Palettes}
+#  %\VignetteEngine{knitr::rmarkdown}
+#  %\VignetteDepends{colorspace,ggplot2}
+#  %\VignetteKeywords{RGB, sRGB, XYZ, LUV, LAB, HLS, HSV, HCL, qualitative palette, sequential palette, diverging palette, shiny, visualization, color vision deficiency}
+#  %\VignettePackage{colorspace}
+```
+
+Dummy content

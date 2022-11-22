@@ -1,0 +1,40 @@
+url: "https://some.example-url.com/"
+destination: "docs"
+
+template:
+  bootstrap: 5
+  assets: "pkgdown/assets/"
+  #opengraph:
+  #  image:
+  #    src: logo.png
+  #twitter:
+  #   image:
+  #     src: logo.png
+
+navbar:
+  left:
+    - text: "Get started"
+      href: articles/Annex.html
+    - text: "Importing data"
+      menu:
+        - text: "XLSX"
+          href: articles/import_xlsx.html
+        - text: "TEXT/CSV"
+          href: article/import_csv.html
+    - text: "Articles"
+      menu:
+        - text: "Method"
+          href: articles/method.html
+    - text: "Reference"
+      href: reference/index.html
+    - text: "Changelog"
+      href: news/index.html
+    - text: "Contact"
+      href: contact.html
+
+references:
+  - title: "Reference"
+    desc: Function reference.
+    contents: 
+    - evaluate
+    - formatting

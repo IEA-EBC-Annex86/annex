@@ -1,0 +1,141 @@
+---
+title: "Getting Started"
+author: "Reto Stauffer"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+bibliography: Annex.bib
+link-citations: true
+vignette: >
+%\VignetteIndexEntry{Annex: Annex86 Data Analysis Package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteDepends{Formula}
+  %\VignetteKeywords{Annex86}
+  %\VignettePackage{Annex}
+```
+
+## Reading Demo Data
+
+This article is using a tiny demo data set called
+[`demo_01.csv`](../inst/data/demo_01.csv) (shipped
+with the package).
+
+```{r, include = FALSE}
+# Make a copy when building the article
+file.copy("../inst/data/demo_01.csv", "demo_01.csv")
+```
+
+```{r}
+# Define input file to read
+INPUT_FILE <- "demo_01.csv"
+```
+
+As the data sets from the different campagnes will
+come in various formats, the `Annex` package cannot
+provide import functions, however, a series of 
+demos are provided to read some common formats.
+
+In this case, the data set comes as a text/CSV file
+which can easily be read using _R_s `read.table()`
+function.
+
+```{r}
+data <- read.table(INPUT_FILE, heade = TRUE, sep = "\t")
+```
+
+The return is a `r class(data)` with `r nrow(data)` observations
+and `r ncol(data)` variables.
+
+```{r}
+dim(data)           # Dimension of the object
+summary(data)       # Object summary
+print(data)         # Content of the demo object
+names(data)         # Names of the variables
+```
+
+For the further analysis step, the data set has to be brought in a 
+'longer' format. The following steps are performed:
+
+1. Separate the different rooms (here we have `WZ.W1` and `WZ.W2`
+2. Rename the existing variables (columns)
+3. Append two additional columns `home` and `room` (identifier)
+
+```{r}
+# (1) Separate room data
+room1 <- subset(data, select = c(Zeitraum.ab, T.WZ.W1, rH.WZ.W1, CO2.WZ.W1))
+room2 <- subset(data, select = c(Zeitraum.ab, T.WZ.W2, rH.WZ.W2, CO2.WZ.W2))
+# TODO(R): There are 'nicer' ways to do that.
+
+# (2) Renaming existing columns
+names(room1) <- names(room2) <- c("time", "temp", "rH", "co2")
+
+# (3) Transform objects; add additional variables
+room1 <- transform(room1, home = "WZ", room = "W1")
+room2 <- transform(room1, home = "WZ", room = "W2")
+
+# Modified objects
+head(room1, n = 2)
+head(room2, n = 2)
+```
+
+The two objects can now be combined; this only works if the two objects
+do have the same structure/same variables.
+
+```{r}
+final <- rbind(room1, room2)     # Row-bind both objects
+dim(final)
+head(final, n = 2)
+```
+
+TODO(R): Else show an example for `dplyr::bind_rows()` (!?).
+
+## Preparing time?
+
+Not sure if I need this, I just try it :)
+
+```{r}
+### NO ### final$time <- as.POSIXct(final$time, format = "%d.%m.%y %H:%M", tz = "UTC")
+### NO ### head(final)
+```
+
+
+## Pre-formatting data
+
+TODO(R): I am not sure if I use the functions correctly; I do not want
+to spend too much time. But this seems to ignore `home` and `room` from
+above (which I think is good anyways) but would require to adjust this
+demo.
+
+```{r}
+library("Annex")
+y <- formatting(final, format = "%d.%m.%y %H:%M",
+                formula = temp + co2 + rH ~ time,
+                user = "Demo",
+                study = "001",
+                room = "Wohnzimmer")
+head(y)
+```
+
+## Analysis
+
+```{r}
+tmp <- tempfile(fileext = ".CSV")
+# TODO(R): Not working as expected?
+##evaluate(final, formula = temp + co2 + rH ~ time, path = tmp, write = TRUE)
+```
+
+
+
+
+
+
+
+
+
+```{r, include = FALSE}
+# Getting rid of the copy of the demo file
+file.remove("demo_01.csv")
+```
+

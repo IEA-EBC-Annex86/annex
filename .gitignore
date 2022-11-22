@@ -1,0 +1,8 @@
+
+
+
+# vim swap files
+*.swp
+
+# Rendered documentation
+/docs
