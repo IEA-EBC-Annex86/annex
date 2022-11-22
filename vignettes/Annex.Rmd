@@ -16,6 +16,12 @@ vignette: >
   %\VignettePackage{Annex}
 ---
 
+```{r setup}
+suppressPackageStartupMessages(library('zoo'))
+suppressPackageStartupMessages(library('Formula'))
+```
+
+
 ## Reading Demo Data
 
 This article is using a tiny demo data set called
@@ -49,7 +55,7 @@ and `r ncol(raw)` variables.
 ```{r}
 dim(raw)           # Dimension of the object
 summary(raw)       # Object summary
-print(raw)         # Content of the demo object
+head(raw)          # Content of the demo object
 names(raw)         # Names of the variables
 ```
 
@@ -86,8 +92,8 @@ class(raw$datetime)
 function `as.POSIXct()` (see `?as.POSIXct()` for more details).
 
 ```{r}
-raw <- transform(raw, datetime = as.POSIXct(raw$datetime),
-                 format = "%Y-%m-%d %H:%M:%S", tz = "UTC")
+raw <- transform(raw, datetime = as.POSIXct(raw$datetime,
+                                            format = "%Y-%m-%d %H:%M:%S", tz = "UTC"))
 class(raw$datetime)
 ```
 
