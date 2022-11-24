@@ -14,6 +14,10 @@ docs:
 	-rm -rf docs
 	Rscript -e "pkgdown::build_site()"
 
+# Reto; for testing only
+upload:
+	scp -r docs retostauffer:~/html/trash/annex
+
 test:
 	Rscript -e "devtools::load_all(); tinytest::test_all()"
 

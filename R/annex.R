@@ -329,7 +329,7 @@ plot.annex <- function(x, ...) {
     tmp <- split(x, formula(paste("~ ", paste(f$group, collapse = " + "))), drop = TRUE)
     res <- logical(0)
     for (k in tmp) {
-        name <- paste(as.vector(k[1, f$group]), collapse = " - ")
+        name      <- paste(as.vector(k[1, f$group]), collapse = " - ")
         res[name] <- is.regular(zoo(NA, k[[f$time]]), strict = strict)
     }
     return(res)
@@ -442,28 +442,6 @@ summary.annex <- function(object, type = "default", ...) {
         print(annex_stats(object, ...))
     }
     invisible(NULL)
-}
-
-
-#' Standard plot for annex objects
-#'
-#' TODO(R)
-#'
-#' @param x an object of class \code{annex}.
-#'
-#' @author Reto Stauffer
-#' @export
-plot.annex <- function(x, ...) {
-    stopifnot(inherits(object, "annex"))
-    f <- annex_parse_formula(attr(x, "formula"))
-    # Splitting data set
-    tmp <- split(x, formula(paste("~ ", paste(f$group, collapse = " + "))), drop = TRUE)
-    res <- logical(0)
-    for (k in tmp) {
-        name <- paste(as.vector(k[1, f$group]), collapse = " - ")
-        res[name] <- is.regular(zoo(NA, k[[f$time]]), strict = strict)
-    }
-    return(res)
 }
 
 
@@ -614,7 +592,6 @@ plot.annex <- function(x, bygroup = FALSE, ...) {
     # Datetime range
     datetime_range <- range(x[, f$time], na.rm = TRUE)
 
-    lapply(tmp, function(x) print(head(x)))
     # Number of data sets, number of variables
     n_sets <- length(tmp)
     n_vars <- length(f$vars)
@@ -642,7 +619,7 @@ plot.annex <- function(x, bygroup = FALSE, ...) {
             plot(zoo(0, datetime_range), type = "n", ylim = ylim, xlab = NA, ylab = v)
             # Adding observations
             for (i in seq_along(tmp)) {
-                cat("testing ", v, "  ", paste(names(tmp[[i]]), collapse = ", "), "\n")
+                ###cat("testing ", v, "  ", paste(names(tmp[[i]]), collapse = ", "), "\n")
                 if (!v %in% names(tmp[[i]])) next # Variable does not exist in this group
                 lines(index(tmp[[i]]), coredata(tmp[[i]])[, v], col = i)
             }
@@ -654,7 +631,7 @@ plot.annex <- function(x, bygroup = FALSE, ...) {
         }
     }
 
-    return(NULL)
+    invisible(NULL)
 }
 
 #' Standard plot for annex_stats objects

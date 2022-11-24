@@ -7,8 +7,6 @@
 \method{plot}{annex}(x, bygroup = FALSE, ...)
 
 \method{plot}{annex}(x, bygroup = FALSE, ...)
-
-\method{plot}{annex}(x, bygroup = FALSE, ...)
 }
 \arguments{
 \item{x}{an object of class \code{annex}.}
@@ -18,8 +16,6 @@ build up on different variables. If \code{TRUE},
 all varables from one group will be plotted in one subplot.}
 }
 \description{
-TODO(R)
-
 TODO(R)
 
 TODO(R)
