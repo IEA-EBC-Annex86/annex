@@ -4,17 +4,32 @@
 \alias{summary.annex}
 \title{Annex summary}
 \usage{
-\method{summary}{annex}(object, ...)
+\method{summary}{annex}(object, type = "default", ...)
+
+\method{summary}{annex}(object, type = "default", ...)
+
+\method{summary}{annex}(object, type = "default", ...)
 }
 \arguments{
 \item{object}{an object of class \code{annex}.}
+
+\item{type}{character, one of \code{"default"} (default) or \code{"statistic"}.
+If \code{type = "statistics"} the result of \code{annex_stats(object)} will be printed.}
 
 \item{\dots}{currently unused.}
 }
 \value{
 Returns \code{NULL} (invisible).
+
+Returns \code{NULL} (invisible).
+
+Returns \code{NULL} (invisible).
 }
 \description{
+Numeric summary of an annex object.
+
+Numeric summary of an annex object.
+
 Numeric summary of an annex object.
 }
 \author{

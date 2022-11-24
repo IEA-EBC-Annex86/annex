@@ -15,16 +15,18 @@ navbar:
   left:
     - text: "Get started"
       href: articles/Annex.html
-    - text: "Importing data"
-      menu:
-        - text: "XLSX"
-          href: articles/import_xlsx.html
-        - text: "TEXT/CSV"
-          href: article/import_csv.html
-    - text: "Articles"
-      menu:
-        - text: "Method"
-          href: articles/method.html
+    - text: "With config"
+      href: articles/with_config.html
+#    - text: "Importing data"
+#      menu:
+#        - text: "XLSX"
+#          href: articles/import_xlsx.html
+#        - text: "TEXT/CSV"
+#          href: article/import_csv.html
+#    - text: "Articles"
+#      menu:
+#        - text: "Method"
+#          href: articles/method.html
     - text: "Reference"
       href: reference/index.html
     - text: "Changelog"
@@ -33,14 +35,7 @@ navbar:
       href: contact.html
 
 references:
-  - title: "Original functions"
-    desc: Function reference.
+  - title: "Reference"
+    desc: Note that 'evaluate' and 'formatting' are no longer used functions.
     contents: 
-    - evaluate
-    - formatting
-  - title: "Retos implementation"
-    desc: Function reference.
-    contents: 
-    - annex
-    - is.regular.annex
-    - is.summary.annex
+    - matches(".*")

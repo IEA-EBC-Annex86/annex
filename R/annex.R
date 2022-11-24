@@ -26,13 +26,14 @@
 #' the right hand side is the name of the variable containing the
 #' time information (must be of class \code{POSIXt}). In this case,
 #' the \code{meta} argument is required to provide information about
-#' the study, home, and room.
+#' the study, home, and room. Will be appended as a new variable
+#' \code{ID}.
 #'
-#' TODO(R): I would like to implement the following incase
-#' the information is in the data frame \code{x}, this would allow
-#' to process multiple at once.
+#' If the grouping information is already in the data set,
+#' the analysis can be performed depending on the group information.
 #' 
 #' \itemize{
+#'    \item \code{co2 + voc ~ datetime | ID} ... or even ...
 #'    \item \code{co2 + voc ~ datetime | study + home + room}
 #' }
 #'
@@ -53,8 +54,8 @@ annex <- function(formula, data, meta = NULL, verbose = FALSE) {
         if (!is.list(meta))
             stop("if grouping is not given in formula, 'meta' must be specified (see ?annex 'Details')")
         f$group <- c("study", "room", "home")
-        if (any(f$group %in% names(data)))
-            warning("variables ", paste(f$group, collapse = ", "), " will get overwritten (see ?annex Details)!")
+        if (any("ID" %in% names(data)))
+            warning("variables 'ID' will get overwritten (see ?annex Details)!")
         for (n in f$group) {
             if (!n %in% names(meta)) stop("missing '", n, "' in 'meta'")
             if (length(meta[[n]]) != 1) stop("'meta$", n, "' must be of length 1")
@@ -127,6 +128,7 @@ annex <- function(formula, data, meta = NULL, verbose = FALSE) {
 #' @return List with two elements \code{season} (factor) and \code{tod} (factor).
 #'
 #' @author Reto Stauffer
+#' TODO(R): TIME ZONE HANDLING
 annex_add_season_and_tod <- function(x) {
     stopifnot(inherits(x, "POSIXt"))
     #categorize time to specific season and time of day (tod)
@@ -188,6 +190,7 @@ annex_parse_formula <- function(f, verbose = FALSE) {
 #' a combination of the grouping (study, home, room), the
 #' content the result of checking regularity.
 #'
+#' @method is.regular annex
 #' @importFrom zoo zoo is.regular
 #' @author Reto stauffer
 #' @export
@@ -204,35 +207,472 @@ is.regular.annex <- function(x, strict = TRUE, ...) {
 }
 
 
+#' Calculate Statistics on Annex object
+#'
+#' @param object an object of class \code{annex}.
+#' @param format character, either \code{"wide"} (default) or \code{"long"}.
+#'
+#' @return Returns an object of class \code{c("annex_stats", "data_frame")}.
+#'
+#' @author Reto Stauffer
+#' @export
+annex_stats <- function(object, format = "wide", ...) {
+    stopifnot(inherits(object, "annex"))
+    format <- match.arg(format, c("wide", "long"))
+    f <- annex_parse_formula(attr(object, "formula"))
+
+    # Functions to apply to calculate the stats
+    get_summary <- function(x, digits = 4)
+        return(round(setNames(quantile(x, p = c(0, 0.025, 0.25, 0.5, 0.75, 0.975, 1), na.rm = TRUE),
+                              c("Min", "p2.5", "p25", "p50", "p75", "p97.5", "Max")), digits = digits))
+
+    # Helper function to caluclate the shape
+    shape <- function(x, na.rm = TRUE) {
+        mean(x, na.rm = na.rm)^2 * ((1 - mean(x, na.rm = na.rm)) / var(x, na.rm = na.rm) - 1 / mean(x, na.rm = na.rm))
+    }
+
+    # Reshaping result of aggregate()
+    convert <- function(var, data, f, format) {
+        res <- as.data.frame(data[, var])
+        res <- cbind(transform(data[, c(f$group, "season", "tod")], variable = var), res)
+        if (format == "long") {
+            idvar   <- c(f$group, "season", "tod", "variable")
+            varying <- names(res)[!names(res) %in% idvar]
+            res     <- reshape(res,
+                               varying = varying,
+                               v.names = "value", direction = "long")
+            res <- subset(res, select = -c(time, id))
+        }
+        return(res)
+    }
+
+    # List of functions to be applied; must all return a named vector
+    functionlist <- list(
+        get_summary,
+        function(x) setNames(sd(x, na.rm = TRUE), "sd"),
+        function(x) setNames(mean(x, na.rm = TRUE), "mean"),
+        function(x) c(N = length(x), NAs = sum(is.na(x))),
+        function(x) c(shape1 = shape(x)),
+        function(x) c(shape2 = shape(x) * (1 / mean(x, na.rm = TRUE) - 1)),
+        function(x) c(exp_param = 1 / mean(x, na.rm = TRUE))
+        )
+
+    # Applies all the functions of the functionlist to an input x
+    # Warning: uses scoping (functionlist)
+    get_stats <- function(x) do.call(c, lapply(functionlist, function(FUN, x) FUN(x), x = x))
+
+    # Aggregate the data
+    af <- sprintf("cbind(%s) ~ %s + season + tod",
+                  paste(f$vars, collapse = ", "),
+                  paste(f$group, collapse = " + "))
+
+    object_split  <- split(object, formula(paste("~ ", paste(f$group, collapse = " + "))), drop = TRUE)
+    fn <- function(x, f) {
+        x <- aggregate(formula(af), x, get_stats) # Aggregation
+        return(lapply(f$vars, convert, data = x, f = f, format = format)) # Wide to long
+    }
+    res <- unlist(lapply(object_split, fn, f = f), recursive = FALSE)
+    res <- if (length(res) == 1) res[[1]] else do.call(rbind, res)
+    rownames(res) <- NULL
+    class(res) <- c("annex_stats", class(res))
+    attr(res, "formula") <- attr(object, "formula")
+    return(res)
+}
+
 
 #' Annex summary
 #'
 #' Numeric summary of an annex object.
 #'
 #' @param object an object of class \code{annex}.
+#' @param type character, one of \code{"default"} (default) or \code{"statistic"}.
+#'        If \code{type = "statistics"} the result of \code{annex_stats(object)} will be printed.
 #' @param \dots currently unused.
 #'
 #' @return Returns \code{NULL} (invisible).
 #'
+#' @method summary annex
 #' @author Reto stauffer
 #' @export
-summary.annex <- function(object, ...) {
-    f <- annex_parse_formula(attr(object, "formula"))
-    # Splitting data set
-    tmp <- split(object, formula(paste("~ ", paste(f$group, collapse = " + "))), drop = TRUE)
-    for (k in tmp) {
-        cat(paste(f$group, as.vector(k[1, f$group]), sep = " = ", collapse = ", "), "\n")
-        cat("Number of observations: ", nrow(k), "\n")
-        k <- structure(k[, !names(k) %in% f$group], class = class(k)[2])
-        print(summary(k))
-        cat("\n")
+summary.annex <- function(object, type = "default", ...) {
+    type <- match.arg(type, c("statistics", "default"))
+    if (type == "default") {
+        f <- annex_parse_formula(attr(object, "formula"))
+        # Splitting data set
+        tmp <- split(object, formula(paste("~ ", paste(f$group, collapse = " + "))), drop = TRUE)
+        for (k in tmp) {
+            cat(paste(f$group, as.vector(k[1, f$group]), sep = " = ", collapse = ", "), "\n")
+            cat("Number of observations: ", nrow(k), "\n")
+            k <- structure(k[, !names(k) %in% f$group], class = class(k)[2])
+            print(summary(k))
+            cat("\n")
+        }
+    } else {
+        print(annex_stats(object, ...))
     }
     invisible(NULL)
 }
 
 
+#' Standard plot for annex objects
+#'
+#' TODO(R)
+#'
+#' @param x an object of class \code{annex}.
+#'
+#' @author Reto Stauffer
+#' @export
+plot.annex <- function(x, ...) {
+    stopifnot(inherits(object, "annex"))
+    f <- annex_parse_formula(attr(x, "formula"))
+    # Splitting data set
+    tmp <- split(x, formula(paste("~ ", paste(f$group, collapse = " + "))), drop = TRUE)
+    res <- logical(0)
+    for (k in tmp) {
+        name <- paste(as.vector(k[1, f$group]), collapse = " - ")
+        res[name] <- is.regular(zoo(NA, k[[f$time]]), strict = strict)
+    }
+    return(res)
+}
 
 
+#' Calculate Statistics on Annex object
+#'
+#' @param object an object of class \code{annex}.
+#' @param format character, either \code{"wide"} (default) or \code{"long"}.
+#'
+#' @return Returns an object of class \code{c("annex_stats", "data_frame")}.
+#'
+#' @author Reto Stauffer
+#' @export
+annex_stats <- function(object, format = "wide", ...) {
+    stopifnot(inherits(object, "annex"))
+    format <- match.arg(format, c("wide", "long"))
+    f <- annex_parse_formula(attr(object, "formula"))
+
+    # Functions to apply to calculate the stats
+    get_summary <- function(x, digits = 4)
+        return(round(setNames(quantile(x, p = c(0, 0.025, 0.25, 0.5, 0.75, 0.975, 1), na.rm = TRUE),
+                              c("Min", "p2.5", "p25", "p50", "p75", "p97.5", "Max")), digits = digits))
+
+    # Helper function to caluclate the shape
+    shape <- function(x, na.rm = TRUE) {
+        mean(x, na.rm = na.rm)^2 * ((1 - mean(x, na.rm = na.rm)) / var(x, na.rm = na.rm) - 1 / mean(x, na.rm = na.rm))
+    }
+
+    # Reshaping result of aggregate()
+    convert <- function(var, data, f, format) {
+        res <- as.data.frame(data[, var])
+        res <- cbind(transform(data[, c(f$group, "season", "tod")], variable = var), res)
+        if (format == "long") {
+            idvar   <- c(f$group, "season", "tod", "variable")
+            varying <- names(res)[!names(res) %in% idvar]
+            res     <- reshape(res,
+                               varying = varying,
+                               v.names = "value", direction = "long")
+            res <- subset(res, select = -c(time, id))
+        }
+        return(res)
+    }
+
+    # List of functions to be applied; must all return a named vector
+    functionlist <- list(
+        get_summary,
+        function(x) setNames(sd(x, na.rm = TRUE), "sd"),
+        function(x) setNames(mean(x, na.rm = TRUE), "mean"),
+        function(x) c(N = length(x), NAs = sum(is.na(x))),
+        function(x) c(shape1 = shape(x)),
+        function(x) c(shape2 = shape(x) * (1 / mean(x, na.rm = TRUE) - 1)),
+        function(x) c(exp_param = 1 / mean(x, na.rm = TRUE))
+        )
+
+    # Applies all the functions of the functionlist to an input x
+    # Warning: uses scoping (functionlist)
+    get_stats <- function(x) do.call(c, lapply(functionlist, function(FUN, x) FUN(x), x = x))
+
+    # Aggregate the data
+    af <- sprintf("cbind(%s) ~ %s + season + tod",
+                  paste(f$vars, collapse = ", "),
+                  paste(f$group, collapse = " + "))
+
+    object_split  <- split(object, formula(paste("~ ", paste(f$group, collapse = " + "))), drop = TRUE)
+    fn <- function(x, f) {
+        print(f)
+        print(af)
+        x <- aggregate(formula(af), x, get_stats) # Aggregation
+        return(lapply(f$vars, convert, data = x, f = f, format = format)) # Wide to long
+    }
+    res <- unlist(lapply(object_split, fn, f = f), recursive = FALSE)
+    res <- if (length(res) == 1) res[[1]] else do.call(rbind, res)
+    rownames(res) <- NULL
+    class(res) <- c("annex_stats", class(res))
+    attr(res, "formula") <- attr(object, "formula")
+    return(res)
+}
+
+
+#' Annex summary
+#'
+#' Numeric summary of an annex object.
+#'
+#' @param object an object of class \code{annex}.
+#' @param type character, one of \code{"default"} (default) or \code{"statistic"}.
+#'        If \code{type = "statistics"} the result of \code{annex_stats(object)} will be printed.
+#' @param \dots currently unused.
+#'
+#' @return Returns \code{NULL} (invisible).
+#'
+#' @method summary annex
+#' @author Reto stauffer
+#' @export
+summary.annex <- function(object, type = "default", ...) {
+    type <- match.arg(type, c("statistics", "default"))
+    if (type == "default") {
+        f <- annex_parse_formula(attr(object, "formula"))
+        # Splitting data set
+        tmp <- split(object, formula(paste("~ ", paste(f$group, collapse = " + "))), drop = TRUE)
+        for (k in tmp) {
+            cat(paste(f$group, as.vector(k[1, f$group]), sep = " = ", collapse = ", "), "\n")
+            cat("Number of observations: ", nrow(k), "\n")
+            k <- structure(k[, !names(k) %in% f$group], class = class(k)[2])
+            print(summary(k))
+            cat("\n")
+        }
+    } else {
+        print(annex_stats(object, ...))
+    }
+    invisible(NULL)
+}
+
+
+#' Standard plot for annex objects
+#'
+#' TODO(R)
+#'
+#' @param x an object of class \code{annex}.
+#'
+#' @author Reto Stauffer
+#' @export
+plot.annex <- function(x, ...) {
+    stopifnot(inherits(object, "annex"))
+    f <- annex_parse_formula(attr(x, "formula"))
+    # Splitting data set
+    tmp <- split(x, formula(paste("~ ", paste(f$group, collapse = " + "))), drop = TRUE)
+    res <- logical(0)
+    for (k in tmp) {
+        name <- paste(as.vector(k[1, f$group]), collapse = " - ")
+        res[name] <- is.regular(zoo(NA, k[[f$time]]), strict = strict)
+    }
+    return(res)
+}
+
+
+#' Calculate Statistics on Annex object
+#'
+#' @param object an object of class \code{annex}.
+#' @param format character, either \code{"wide"} (default) or \code{"long"}.
+#'
+#' @return Returns an object of class \code{c("annex_stats", "data_frame")}.
+#'
+#' @importFrom dplyr bind_rows
+#' @author Reto Stauffer
+#' @export
+annex_stats <- function(object, format = "wide", ...) {
+    stopifnot(inherits(object, "annex"))
+    format <- match.arg(format, c("wide", "long"))
+    f <- annex_parse_formula(attr(object, "formula"))
+
+    # Functions to apply to calculate the stats
+    get_summary <- function(x, digits = 4)
+        return(round(setNames(quantile(x, p = c(0, 0.025, 0.25, 0.5, 0.75, 0.975, 1), na.rm = TRUE),
+                              c("Min", "p2.5", "p25", "p50", "p75", "p97.5", "Max")), digits = digits))
+
+    # Helper function to caluclate the shape
+    shape <- function(x, na.rm = TRUE) {
+        mean(x, na.rm = na.rm)^2 * ((1 - mean(x, na.rm = na.rm)) / var(x, na.rm = na.rm) - 1 / mean(x, na.rm = na.rm))
+    }
+
+    # Reshaping result of aggregate()
+    convert <- function(var, data, f, format) {
+        res <- as.data.frame(data[, var])
+        res <- cbind(transform(data[, c(f$group, "season", "tod")], variable = var), res)
+        if (format == "long") {
+            idvar   <- c(f$group, "season", "tod", "variable")
+            varying <- names(res)[!names(res) %in% idvar]
+            res     <- reshape(res,
+                               varying = varying,
+                               v.names = "value", direction = "long")
+            res <- subset(res, select = -c(time, id))
+        }
+        return(res)
+    }
+
+    # List of functions to be applied; must all return a named vector
+    functionlist <- list(
+        get_summary,
+        function(x) setNames(sd(x, na.rm = TRUE), "sd"),
+        function(x) setNames(mean(x, na.rm = TRUE), "mean"),
+        function(x) c(N = length(x), NAs = sum(is.na(x))),
+        function(x) c(shape1 = shape(x)),
+        function(x) c(shape2 = shape(x) * (1 / mean(x, na.rm = TRUE) - 1)),
+        function(x) c(exp_param = 1 / mean(x, na.rm = TRUE))
+        )
+
+    # Applies all the functions of the functionlist to an input x
+    # Warning: uses scoping (functionlist)
+    get_stats <- function(x) do.call(c, lapply(functionlist, function(FUN, x) FUN(x), x = x))
+
+    # Aggregate the data
+    object_split  <- split(object, formula(paste("~ ", paste(f$group, collapse = " + "))), drop = TRUE)
+    fn <- function(x, f) {
+        # In case everything is NA; return NULL straight away
+        if (sum(!is.na(x[, f$vars])) == 0) return(NULL)
+        # Drop columns without non-missing values
+        check_na <- sapply(x[, f$vars], function(x) sum(!is.na(x)))
+        use_var  <- f$var[f$var %in% names(check_na)[check_na > 0]]
+        af <- sprintf("cbind(%s) ~ %s + season + tod", paste(use_var, collapse = ", "),
+                      paste(f$group, collapse = " + "))
+        # Else perform the aggregation
+        x <- aggregate(formula(af), x, get_stats)
+        return(lapply(use_var, convert, data = x, f = f, format = format)) # Wide to long
+    }
+    res <- unlist(lapply(object_split, fn, f = f), recursive = FALSE)
+    res <- if (length(res) == 1) res[[1]] else bind_rows(res)
+    rownames(res) <- NULL
+    class(res) <- c("annex_stats", class(res))
+    attr(res, "formula") <- attr(object, "formula")
+    return(res)
+}
+
+
+#' Annex summary
+#'
+#' Numeric summary of an annex object.
+#'
+#' @param object an object of class \code{annex}.
+#' @param type character, one of \code{"default"} (default) or \code{"statistic"}.
+#'        If \code{type = "statistics"} the result of \code{annex_stats(object)} will be printed.
+#' @param \dots currently unused.
+#'
+#' @return Returns \code{NULL} (invisible).
+#'
+#' @method summary annex
+#' @author Reto stauffer
+#' @export
+summary.annex <- function(object, type = "default", ...) {
+    type <- match.arg(type, c("statistics", "default"))
+    stopifnot("formula" %in% names(attributes(object)))
+    if (type == "default") {
+        f <- annex_parse_formula(attr(object, "formula"))
+        # Splitting data set
+        tmp <- split(object, formula(paste("~ ", paste(f$group, collapse = " + "))), drop = TRUE)
+        for (k in tmp) {
+            cat(paste(f$group, as.vector(k[1, f$group]), sep = " = ", collapse = ", "), "\n")
+            cat("Number of observations: ", nrow(k), "\n")
+            k <- structure(k[, !names(k) %in% f$group], class = class(k)[2])
+            print(summary(k))
+            cat("\n")
+        }
+    } else {
+        print(annex_stats(object, ...))
+    }
+    invisible(NULL)
+}
+
+
+#' Standard plot for annex objects
+#'
+#' TODO(R)
+#'
+#' @param x an object of class \code{annex}.
+#' @param bygroup logical, by default the subplots are
+#'        build up on different variables. If \code{TRUE},
+#'        all varables from one group will be plotted in one subplot.
+#'
+#' @importFrom zoo zoo
+#' @author Reto Stauffer
+#' @method plot annex
+#' @export
+plot.annex <- function(x, bygroup = FALSE, ...) {
+    stopifnot(inherits(x, "annex"))
+    f <- annex_parse_formula(attr(x, "formula"))
+    stopifnot(isTRUE(bygroup) | isFALSE(bygroup))
+
+    # Splitting the data set
+    tozoo <- function(x) {
+        # TODO(R): Make time series strictly regular -> that kills your machine
+        # on the test data set. Even needed/wanted?
+        #####dr <- range(x[, f$time], na.rm = TRUE) # range
+        #####dd <- min(diff(x[, f$time]))           # time difference
+        #####merge(zoo(x[, f$vars], x[, f$time]), zoo(, seq(dr[1], dr[2], by = dd)))
+        zoo(x[, f$vars], x[, f$time])
+    }
+    tmp <- split(x, formula(paste("~ ", paste(f$group, collapse = " + "))), drop = TRUE)
+    names(tmp) <- lapply(tmp, function(x) sprintf("study = %s, home = %s, room = %s", x[1, "study"], x[1, "home"], x[1, "room"]))
+    tmp <- lapply(tmp, tozoo)
+
+    # Datetime range
+    datetime_range <- range(x[, f$time], na.rm = TRUE)
+
+    lapply(tmp, function(x) print(head(x)))
+    # Number of data sets, number of variables
+    n_sets <- length(tmp)
+    n_vars <- length(f$vars)
+
+    # Plot by group (often not the most useful variant)
+    if (bygroup) {
+        par(mfrow = c(n_sets, 1))
+        for (i in seq_along(tmp)) {
+            plot(tmp[[i]], screen = 1, col = seq_len(NCOL(x)),
+                 xlab = NA, ylab = "value")
+            mtext(side = 1, names(tmp)[i])
+            legend("topleft", legend = names(tmp[[i]]), lty = 1,
+                   bty = "n", col = seq_len(NCOL(x)))
+        }
+    # Else by variable
+    } else {
+        getlim <- function(tmp, v) if (!v %in% names(x)) NA else range(x[, v], na.rm = TRUE)
+        par(mfrow = c(n_vars, 1))
+        is_first <- TRUE
+        for (v in f$vars) {
+            ylim <- range(unlist(lapply(tmp, getlim, v = v)), na.rm = TRUE)
+            if (any(is.na(ylim))) stop("no non-missing data for variable '", v, "'")
+            # Start plotting
+            # Base plot
+            plot(zoo(0, datetime_range), type = "n", ylim = ylim, xlab = NA, ylab = v)
+            # Adding observations
+            for (i in seq_along(tmp)) {
+                cat("testing ", v, "  ", paste(names(tmp[[i]]), collapse = ", "), "\n")
+                if (!v %in% names(tmp[[i]])) next # Variable does not exist in this group
+                lines(index(tmp[[i]]), coredata(tmp[[i]])[, v], col = i)
+            }
+            if (is_first) {
+                legend("topleft", legend = names(tmp),
+                       col = seq_along(tmp), bty = "n", lty = 1)
+                is_first <- FALSE
+            }
+        }
+    }
+
+    return(NULL)
+}
+
+#' Standard plot for annex_stats objects
+#'
+#' TODO(R)
+#'
+#' @param x an object of class \code{annex}.
+#'
+#' @author Reto Stauffer
+#' @method plot annex_stats
+#' @export
+plot.annex_stats <- function(x, ...) {
+    stopifnot(inherits(x, "annex_stats"))
+    f <- annex_parse_formula(attr(x, "formula"))
+
+    tmp <- split(x, formula(paste("~ ", paste(f$group, collapse = " + "))), drop = TRUE)
+    print(length(tmp))
+}
 
 
 

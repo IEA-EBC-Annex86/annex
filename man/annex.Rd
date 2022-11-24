@@ -35,13 +35,14 @@ the names of the variables of the observations to be processed,
 the right hand side is the name of the variable containing the
 time information (must be of class \code{POSIXt}). In this case,
 the \code{meta} argument is required to provide information about
-the study, home, and room.
+the study, home, and room. Will be appended as a new variable
+\code{ID}.
 
-TODO(R): I would like to implement the following incase
-the information is in the data frame \code{x}, this would allow
-to process multiple at once.
+If the grouping information is already in the data set,
+the analysis can be performed depending on the group information.
 
 \itemize{
+\item \code{co2 + voc ~ datetime | ID} ... or even ...
 \item \code{co2 + voc ~ datetime | study + home + room}
 }
 }

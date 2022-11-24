@@ -14,6 +14,7 @@ Authors@R:
               comment = c(ORCID = "YOUR-ORCID-ID")))
 Description: What the package does (one paragraph).
 Depends: R (>= 4.0.0), Formula, zoo
+Suggests: dplyr
 License: MIT, GPL-3, or friends to pick a license
 URL: https://ada.some-url.com
 BugReports: https://ada.some-url.com/issues
