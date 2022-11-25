@@ -50,7 +50,7 @@ What we would like to have is the following:
 
 * Read the data
 * Prepare the 'config'
-* Call `prepare_annex(data, config)`
+* Call `annex_prepare(data, config)`
 
 ... and then do the further analysis.
 
@@ -80,7 +80,7 @@ head(config)
 
 We _could_ now check if this object is valid using the `check_config()`
 function. This is not mandatory as it will be done inside
-`prepare_annex()` in any case. However, let's try:
+`annex_prepare()` in any case. However, let's try:
 
 ```{r}
 library("Annex")
@@ -123,7 +123,7 @@ We can now use this `raw_df` object in combination with our
 
 ```{r}
 devtools::load_all("../")
-prepared_df <- prepare_annex(raw_df, config)
+prepared_df <- annex_prepare(raw_df, config)
 head(prepared_df)
 ```
 

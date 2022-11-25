@@ -15,7 +15,7 @@
 #' @importFrom dplyr bind_rows
 #' @author Reto Stauffer
 #' @export
-prepare_annex <- function(x, config) {
+annex_prepare <- function(x, config) {
     stopifnot(is.data.frame(x), is.data.frame(config))
 
     # Checking config; this would fail if it does not contain 
