@@ -207,78 +207,6 @@ is.regular.annex <- function(x, strict = TRUE, ...) {
 }
 
 
-#' Calculate Statistics on Annex object
-#'
-#' @param object an object of class \code{annex}.
-#' @param format character, either \code{"wide"} (default) or \code{"long"}.
-#'
-#' @return Returns an object of class \code{c("annex_stats", "data_frame")}.
-#'
-#' @author Reto Stauffer
-#' @export
-annex_stats <- function(object, format = "wide", ...) {
-    stopifnot(inherits(object, "annex"))
-    format <- match.arg(format, c("wide", "long"))
-    f <- annex_parse_formula(attr(object, "formula"))
-
-    # Functions to apply to calculate the stats
-    get_summary <- function(x, digits = 4)
-        return(round(setNames(quantile(x, p = c(0, 0.025, 0.25, 0.5, 0.75, 0.975, 1), na.rm = TRUE),
-                              c("Min", "p2.5", "p25", "p50", "p75", "p97.5", "Max")), digits = digits))
-
-    # Helper function to caluclate the shape
-    shape <- function(x, na.rm = TRUE) {
-        mean(x, na.rm = na.rm)^2 * ((1 - mean(x, na.rm = na.rm)) / var(x, na.rm = na.rm) - 1 / mean(x, na.rm = na.rm))
-    }
-
-    # Reshaping result of aggregate()
-    convert <- function(var, data, f, format) {
-        res <- as.data.frame(data[, var])
-        res <- cbind(transform(data[, c(f$group, "season", "tod")], variable = var), res)
-        if (format == "long") {
-            idvar   <- c(f$group, "season", "tod", "variable")
-            varying <- names(res)[!names(res) %in% idvar]
-            res     <- reshape(res,
-                               varying = varying,
-                               v.names = "value", direction = "long")
-            res <- subset(res, select = -c(time, id))
-        }
-        return(res)
-    }
-
-    # List of functions to be applied; must all return a named vector
-    functionlist <- list(
-        get_summary,
-        function(x) setNames(sd(x, na.rm = TRUE), "sd"),
-        function(x) setNames(mean(x, na.rm = TRUE), "mean"),
-        function(x) c(N = length(x), NAs = sum(is.na(x))),
-        function(x) c(shape1 = shape(x)),
-        function(x) c(shape2 = shape(x) * (1 / mean(x, na.rm = TRUE) - 1)),
-        function(x) c(exp_param = 1 / mean(x, na.rm = TRUE))
-        )
-
-    # Applies all the functions of the functionlist to an input x
-    # Warning: uses scoping (functionlist)
-    get_stats <- function(x) do.call(c, lapply(functionlist, function(FUN, x) FUN(x), x = x))
-
-    # Aggregate the data
-    af <- sprintf("cbind(%s) ~ %s + season + tod",
-                  paste(f$vars, collapse = ", "),
-                  paste(f$group, collapse = " + "))
-
-    object_split  <- split(object, formula(paste("~ ", paste(f$group, collapse = " + "))), drop = TRUE)
-    fn <- function(x, f) {
-        x <- aggregate(formula(af), x, get_stats) # Aggregation
-        return(lapply(f$vars, convert, data = x, f = f, format = format)) # Wide to long
-    }
-    res <- unlist(lapply(object_split, fn, f = f), recursive = FALSE)
-    res <- if (length(res) == 1) res[[1]] else do.call(rbind, res)
-    rownames(res) <- NULL
-    class(res) <- c("annex_stats", class(res))
-    attr(res, "formula") <- attr(object, "formula")
-    return(res)
-}
-
 
 #' Annex summary
 #'
@@ -336,80 +264,6 @@ plot.annex <- function(x, ...) {
 }
 
 
-#' Calculate Statistics on Annex object
-#'
-#' @param object an object of class \code{annex}.
-#' @param format character, either \code{"wide"} (default) or \code{"long"}.
-#'
-#' @return Returns an object of class \code{c("annex_stats", "data_frame")}.
-#'
-#' @author Reto Stauffer
-#' @export
-annex_stats <- function(object, format = "wide", ...) {
-    stopifnot(inherits(object, "annex"))
-    format <- match.arg(format, c("wide", "long"))
-    f <- annex_parse_formula(attr(object, "formula"))
-
-    # Functions to apply to calculate the stats
-    get_summary <- function(x, digits = 4)
-        return(round(setNames(quantile(x, p = c(0, 0.025, 0.25, 0.5, 0.75, 0.975, 1), na.rm = TRUE),
-                              c("Min", "p2.5", "p25", "p50", "p75", "p97.5", "Max")), digits = digits))
-
-    # Helper function to caluclate the shape
-    shape <- function(x, na.rm = TRUE) {
-        mean(x, na.rm = na.rm)^2 * ((1 - mean(x, na.rm = na.rm)) / var(x, na.rm = na.rm) - 1 / mean(x, na.rm = na.rm))
-    }
-
-    # Reshaping result of aggregate()
-    convert <- function(var, data, f, format) {
-        res <- as.data.frame(data[, var])
-        res <- cbind(transform(data[, c(f$group, "season", "tod")], variable = var), res)
-        if (format == "long") {
-            idvar   <- c(f$group, "season", "tod", "variable")
-            varying <- names(res)[!names(res) %in% idvar]
-            res     <- reshape(res,
-                               varying = varying,
-                               v.names = "value", direction = "long")
-            res <- subset(res, select = -c(time, id))
-        }
-        return(res)
-    }
-
-    # List of functions to be applied; must all return a named vector
-    functionlist <- list(
-        get_summary,
-        function(x) setNames(sd(x, na.rm = TRUE), "sd"),
-        function(x) setNames(mean(x, na.rm = TRUE), "mean"),
-        function(x) c(N = length(x), NAs = sum(is.na(x))),
-        function(x) c(shape1 = shape(x)),
-        function(x) c(shape2 = shape(x) * (1 / mean(x, na.rm = TRUE) - 1)),
-        function(x) c(exp_param = 1 / mean(x, na.rm = TRUE))
-        )
-
-    # Applies all the functions of the functionlist to an input x
-    # Warning: uses scoping (functionlist)
-    get_stats <- function(x) do.call(c, lapply(functionlist, function(FUN, x) FUN(x), x = x))
-
-    # Aggregate the data
-    af <- sprintf("cbind(%s) ~ %s + season + tod",
-                  paste(f$vars, collapse = ", "),
-                  paste(f$group, collapse = " + "))
-
-    object_split  <- split(object, formula(paste("~ ", paste(f$group, collapse = " + "))), drop = TRUE)
-    fn <- function(x, f) {
-        print(f)
-        print(af)
-        x <- aggregate(formula(af), x, get_stats) # Aggregation
-        return(lapply(f$vars, convert, data = x, f = f, format = format)) # Wide to long
-    }
-    res <- unlist(lapply(object_split, fn, f = f), recursive = FALSE)
-    res <- if (length(res) == 1) res[[1]] else do.call(rbind, res)
-    rownames(res) <- NULL
-    class(res) <- c("annex_stats", class(res))
-    attr(res, "formula") <- attr(object, "formula")
-    return(res)
-}
-
 
 #' Annex summary
 #'
@@ -452,6 +306,7 @@ summary.annex <- function(object, type = "default", ...) {
 #'
 #' @return Returns an object of class \code{c("annex_stats", "data_frame")}.
 #'
+#' @importFrom tidyr pivot_longer
 #' @importFrom dplyr bind_rows
 #' @author Reto Stauffer
 #' @export
@@ -477,10 +332,7 @@ annex_stats <- function(object, format = "wide", ...) {
         if (format == "long") {
             idvar   <- c(f$group, "season", "tod", "variable")
             varying <- names(res)[!names(res) %in% idvar]
-            res     <- reshape(res,
-                               varying = varying,
-                               v.names = "value", direction = "long")
-            res <- subset(res, select = -c(time, id))
+            res     <- as.data.frame(pivot_longer(res, cols = varying, names_to = "stats"))
         }
         return(res)
     }
@@ -488,9 +340,9 @@ annex_stats <- function(object, format = "wide", ...) {
     # List of functions to be applied; must all return a named vector
     functionlist <- list(
         get_summary,
-        function(x) setNames(sd(x, na.rm = TRUE), "sd"),
-        function(x) setNames(mean(x, na.rm = TRUE), "mean"),
-        function(x) c(N = length(x), NAs = sum(is.na(x))),
+        function(x) c(Sd     = sd(x, na.rm = TRUE)),
+        function(x) c(Mean   = mean(x, na.rm = TRUE)),
+        function(x) c(N      = length(x), NAs = sum(is.na(x))),
         function(x) c(shape1 = shape(x)),
         function(x) c(shape2 = shape(x) * (1 / mean(x, na.rm = TRUE) - 1)),
         function(x) c(exp_param = 1 / mean(x, na.rm = TRUE))
@@ -636,19 +488,18 @@ plot.annex <- function(x, bygroup = FALSE, ...) {
 
 #' Standard plot for annex_stats objects
 #'
-#' TODO(R)
+#' TODO(R): How can one plot this 5d object?
 #'
 #' @param x an object of class \code{annex}.
 #'
 #' @author Reto Stauffer
 #' @method plot annex_stats
-#' @export
 plot.annex_stats <- function(x, ...) {
     stopifnot(inherits(x, "annex_stats"))
     f <- annex_parse_formula(attr(x, "formula"))
 
     tmp <- split(x, formula(paste("~ ", paste(f$group, collapse = " + "))), drop = TRUE)
-    print(length(tmp))
+    cat("This is a 5 dimensional data set; how to plot?")
 }
 
 

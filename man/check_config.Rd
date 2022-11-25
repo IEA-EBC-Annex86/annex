@@ -33,7 +33,9 @@ Fails if:
 \item the variable 'column' is not unique
 \item there are duplicated entries for the combination of
 variable/study/home/room (must be unique)
-\item variables study, home, or room contain the character \code{:} (not allowed)
+\item variables study, home or room contain contain non-allowed characters.
+Must only contain letters (lowercase or uppercase), numbers,
+and underscores. Must start with a letter.
 }
 }
 \author{

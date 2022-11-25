@@ -5,10 +5,6 @@
 \title{Calculate Statistics on Annex object}
 \usage{
 annex_stats(object, format = "wide", ...)
-
-annex_stats(object, format = "wide", ...)
-
-annex_stats(object, format = "wide", ...)
 }
 \arguments{
 \item{object}{an object of class \code{annex}.}
@@ -17,16 +13,8 @@ annex_stats(object, format = "wide", ...)
 }
 \value{
 Returns an object of class \code{c("annex_stats", "data_frame")}.
-
-Returns an object of class \code{c("annex_stats", "data_frame")}.
-
-Returns an object of class \code{c("annex_stats", "data_frame")}.
 }
 \description{
-Calculate Statistics on Annex object
-
-Calculate Statistics on Annex object
-
 Calculate Statistics on Annex object
 }
 \author{

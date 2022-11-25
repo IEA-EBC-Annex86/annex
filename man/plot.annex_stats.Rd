@@ -10,7 +10,7 @@
 \item{x}{an object of class \code{annex}.}
 }
 \description{
-TODO(R)
+TODO(R): How can one plot this 5d object?
 }
 \author{
 Reto Stauffer

@@ -145,12 +145,10 @@ Just for fun, even if it does not make most sense
 
 ### Prepare `annex` object
 
-TODO(R): Variable name `del-CO2` can't be used in the formula;
-extend config checker to not allow this (and limit variable names
-to `[A-Za-z_]`).
+TODO(R): Briefly explain what's going on here.
 
 ```{r}
-annex_df <- annex(CO2 + rH + T + V + Pyro ~ datetime | ID, data = prepared_df)
+annex_df <- annex(CO2 + rH + T + del_CO2 + V + Pyro ~ datetime | ID, data = prepared_df)
 head(annex_df)
 ```
 

@@ -16,7 +16,7 @@ docs:
 
 # Reto; for testing only
 upload:
-	scp -r docs retostauffer:~/html/trash/annex
+	rsync -va docs/* retostauffer:~/html/trash/annex/
 
 test:
 	Rscript -e "devtools::load_all(); tinytest::test_all()"

@@ -104,4 +104,4 @@ T_Netz_VL [°C] avg,T,demo,VL,Netz
 T_Netz_RL [°C] avg,T,demo,RL,Netz
 T_Strang Stiege_J_VL [°C] avg,T,demo,VL,staircaseJ
 T_Strang Stiege_J_RL [°C] avg,T,demo,RL,staircaseJ
-del-CO2-WZ_W1 [ppm] avg,del-CO2,demo,W1,livingroom
+del-CO2-WZ_W1 [ppm] avg,del_CO2,demo,W1,livingroom

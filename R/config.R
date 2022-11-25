@@ -26,7 +26,9 @@
 #'      \item the variable 'column' is not unique
 #'      \item there are duplicated entries for the combination of
 #'            variable/study/home/room (must be unique)
-#'      \item variables study, home, or room contain the character \code{:} (not allowed)
+#'      \item variables study, home or room contain contain non-allowed characters.
+#'            Must only contain letters (lowercase or uppercase), numbers,
+#'            and underscores. Must start with a letter.
 #'}
 #'
 #' @author Reto Stauffer
@@ -71,8 +73,14 @@ check_config <- function(x) {
 
     # Colons (:) forbidden in study, home, or room as this would break
     # our unique interaction later on.
-    for (v in c("study", "home", "room")) {
-        if (any(grepl("\\:", x[, v]))) stop("colons (':') not allowed in variable ", v)
+    for (v in c("variable", "study", "home", "room")) {
+        tmp <- subset(x, variable != "datetime", select = v, drop = TRUE)
+        idx <- which(!grepl("^[a-z][a-z0-9_]{0,}$", tmp, ignore.case = TRUE))
+        if (length(idx) > 0)
+            stop("values in variable ", v, " must only contain letters (lower or upper case), ",
+                 "numbers, and underscores. Must start with a letter. The following are not allowed: ",
+                 paste(tmp[idx], collapse = ", "))
+
     }
 
     # Invisible return reduced to the required columns

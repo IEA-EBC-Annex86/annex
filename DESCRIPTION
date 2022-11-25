@@ -1,7 +1,7 @@
 Package: Annex
 Title: Annex86 Data Analysis Package
-Version: 0.1-0
-Date: 2022-11-22
+Version: 0.1-1
+Date: 2022-11-25
 Authors@R: 
     c(person(given = "Gabriel", family = "Rojas-Kopeinig", role = c("fnd", "aut"),
              email = "gabi.rojas@uibk.ac.at",
