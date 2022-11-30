@@ -47,6 +47,6 @@ annex_prepare <- function(x, config) {
         first_cols <- c("datetime", "ID")
         return(tmp[, c(first_cols, sort(names(tmp)[!names(tmp) %in% first_cols]))])
     }
-    tmp <- sapply(levels(config$ID), split_data)
+    tmp <- lapply(levels(config$ID), split_data)
     return(bind_rows(tmp))
 }
