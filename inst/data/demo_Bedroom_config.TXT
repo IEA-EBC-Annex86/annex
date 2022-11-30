@@ -1,0 +1,9 @@
+"column"            "variable"      "study"        "home"         "room"
+"X"                 "datetime"      empty          empty          empty
+"co2"               "CO2"           "DEMO_STUD"    "Casa_Blanca"  "Bedroom"
+"humidity"          "rH"            "DEMO_STUD"    "Casa_Blanca"  "Bedroom"
+"light"             "Light"         "DEMO_STUD"    "Casa_Blanca"  "Bedroom"
+"pressure"          "Pressure"      "DEMO_STUD"    "Casa_Blanca"  "Bedroom"
+"temp"              "T"             "DEMO_STUD"    "Casa_Blanca"  "Bedroom"
+"voc"               "VOC"           "DEMO_STUD"    "Casa_Blanca"  "Bedroom"
+"radonShortTermAvg" "Radon_AVG"     "DEMO_STUD"    "Casa_Blanca"  "Bedroom"
