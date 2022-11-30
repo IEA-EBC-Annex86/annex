@@ -15,8 +15,10 @@ navbar:
   left:
     - text: "Get started"
       href: articles/Annex.html
-    - text: "With config"
-      href: articles/with_config.html
+    - text: "Reading XLSX"
+      href: articles/reading_xlsx.html
+    - text: "Reading Textfile"
+      href: articles/reading_textfile.html
 #    - text: "Importing data"
 #      menu:
 #        - text: "XLSX"
