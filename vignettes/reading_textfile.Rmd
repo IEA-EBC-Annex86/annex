@@ -1,0 +1,192 @@
+---
+title: "Reading from Textfiles"
+author: "Reto Stauffer"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+bibliography: Annex.bib
+link-citations: true
+vignette: >
+  %\VignetteIndexEntry{Annex: Annex86 Data Analysis Package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteDepends{Formula}
+  %\VignetteKeywords{Annex86}
+  %\VignettePackage{Annex}
+---
+
+```{r setup, include = FALSE}
+suppressPackageStartupMessages(library('zoo'))
+suppressPackageStartupMessages(library('Formula'))
+```
+
+## Introduction
+
+See [this](reading_xlsx.Rmd).
+
+# The configuration
+
+```{r, include = FALSE}
+# Make a copy when building the article
+file <- system.file("data/demo_Bedroom_config.TXT", package = "Annex")
+file.copy(file, "demo_Bedroom_config.TXT")
+```
+
+The config must be a `data.frame` with specific content,
+the package does not care where this `data.frame` comes
+from. In this case we are using a textfile 
+called `r xfun::embed_file("demo_Bedroom_config.TXT", text = "demo_Bedroom_config.TXT")`
+(shipped with the package). Whilst the file extension is not 'CSV', the
+content is still CSV-alike, however, we must specify some details when reading
+the file. For details, read the manual page `?read.table` (R base functionality).
+
+
+```{r}
+config <- read.table("demo_Bedroom_config.TXT",
+                     sep = "",             # Separator: one or multiple spaces
+                     quote = "\"",         # Characters are in quotes
+                     header = TRUE,        # First row contains variable names
+                     na.strings = "empty") # Custom value for 'not defined'
+print(config)
+```
+
+### Checking the config object
+
+We can check/validate whether or not our `config` object contains
+what is expected by `annex_prepare()` used in the next step.
+
+```{r}
+library("Annex")
+check_config(config)
+```
+
+Note that this step is not required as the `config` object will
+be validated inside `annex_prepare()` in any case.
+
+
+# The data
+
+```{r, include = FALSE}
+# Make a copy when building the article
+file <- system.file("data/demo_Bedroom.txt", package = "Annex")
+file.copy(file, "demo_Bedroom.txt")
+```
+
+As well as the configuration, this demo data set comes as a 
+tabular text file called `r xfun::embed_file("demo_Bedroom.txt", text = "demo_Bedroom.txt")`
+(also shipped with the package).
+
+The content (first few lines) of the file look as follows:
+
+```{r, echo = FALSE, result = "asis"}
+x <- readLines("demo_Bedroom.txt", n = 5)
+cat(paste(x, collapse = "\n"))
+```
+
+To import the data one can again use `read.csv()` or `read.table()`.
+As the format follows the defaults of `read.csv()` this is most
+efficient to use:
+
+```{r}
+raw_df <- read.csv("demo_Bedroom.txt")
+head(raw_df)
+```
+
+Note that the first column (first variable) with the date and time
+information is called `"X"`. This has been set automatically by _R_
+as the column the first column in the `.txt` file is unnamed (see
+output above). Could of course be renamed, however, one can also
+work with this - we have defined the datetime variable in the config
+file as being named `"X"`.
+
+### Date and time information
+
+What we need to ensure is that our datetime column (variable `"X"`)
+is of class `POSIXt`, else `prepare_annex()` will throw an error.
+Currently, the variable is stored as `r class(raw_df$X)` (text).
+
+```{r}
+class(raw_df$X)
+```
+
+As the date and time information is following the ISO standard,
+all needed is to take `raw_df$X` and convert the information
+to a proper datetime variable by calling `as.POSIXct()` without
+providing a format specification. In case the information does
+not follow the ISO representation, a format can be given.
+For details read the manual `?POSIXct`; all available format
+specifications can be found in the details section of the manual
+for `?strftime`.
+
+```{r}
+# Note: Format not required in this case (but can be given)
+# Convert chracter; store back on the original data.frame
+raw_df$X <- as.POSIXct(raw_df$X, format = "%Y-%m-%d %H:%M:%S", utc = TRUE)
+class(raw_df$X)
+```
+
+# Preparing data
+
+We can now use this `raw_df` object in combination with our
+`config` to prepare the data. 
+
+```{r}
+devtools::load_all("../")
+prepared_df <- annex_prepare(raw_df, config)
+head(prepared_df)
+```
+
+As shown, the data set `raw_df` has been brought into a new format.
+
+* `datetime`: time of observation
+* `ID`: unique identifier for `<study>:<home>:<room>`
+* ... followed by all variables found.
+
+
+# Performing the analysis
+
+The object `prepared_df` is now ready to (i) create an object
+of class `"annex"` and perform the analysis.
+
+Just for fun, even if it does not make most sense
+
+### Prepare `annex` object
+
+TODO(R): Briefly explain what's going on here.
+
+```{r}
+annex_df <- annex(Light + Pressure + Radon_AVG + CO2 + T + rH + VOC ~ datetime | ID, data = prepared_df)
+head(annex_df)
+```
+
+### Just for fun ...
+
+```{r, fig.width = 8, fig.height = 11, out.width = "100%"}
+par(mar = c(1, 5, 1, 1))
+plot(annex_df)
+```
+
+### Perform analysis
+
+TODO(R): Still contains the error seen yesterday.
+
+```{r}
+stats <- annex_stats(annex_df, format = "long")
+head(stats)
+```
+
+
+```{r, include = FALSE}
+files <- c("demo_Bedroom_config.TXT", "demo_Bedroom.txt")
+for (f in files) {
+    if (file.exists(f)) file.remove(f)
+}
+```
+
+
+
+
+
+
+
