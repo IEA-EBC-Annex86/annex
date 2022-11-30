@@ -25,13 +25,13 @@ suppressPackageStartupMessages(library('Formula'))
 ## Reading Demo Data
 
 This article is using a tiny demo data set called
-[`Bedroom.txt`](../inst/data/Bedroom.txt) (shipped
+[`Bedroom.txt`](../inst/data/demo_Bedroom.txt) (shipped
 with the package).
 
 ```{r, include = FALSE}
 # Make a copy when building the article
-file <- system.file("data/Bedroom.txt", package = "Annex")
-file.copy(file, "Bedroom.txt")
+file <- system.file("data/demo_Bedroom.txt", package = "Annex")
+file.copy(file, "demo_Bedroom.txt")
 ```
 
 As the data sets from the different campagnes will
@@ -40,13 +40,13 @@ provide import functions, however, a series of
 demos are provided to read some common formats.
 
 In this case, the data set comes as a text/CSV file
-which can easily be read using _R_s `read.table()`
+which can easily be read using _Rs_ `read.table()`
 function (see `?read.table`). The demo data set
 comes in the format expected by the convenience
 funtion `read.csv()`, thus all needed is ...
 
 ```{r}
-raw <- read.csv("Bedroom.txt")
+raw <- read.csv("demo_Bedroom.txt")
 ```
 
 The return is a `r class(raw)` with `r nrow(raw)` observations
@@ -58,6 +58,16 @@ summary(raw)       # Object summary
 head(raw)          # Content of the demo object
 names(raw)         # Names of the variables
 ```
+
+The first row (with datetime information) is called `"X"` as the
+column does not have a name defined in the text file. Can be
+renamed in different ways, e.g.,:
+
+```{r}
+names(raw)[1] <- "datetime"
+names(raw)
+```
+
 
 ## Preparing data
 

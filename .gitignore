@@ -7,5 +7,6 @@
 # Rendered documentation
 /docs
 
-# Retos test script
-/test.R
+# Test files
+/*.R
+/*.Rmd

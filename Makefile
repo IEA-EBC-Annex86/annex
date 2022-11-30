@@ -23,5 +23,7 @@ test:
 
 .PHONY: all
 all:
+	make document
 	make install
 	make docs
+	make upload

@@ -242,29 +242,6 @@ summary.annex <- function(object, type = "default", ...) {
 }
 
 
-#' Standard plot for annex objects
-#'
-#' TODO(R)
-#'
-#' @param x an object of class \code{annex}.
-#'
-#' @author Reto Stauffer
-#' @export
-plot.annex <- function(x, ...) {
-    stopifnot(inherits(object, "annex"))
-    f <- annex_parse_formula(attr(x, "formula"))
-    # Splitting data set
-    tmp <- split(x, formula(paste("~ ", paste(f$group, collapse = " + "))), drop = TRUE)
-    res <- logical(0)
-    for (k in tmp) {
-        name      <- paste(as.vector(k[1, f$group]), collapse = " - ")
-        res[name] <- is.regular(zoo(NA, k[[f$time]]), strict = strict)
-    }
-    return(res)
-}
-
-
-
 #' Annex summary
 #'
 #' Numeric summary of an annex object.
@@ -418,31 +395,39 @@ summary.annex <- function(object, type = "default", ...) {
 #' @param bygroup logical, by default the subplots are
 #'        build up on different variables. If \code{TRUE},
 #'        all varables from one group will be plotted in one subplot.
+#' @param start the start time of the period of interest.
+#' @param end the end time of the period of interest.
 #'
 #' @importFrom zoo zoo
 #' @author Reto Stauffer
 #' @method plot annex
 #' @export
-plot.annex <- function(x, bygroup = FALSE, ...) {
+plot.annex <- function(x, bygroup = FALSE, start = NULL, end = NULL, ...) {
     stopifnot(inherits(x, "annex"))
     f <- annex_parse_formula(attr(x, "formula"))
     stopifnot(isTRUE(bygroup) | isFALSE(bygroup))
 
+    # Check/evaluate start and end time
+    x_tz <- format(x[[f$time]][1], "%Z")
+    if (!is.null(start)) { stopifnot(length(start) == 1L); start <- as.POSIXct(start, tz = x_tz) }
+    if (!is.null(end))   { stopifnot(length(end) == 1L);   end   <- as.POSIXct(end,   tz = x_tz) }
+
     # Splitting the data set
-    tozoo <- function(x) {
+    tozoo <- function(x, start, end) {
         # TODO(R): Make time series strictly regular -> that kills your machine
         # on the test data set. Even needed/wanted?
         #####dr <- range(x[, f$time], na.rm = TRUE) # range
         #####dd <- min(diff(x[, f$time]))           # time difference
         #####merge(zoo(x[, f$vars], x[, f$time]), zoo(, seq(dr[1], dr[2], by = dd)))
-        zoo(x[, f$vars], x[, f$time])
+        window(zoo(x[, f$vars], x[, f$time]), start = start, end = end)
     }
     tmp <- split(x, formula(paste("~ ", paste(f$group, collapse = " + "))), drop = TRUE)
     names(tmp) <- lapply(tmp, function(x) sprintf("study = %s, home = %s, room = %s", x[1, "study"], x[1, "home"], x[1, "room"]))
-    tmp <- lapply(tmp, tozoo)
+    tmp <- lapply(tmp, tozoo, start = start, end = end)
 
     # Datetime range
     datetime_range <- range(x[, f$time], na.rm = TRUE)
+    datetime_range <- c(max(datetime_range[1], start), min(datetime_range[2], end))
 
     # Number of data sets, number of variables
     n_sets <- length(tmp)

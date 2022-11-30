@@ -4,9 +4,7 @@
 \alias{plot.annex}
 \title{Standard plot for annex objects}
 \usage{
-\method{plot}{annex}(x, bygroup = FALSE, ...)
-
-\method{plot}{annex}(x, bygroup = FALSE, ...)
+\method{plot}{annex}(x, bygroup = FALSE, start = NULL, end = NULL, ...)
 }
 \arguments{
 \item{x}{an object of class \code{annex}.}
@@ -14,10 +12,12 @@
 \item{bygroup}{logical, by default the subplots are
 build up on different variables. If \code{TRUE},
 all varables from one group will be plotted in one subplot.}
+
+\item{start}{the start time of the period of interest.}
+
+\item{end}{the end time of the period of interest.}
 }
 \description{
-TODO(R)
-
 TODO(R)
 }
 \author{

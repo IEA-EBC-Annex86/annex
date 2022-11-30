@@ -79,7 +79,7 @@ tabular text file called `r xfun::embed_file("demo_Bedroom.txt", text = "demo_Be
 
 The content (first few lines) of the file look as follows:
 
-```{r, echo = FALSE, result = "asis"}
+```{r, echo = FALSE, result = "asis", comment = ""}
 x <- readLines("demo_Bedroom.txt", n = 5)
 cat(paste(x, collapse = "\n"))
 ```
@@ -122,7 +122,7 @@ for `?strftime`.
 ```{r}
 # Note: Format not required in this case (but can be given)
 # Convert chracter; store back on the original data.frame
-raw_df$X <- as.POSIXct(raw_df$X, format = "%Y-%m-%d %H:%M:%S", utc = TRUE)
+raw_df$X <- as.POSIXct(raw_df$X, format = "%Y-%m-%d %H:%M:%S", tz = "UTC")
 class(raw_df$X)
 ```
 
@@ -132,7 +132,6 @@ We can now use this `raw_df` object in combination with our
 `config` to prepare the data. 
 
 ```{r}
-devtools::load_all("../")
 prepared_df <- annex_prepare(raw_df, config)
 head(prepared_df)
 ```

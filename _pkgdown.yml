@@ -15,10 +15,12 @@ navbar:
   left:
     - text: "Get started"
       href: articles/Annex.html
-    - text: "Reading XLSX"
-      href: articles/reading_xlsx.html
-    - text: "Reading Textfile"
-      href: articles/reading_textfile.html
+    - text: "Articles"
+      menu:
+      - text: "Reading XLSX"
+        href: articles/reading_xlsx.html
+      - text: "Reading Textfile"
+        href: articles/reading_textfile.html
 #    - text: "Importing data"
 #      menu:
 #        - text: "XLSX"

@@ -151,11 +151,21 @@ annex_df <- annex(CO2 + rH + T + del_CO2 + V + Pyro ~ datetime | ID, data = prep
 head(annex_df)
 ```
 
-### Just for fun ...
+### Plotting
 
 ```{r, fig.width = 8, fig.height = 11, out.width = "100%"}
 par(mar = c(1, 5, 1, 1))
 plot(annex_df)
+```
+
+```{r, fig.width = 8, fig.height = 11, out.width = "100%"}
+par(mar = c(1, 5, 1, 1))
+plot(annex_df, end = as.POSIXct("2011-02-01 00:00", tz = "UTC"))
+```
+
+```{r, fig.width = 8, fig.height = 11, out.width = "100%"}
+par(mar = c(1, 5, 1, 1))
+plot(annex_df, start = "2011-03-10", end = "2011-03-15")
 ```
 
 ### Perform analysis
