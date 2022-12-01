@@ -156,9 +156,6 @@ class(annex_df)
 ### Plotting
 
 ```{r, fig.width = 8, fig.height = 11, out.width = "100%"}
-devtools::load_all("../")
-range(class(annex_df$datetime))
-annex_df[1, ]
 plot(annex_df)
 ```
 
