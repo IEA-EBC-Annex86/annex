@@ -5,10 +5,6 @@
 \title{Annex summary}
 \usage{
 \method{summary}{annex}(object, type = "default", ...)
-
-\method{summary}{annex}(object, type = "default", ...)
-
-\method{summary}{annex}(object, type = "default", ...)
 }
 \arguments{
 \item{object}{an object of class \code{annex}.}
@@ -20,16 +16,8 @@ If \code{type = "statistics"} the result of \code{annex_stats(object)} will be p
 }
 \value{
 Returns \code{NULL} (invisible).
-
-Returns \code{NULL} (invisible).
-
-Returns \code{NULL} (invisible).
 }
 \description{
-Numeric summary of an annex object.
-
-Numeric summary of an annex object.
-
 Numeric summary of an annex object.
 }
 \author{

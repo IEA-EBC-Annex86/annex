@@ -139,7 +139,7 @@ head(prepared_df)
 As shown, the data set `raw_df` has been brought into a new format.
 
 * `datetime`: time of observation
-* `ID`: unique identifier for `<study>:<home>:<room>`
+* `study`/`home`/`room`: identifiers
 * ... followed by all variables found.
 
 
@@ -155,15 +155,16 @@ Just for fun, even if it does not make most sense
 TODO(R): Briefly explain what's going on here.
 
 ```{r}
-annex_df <- annex(Light + Pressure + Radon_AVG + CO2 + T + rH + VOC ~ datetime | ID, data = prepared_df)
+annex_df <- annex(Light + Pressure + Radon_AVG + CO2 + T + rH + VOC ~ datetime | study + home + room, data = prepared_df)
 head(annex_df)
 ```
 
-### Just for fun ...
+### Plotting
 
-```{r, fig.width = 8, fig.height = 11, out.width = "100%"}
-par(mar = c(1, 5, 1, 1))
+```{r, fig.width = 8, fig.height = 6, out.width = "100%"}
 plot(annex_df)
+plot(annex_df, start = "2011-03-01")
+plot(annex_df, start = "2011-03-01", end = as.POSIXct("2011-03-10"))
 ```
 
 ### Perform analysis

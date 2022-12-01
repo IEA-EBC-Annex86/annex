@@ -122,14 +122,14 @@ We can now use this `raw_df` object in combination with our
 `config` to prepare the data. 
 
 ```{r}
-prepared_df <- annex_prepare(raw_df, config)
+devtools::load_all(); prepared_df <- annex_prepare(raw_df, config)
 head(prepared_df)
 ```
 
 As shown, the data set `raw_df` has been brought into a new format.
 
 * `datetime`: time of observation
-* `ID`: unique identifier for `<study>:<home>:<room>`
+* `study`/`home`,`room`: identifiers
 * ... followed by all variables found.
 
 As not all variables are available for all rooms, there can be
@@ -147,25 +147,22 @@ Just for fun, even if it does not make most sense
 TODO(R): Briefly explain what's going on here.
 
 ```{r}
-annex_df <- annex(CO2 + rH + T + del_CO2 + V + Pyro ~ datetime | ID, data = prepared_df)
+annex_df <- annex(CO2 + rH + T + del_CO2 + V + Pyro ~ datetime | study + home + room, data = prepared_df)
 head(annex_df)
 ```
 
 ### Plotting
 
 ```{r, fig.width = 8, fig.height = 11, out.width = "100%"}
-par(mar = c(1, 5, 1, 1))
 plot(annex_df)
 ```
 
 ```{r, fig.width = 8, fig.height = 11, out.width = "100%"}
-par(mar = c(1, 5, 1, 1))
-plot(annex_df, end = as.POSIXct("2011-02-01 00:00", tz = "UTC"))
+plot(annex_df, end = as.POSIXct("2011-10-03 00:00", tz = "UTC"))
 ```
 
 ```{r, fig.width = 8, fig.height = 11, out.width = "100%"}
-par(mar = c(1, 5, 1, 1))
-plot(annex_df, start = "2011-03-10", end = "2011-03-15")
+plot(annex_df, start = "2011-10-03", end = "2011-10-04")
 ```
 
 ### Perform analysis
@@ -173,6 +170,7 @@ plot(annex_df, start = "2011-03-10", end = "2011-03-15")
 TODO(R): Still contains the error seen yesterday.
 
 ```{r}
+head(annex_df)
 stats <- annex_stats(annex_df, format = "long")
 head(stats)
 ```

@@ -21,10 +21,6 @@ annex_prepare <- function(x, config) {
     # Checking config; this would fail if it does not contain 
     # the expected information.
     config <- check_config(config)
-    # Append unque identifier for study/home/room
-    config$ID <- with(config, interaction(study, home, room, sep = ":", drop = TRUE))
-    config$ID[config$variable == "datetime"] <- NA # Ensure this one is NA
-    config$ID <- droplevels(config$ID)
 
     # Next we need to check if all columns in 'data' are described
     # in 'config'.
@@ -37,16 +33,27 @@ annex_prepare <- function(x, config) {
     vars <- unique(subset(config, variable != "datetime", select = variable, drop = TRUE))
 
     # (2) Rename column names in x
-    split_data <- function(targetID) {
-        idx <- which(config$ID == targetID | config$variable == "datetime")
+    split_data <- function(current_ID) {
+        # Variables to be processed; extract data from x
+        cnf <- subset(config, variable == "datetime" | ID == current_ID)
+        idx <- which(names(x) %in% cnf$column)
         tmp <- x[, idx]
-        names(tmp) <- config$variable[match(names(tmp), config$column)]
-        tmp$ID <- targetID
+
+        # Renaming
+        names(tmp) <- cnf$variable[match(names(tmp), cnf$column)]
+
+        # Adding identifier
+        current_ID <- setNames(strsplit(current_ID, ":")[[1]], c("study", "home", "room")) # split
+        for (n in names(current_ID)) tmp[[n]] <- current_ID[[n]]
 
         # Ordering columns and return
-        first_cols <- c("datetime", "ID")
+        first_cols <- c("datetime", "study", "home", "room")
         return(tmp[, c(first_cols, sort(names(tmp)[!names(tmp) %in% first_cols]))])
     }
-    tmp <- lapply(levels(config$ID), split_data)
+
+    # Create unique IDs; ensure 'datetime' is excluded.
+    config <- transform(config, ID = interaction(study, home, room, sep = ":"))
+    config$ID[config$variable == "datetime"] <- NA # Ensure this one is NA
+    tmp <- lapply(levels(droplevels(config$ID)), split_data)
     return(bind_rows(tmp))
 }

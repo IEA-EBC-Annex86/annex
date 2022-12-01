@@ -1,23 +1,21 @@
 Package: Annex
 Title: Annex86 Data Analysis Package
-Version: 0.1-3
-Date: 2022-11-30
+Version: 0.1-4
+Date: 2022-12-01
 Authors@R: 
     c(person(given = "Gabriel", family = "Rojas-Kopeinig", role = c("fnd", "aut"),
-             email = "gabi.rojas@uibk.ac.at",
-              comment = c(ORCID = "YOUR-ORCID-ID")),
-      person(given = "Tobias", family = "Grass", role = c("cre", "aut"),
-             email = "tobias.grass@example.com",
-              comment = c(ORCID = "YOUR-ORCID-ID")),
-      person(given = "Reto", family = "Stauffer", role = "aut",
+             email = "gabi.rojas@uibk.ac.at"),
+      person(given = "Tobias", family = "Grass", role = "aut",
+             email = "tobias.grass@example.com"),
+      person(given = "Reto", family = "Stauffer", role = c("cre", "aut"),
              email = "reto.stauffer@uibk.ac.at",
-              comment = c(ORCID = "YOUR-ORCID-ID")))
+              comment = c(ORCID = "0000-0002-3798-5507")))
 Description: What the package does (one paragraph).
 Depends: R (>= 4.0.0), Formula, zoo
 Suggests: dplyr
 License: MIT, GPL-3, or friends to pick a license
-URL: https://ada.some-url.com
-BugReports: https://ada.some-url.com/issues
+URL: https://github.com/Annex86/annex
+BugReports: https://github.com/Annex86/annex/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.0.9000
