@@ -11,6 +11,8 @@
 
 \item{strict}{logical, defaults to \code{TRUE}. If \code{FALSE},
 regularity (but not strict regularity) will be checked.}
+
+\item{\dots}{currently unused.}
 }
 \value{
 Returns a named logical vector where the name is

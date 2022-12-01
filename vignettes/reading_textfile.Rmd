@@ -155,7 +155,8 @@ Just for fun, even if it does not make most sense
 TODO(R): Briefly explain what's going on here.
 
 ```{r}
-annex_df <- annex(Light + Pressure + Radon_AVG + CO2 + T + rH + VOC ~ datetime | study + home + room, data = prepared_df)
+names(prepared_df)
+annex_df <- annex(Light + CO2 + RH + T ~ datetime | study + home + room, data = prepared_df)
 head(annex_df)
 ```
 

@@ -9,6 +9,7 @@
 #'        all varables from one group will be plotted in one subplot.
 #' @param start the start time of the period of interest.
 #' @param end the end time of the period of interest.
+#' @param \dots currently unused.
 #'
 #' @importFrom zoo zoo
 #' @author Reto Stauffer
@@ -92,6 +93,7 @@ plot.annex <- function(x, bygroup = FALSE, start = NULL, end = NULL, ...) {
 #' TODO(R): How can one plot this 5d object?
 #'
 #' @param x an object of class \code{annex}.
+#' @param \dots currently unused.
 #'
 #' @author Reto Stauffer
 #' @method plot annex_stats

@@ -9,6 +9,8 @@
 #' This check will be performed in \code{link{annex()}} automatically,
 #' but can also be done by the user manually.
 #'
+#' @param x object of class \code{data.frame} to be checked.
+#'
 #' @return Invisibly returns a (possibly modified) version of \code{x}
 #' containing only the required columns in a specific order.
 #'
@@ -17,6 +19,7 @@
 #'
 #' Fails if:
 #' \itemize{
+#'      \item TODO(R): checks changed
 #'      \item the input is not a \code{data.frame}
 #'      \item variables are missing ('column', 'variable', 'study', 'home', 'room')
 #'      \item configuration for \code{variable = "datetime"} is missing
@@ -43,6 +46,9 @@ annex_check_config <- function(x) {
         stop("not all required columns (", paste(required_cols, collapse = ", "), ") ",
              "exist in the 'config object'. Missing: ",
              paste(required_cols[!required_cols %in% names(x)], collapse = ", "))
+
+    # Force study, home, and room to NA for variable datetime
+    x[which(x$variable == "datetime"), c("study", "home", "room")] <- NA
 
     # Missing datetime
     if (!any(x$variable == "datetime"))

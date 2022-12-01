@@ -1,6 +1,6 @@
 Package: annex
 Title: Annex86 Data Analysis Package
-Version: 0.1-5
+Version: 0.1-6
 Date: 2022-12-01
 Authors@R: 
     c(person(given = "Gabriel", family = "Rojas-Kopeinig", role = c("fnd", "aut"),
@@ -11,11 +11,11 @@ Authors@R:
              email = "reto.stauffer@uibk.ac.at",
               comment = c(ORCID = "0000-0002-3798-5507")))
 Description: What the package does (one paragraph).
-Depends: R (>= 4.0.0), Formula, zoo
-Suggests: dplyr
-License: MIT, GPL-3, or friends to pick a license
-URL: https://github.com/Annex86/annex
-BugReports: https://github.com/Annex86/annex/issues
+Depends: R (>= 4.0.0), Formula, zoo, dplyr
+Imports: tidyr, readxl
+License: MIT, GPL-2
+URL: https://github.com/IEA-EBC-Annex86/annex/
+BugReports: https://github.com/IEA-EBC-Annex86/annex/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.0.9000

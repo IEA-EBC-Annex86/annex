@@ -10,6 +10,8 @@ annex_stats(object, format = "wide", ...)
 \item{object}{an object of class \code{annex}.}
 
 \item{format}{character, either \code{"wide"} (default) or \code{"long"}.}
+
+\item{\dots}{currently unused.}
 }
 \value{
 Returns an object of class \code{c("annex_stats", "data_frame")}.

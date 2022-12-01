@@ -6,6 +6,9 @@
 \usage{
 annex_check_config(x)
 }
+\arguments{
+\item{x}{object of class \code{data.frame} to be checked.}
+}
 \value{
 Invisibly returns a (possibly modified) version of \code{x}
 containing only the required columns in a specific order.
@@ -24,6 +27,7 @@ and contains the required information for preparing the annex data.
 
 Fails if:
 \itemize{
+\item TODO(R): checks changed
 \item the input is not a \code{data.frame}
 \item variables are missing ('column', 'variable', 'study', 'home', 'room')
 \item configuration for \code{variable = "datetime"} is missing

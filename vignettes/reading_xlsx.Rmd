@@ -69,10 +69,11 @@ from. In this case we are using a `.csv`
 called `r xfun::embed_file("demo_UIBK_config.csv", text = "demo_UIBK_config.csv")`
 (shipped with the package).
 
-All we need is to get the data into R, in this case all we need is:
+Some of the lines in the file are commented (start with `#`) which we
+would like to ignore on import:
 
 ```{r}
-config <- read.csv("demo_UIBK_config.csv")
+config <- read.csv("demo_UIBK_config.csv", comment.char = "#")
 head(config)
 ```
 
@@ -122,7 +123,7 @@ We can now use this `raw_df` object in combination with our
 `config` to prepare the data. 
 
 ```{r}
-prepared_df <- annex_prepare(raw_df, config)
+prepared_df <- annex_prepare(raw_df, config, quiet = TRUE)
 head(prepared_df)
 ```
 
@@ -147,13 +148,17 @@ Just for fun, even if it does not make most sense
 TODO(R): Briefly explain what's going on here.
 
 ```{r}
-annex_df <- annex(CO2 + rH + T + del_CO2 + V + Pyro ~ datetime | study + home + room, data = prepared_df)
+annex_df <- annex(RH + T + CO2 ~ datetime | study + home + room, data = prepared_df)
 head(annex_df)
+class(annex_df)
 ```
 
 ### Plotting
 
 ```{r, fig.width = 8, fig.height = 11, out.width = "100%"}
+devtools::load_all("../")
+range(class(annex_df$datetime))
+annex_df[1, ]
 plot(annex_df)
 ```
 

@@ -4,9 +4,7 @@
 # vim swap files
 *.swp
 
-# Rendered documentation
-/docs
-
 # Test files
 /*.R
 /*.Rmd
+/*.html

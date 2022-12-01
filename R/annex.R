@@ -42,6 +42,7 @@
 #' @export
 annex <- function(formula, data, meta = NULL, verbose = FALSE) {
     if (!is.Formula(formula)) formula <- as.Formula(formula)
+    if (inherits(data, "tbl_df")) data <- as.data.frame(data)
     stopifnot(is.data.frame(data), isTRUE(verbose) | isFALSE(verbose))
 
     # -------------------------------------------------
@@ -78,6 +79,8 @@ annex <- function(formula, data, meta = NULL, verbose = FALSE) {
         stop("invalid argument for the date/time information provided in formula")
     } else if (!f$time %in% names(data)) {
         stop("'", f$time, "' varialbe not found in object 'data'")
+    } else if (any(is.na(data[[f$time]]))) {
+        stop("`data$datetime` contains missing values")
     }
 
     # Data check: f$time must be POSIXt
@@ -151,7 +154,7 @@ annex_add_season_and_tod <- function(x) {
 #' @param verbose logical, defaults to \code{FALSE}. Can be set
 #'        to \code{TRUE} to increase verbosity.
 #'
-#' @importFrom Formula is.Formula
+#' @importFrom Formula is.Formula Formula
 #'
 #' @author Reto Stauffer
 annex_parse_formula <- function(f, verbose = FALSE) {
@@ -159,8 +162,7 @@ annex_parse_formula <- function(f, verbose = FALSE) {
     stopifnot(length(length(f)) == 2, length(f)[2] %in% 1:2)
 
     # Parsing the formula
-    vars  <- sapply(attr(terms(f, lhs = TRUE, rhs = FALSE), "variable"), as.character)[-1]
-    ###vars  <- attr(terms(f, lhs = TRUE,  rhs = FALSE), "term.labels")
+    vars  <- sapply(attr(terms(f, rhs = FALSE), "variable"), format)[-1]
     time  <- attr(terms(f, lhs = FALSE, rhs = 1),     "term.labels")
     group <- if (length(f)[2] == 2) attr(terms(f, lhs = FALSE, rhs = 2), "term.labels") else NULL
 
@@ -185,7 +187,7 @@ annex_parse_formula <- function(f, verbose = FALSE) {
 #' @param x object of class \code{annex}.
 #' @param strict logical, defaults to \code{TRUE}. If \code{FALSE},
 #'        regularity (but not strict regularity) will be checked.
-#'
+#' @param \dots currently unused.
 #'
 #' @return Returns a named logical vector where the name is
 #' a combination of the grouping (study, home, room), the
@@ -213,6 +215,7 @@ is.regular.annex <- function(x, strict = TRUE, ...) {
 #'
 #' @param object an object of class \code{annex}.
 #' @param format character, either \code{"wide"} (default) or \code{"long"}.
+#' @param \dots currently unused.
 #'
 #' @return Returns an object of class \code{c("annex_stats", "data_frame")}.
 #'
@@ -320,5 +323,30 @@ summary.annex <- function(object, type = "default", ...) {
     }
     invisible(NULL)
 }
+
+
+# --------------------------------------------------
+# S3 classes to keep the class
+
+#' @author Reto Stauffer
+#' @rdname annex
+#' @export
+head.annex <- function(x, ...) structure(NextMethod(), class = class(x))
+
+#' @author Reto Stauffer
+#' @rdname annex
+#' @export
+tail.annex <- function(x, ...) structure(NextMethod(), class = class(x))
+
+
+
+
+
+
+
+
+
+
+
 
 

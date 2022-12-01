@@ -2,9 +2,15 @@
 % Please edit documentation in R/annex.R
 \name{annex}
 \alias{annex}
+\alias{head.annex}
+\alias{tail.annex}
 \title{Annex Creator Function}
 \usage{
 annex(formula, data, meta = NULL, verbose = FALSE)
+
+\method{head}{annex}(x, ...)
+
+\method{tail}{annex}(x, ...)
 }
 \arguments{
 \item{formula}{the formula to specify how the data set is set up.

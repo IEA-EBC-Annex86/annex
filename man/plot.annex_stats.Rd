@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{x}{an object of class \code{annex}.}
+
+\item{\dots}{currently unused.}
 }
 \description{
 TODO(R): How can one plot this 5d object?

@@ -16,6 +16,8 @@ all varables from one group will be plotted in one subplot.}
 \item{start}{the start time of the period of interest.}
 
 \item{end}{the end time of the period of interest.}
+
+\item{\dots}{currently unused.}
 }
 \description{
 TODO(R)

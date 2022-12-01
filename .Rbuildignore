@@ -1,0 +1,10 @@
+
+Makefile
+
+_pkgdown.yml
+contact.md
+
+docs/
+inst/*.Rmd
+
+

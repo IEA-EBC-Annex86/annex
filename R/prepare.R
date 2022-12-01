@@ -18,6 +18,7 @@
 #' @author Reto Stauffer
 #' @export
 annex_prepare <- function(x, config, quiet = FALSE) {
+    if (inherits(x, "tbl_df")) x <- as.data.frame(x)
     stopifnot(is.data.frame(x), is.data.frame(config))
 
     # Checking config; this would fail if it does not contain 
@@ -63,7 +64,14 @@ annex_prepare <- function(x, config, quiet = FALSE) {
 
         # Ordering columns and return
         first_cols <- c("datetime", "study", "home", "room")
-        return(tmp[, c(first_cols, sort(names(tmp)[!names(tmp) %in% first_cols]))])
+        tmp <- tmp[, c(first_cols, sort(names(tmp)[!names(tmp) %in% first_cols]))]
+        if (any(is.na(tmp$datetime)))
+            stop("`datetime` (originally column `",
+                 subset(config, variable == "datetime", select = column, drop = TRUE),
+                 "`) contains missing values")
+
+        # Return chunk
+        return(tmp)
     }
 
     # Create unique IDs; ensure 'datetime' is excluded.

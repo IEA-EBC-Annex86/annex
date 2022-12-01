@@ -1,0 +1,15 @@
+pandoc: 2.9.2.1
+pkgdown: 2.0.6
+pkgdown_sha: ~
+articles:
+  Annex: Annex.html
+  import_csv: import_csv.html
+  import_xlsx: import_xlsx.html
+  method: method.html
+  reading_textfile: reading_textfile.html
+  reading_xlsx: reading_xlsx.html
+last_built: 2022-12-01T20:18Z
+urls:
+  reference: https://some.example-url.com/reference
+  article: https://some.example-url.com/articles
+
