@@ -14,7 +14,7 @@ to \code{TRUE} to increase verbosity.}
 }
 \description{
 Function used to test and parse a formula used
-in different functions in the Annex package.
+in different functions in the annex package.
 }
 \author{
 Reto Stauffer

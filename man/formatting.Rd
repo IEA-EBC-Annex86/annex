@@ -47,9 +47,9 @@ mandatory variables (home, room, etc.). If additional variables were given,
 these can also be found in the output.
 
 If a mandatory variable is not present in the output, a message is issued.
-Furthermore, the evaluate function of Annex cannot be used unless all the required
+Furthermore, the evaluate function of annex cannot be used unless all the required
 variables are available. If the formula passed contains more than just the
-mandatory variables, the evaluate function of Annex can be used without any
+mandatory variables, the evaluate function of annex can be used without any
 problems.
 
 The output contains at least seven columns in addition to the columns for

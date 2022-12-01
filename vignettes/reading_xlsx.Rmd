@@ -6,14 +6,14 @@ output:
     toc: true
     toc_float: true
     theme: flatly
-bibliography: Annex.bib
+bibliography: annex.bib
 link-citations: true
 vignette: >
-  %\VignetteIndexEntry{Annex: Annex86 Data Analysis Package}
+  %\VignetteIndexEntry{annex: Annex86 Data Analysis Package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteDepends{Formula}
   %\VignetteKeywords{Annex86}
-  %\VignettePackage{Annex}
+  %\VignettePackage{annex}
 ---
 
 ```{r setup, include = FALSE}
@@ -25,7 +25,7 @@ suppressPackageStartupMessages(library('Formula'))
 
 Some users may have data for multiple rooms in one
 file (CSV, Excel). To prepare the data for further
-processing, the Annex package provides a function
+processing, the annex package provides a function
 `prepare_anenx()` which takes up (i) the data set
 plus (ii) a 'config' object.
 
@@ -59,7 +59,7 @@ What we would like to have is the following:
 
 ```{r, include = FALSE}
 # Make a copy when building the article
-file <- system.file("data/demo_UIBK_config.csv", package = "Annex")
+file <- system.file("data/demo_UIBK_config.csv", package = "annex")
 file.copy(file, "demo_UIBK_config.csv")
 ```
 
@@ -78,13 +78,13 @@ head(config)
 
 ### Checking the config object
 
-We _could_ now check if this object is valid using the `check_config()`
+We _could_ now check if this object is valid using the `annex_check_config()`
 function. This is not mandatory as it will be done inside
 `annex_prepare()` in any case. However, let's try:
 
 ```{r}
-library("Annex")
-check_config(config)
+library("annex")
+annex_check_config(config)
 ```
 
 ... no error, all fine.
@@ -94,7 +94,7 @@ check_config(config)
 
 ```{r, include = FALSE}
 # Make a copy when building the article
-file <- system.file("data/demo_UIBK.xlsx", package = "Annex")
+file <- system.file("data/demo_UIBK.xlsx", package = "annex")
 file.copy(file, "demo_UIBK.xlsx")
 ```
 
@@ -122,7 +122,7 @@ We can now use this `raw_df` object in combination with our
 `config` to prepare the data. 
 
 ```{r}
-devtools::load_all(); prepared_df <- annex_prepare(raw_df, config)
+prepared_df <- annex_prepare(raw_df, config)
 head(prepared_df)
 ```
 

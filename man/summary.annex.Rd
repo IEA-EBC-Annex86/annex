@@ -2,7 +2,7 @@
 % Please edit documentation in R/annex.R
 \name{summary.annex}
 \alias{summary.annex}
-\title{Annex summary}
+\title{Annex Summary}
 \usage{
 \method{summary}{annex}(object, type = "default", ...)
 }

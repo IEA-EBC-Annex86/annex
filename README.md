@@ -8,28 +8,14 @@
 TODO(R): Installation instructions; depends a little bit on where
 the package will be hosted. Something along the lines of:
 
+**Install via remotes**
 
-**If published via CRAN**
-
-```
-install.packages("Annex")      # If provided via CRAN
-```
-
-**If hosted on [github](https://github.com)**
+In _R_, simply call `remotes::install_github()` to download
+and install the package.
 
 ```
-library("remotes")
-install_github("user/Annex")   # If hosted on github
-```
-
-**Access via token on [UIBK gitlab](https://git.uibk.ac.at)**
-
-Must be set up first, but is possible for non-registered users.
-
-```
-library("remotes")
-repos  <- "https://gitlab+deploy-token-80:AB_CDEFGHabcdefghx_o@git.uibk.ac.at/c123456/Annex.git"
-install_git(repos)
+library('remotes')
+install_github("Annex86/annex")
 ```
 
 ## Getting started

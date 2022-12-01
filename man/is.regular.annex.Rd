@@ -2,7 +2,7 @@
 % Please edit documentation in R/annex.R
 \name{is.regular.annex}
 \alias{is.regular.annex}
-\title{Check Regularity of an Annex series}
+\title{Check Regularity of an Annex Series}
 \usage{
 \method{is.regular}{annex}(x, strict = TRUE, ...)
 }
@@ -20,7 +20,7 @@ content the result of checking regularity.
 \description{
 \code{is.regular} is a regular function for checking whether a series
 of observations has an underlying regularity or is even
-strictly regular. Evaulate for each group of an Annex object.
+strictly regular. Evaulate for each group of an annex object.
 }
 \author{
 Reto stauffer

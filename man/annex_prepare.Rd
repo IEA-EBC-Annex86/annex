@@ -10,7 +10,7 @@ annex_prepare(x, config)
 \item{x}{data.frame, the data itself.}
 
 \item{config}{data.frame, config information (see
-\code{link{check_config()}}).}
+\code{\link[=annex_check_config]{annex_check_config()}}).}
 }
 \value{
 Prepared \code{data.frame} for further processing with

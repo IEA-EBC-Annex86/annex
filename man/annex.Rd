@@ -2,7 +2,7 @@
 % Please edit documentation in R/annex.R
 \name{annex}
 \alias{annex}
-\title{Annex Creator}
+\title{Annex Creator Function}
 \usage{
 annex(formula, data, meta = NULL, verbose = FALSE)
 }

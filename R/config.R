@@ -1,6 +1,6 @@
 
 
-#' Checking Annex config object
+#' Checking Annex Config
 #'
 #' An 'annex config object' is a simple data.frame which
 #' can be created using Rs standard features. The function
@@ -33,7 +33,7 @@
 #'
 #' @author Reto Stauffer
 #' @export
-check_config <- function(x) {
+annex_check_config <- function(x) {
     stopifnot(is.data.frame(x))
     stopifnot(NROW(x) > 0)
 
@@ -56,6 +56,10 @@ check_config <- function(x) {
         stop("missing values in ", paste(names(check_na)[check_na > 0], collapse = ", ")," not allowed")
     if (is.na(subset(config, variable == "datetime", select = c(column), drop = TRUE)))
         stop("missing entry for 'column' where variable = 'datetime'")
+
+    # Allowed variable names, study, home, and room
+    x$variable <- check_for_allowed_pollutants(x$variable)
+    x$room     <- check_for_allowed_rooms(x$room)
 
     # Duplicated columns?
     idx <- which(duplicated(x$column))
@@ -85,4 +89,89 @@ check_config <- function(x) {
 
     # Invisible return reduced to the required columns
     invisible(x[, required_cols])
+}
+
+
+
+#' Checking for Allowed Pollutants
+#'
+#' The XLSX file template.xlsx contains a series of
+#' pre-defined names for the pollutants (sheet 'Definitions').
+#' This function checks if all user defined variable names
+#' are valid. Not case sensitive; will be adjusted if needed.
+#'
+#' @param x character vector with variable names.
+#'
+#' @return Character vector (with possibly adjusted) variable
+#' names, or fails.
+#'
+#' @importFrom readxl read_excel
+#' @author Reto Stauffer
+check_for_allowed_pollutants <- function(x) {
+    stopifnot(is.character(x), length(x) > 0, !any(is.na(x)))
+
+    # Path to XLSX file to be read
+    xlsx <- system.file("template/template.xlsx", package = "annex")
+
+    library("readxl")
+    tmp <- suppressMessages(read_excel(xlsx, sheet = "Definitions"))
+    stopifnot("Pollutants" %in% names(tmp))
+    allowed_pollutants <- na.omit(c("datetime", tmp$Pollutants))
+
+    # Fix casing
+    idx_case <- match(tolower(x), tolower(allowed_pollutants))
+    if (!all(is.na(idx_case))) x[which(!is.na(idx_case))] <- allowed_pollutants[na.omit(idx_case)]
+
+    # Show error message of not-allowed variable names
+    idx <- which(!x %in% allowed_pollutants)
+    if (length(idx) > 0)
+        stop("variable names ", paste(sprintf("'%s'", x[idx]), collapse = ", "),
+             " not allowed. Allowed are: ",
+             paste(sprintf("'%s'", allowed_pollutants), collapse = ", "), ".")
+
+    # Return
+    return(x)
+
+}
+
+
+#' Checking for Allowed Rooms
+#'
+#' The XLSX file template.xlsx contains a series of
+#' pre-defined names for the rooms (sheet 'Definitions').
+#' This function checks if all user defined room names
+#' are valid. Not case sensitive; will be adjusted if needed.
+#'
+#' @param x character vector with room names.
+#'
+#' @return Character vector (with possibly adjusted) room
+#' names, or fails.
+#'
+#' @importFrom readxl read_excel
+#' @author Reto Stauffer
+check_for_allowed_rooms <- function(x) {
+    stopifnot(is.character(x), length(x) > 0)
+
+    # Path to XLSX file to be read
+    xlsx <- system.file("template/template.xlsx", package = "annex")
+
+    library("readxl")
+    tmp <- suppressMessages(read_excel(xlsx, sheet = "Definitions"))
+    stopifnot("Measurement location" %in% names(tmp))
+    allowed_rooms <- na.omit(tmp[["Measurement location"]])
+
+    # Fix casing
+    idx_case <- match(tolower(x), tolower(allowed_rooms))
+    if (!all(is.na(idx_case))) x[which(!is.na(idx_case))] <- allowed_rooms[na.omit(idx_case)]
+
+    # Show error message of not-allowed variable names
+    idx <- which(!is.na(x) & !x %in% allowed_rooms)
+    if (length(idx) > 0)
+        stop("room names ", paste(sprintf("'%s'", x[idx]), collapse = ", "),
+             " not allowed. Allowed are: ",
+             paste(sprintf("'%s'", allowed_rooms), collapse = ", "), ".")
+
+    # Return
+    return(x)
+
 }

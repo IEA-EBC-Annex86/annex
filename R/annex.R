@@ -1,6 +1,6 @@
 
 
-#' Annex Creator
+#' Annex Creator Function
 #'
 #' Creates an object of class `c("annex", "data.frame")`.
 #'
@@ -96,7 +96,7 @@ annex <- function(formula, data, meta = NULL, verbose = FALSE) {
     for (t in tmp) {
         if (anyDuplicated(t[[f$time]])) {
             t <- t[1, f$group]
-            warning("variable '", f$time, "' contains duplicated time stamps ",
+            warning("variable '", f$time, "' contains duplicated time stamps for ",
                     paste(names(t), as.vector(t), sep = " = ", collapse = ", "))
         }
     }
@@ -145,7 +145,7 @@ annex_add_season_and_tod <- function(x) {
 #' Parsing Formula
 #'
 #' Function used to test and parse a formula used
-#' in different functions in the Annex package.
+#' in different functions in the annex package.
 #'
 #' @param f object of class \code{Formula}.
 #' @param verbose logical, defaults to \code{FALSE}. Can be set
@@ -159,7 +159,8 @@ annex_parse_formula <- function(f, verbose = FALSE) {
     stopifnot(length(length(f)) == 2, length(f)[2] %in% 1:2)
 
     # Parsing the formula
-    vars  <- attr(terms(f, lhs = TRUE,  rhs = FALSE), "term.labels")
+    vars  <- sapply(attr(terms(f, lhs = TRUE, rhs = FALSE), "variable"), as.character)[-1]
+    ###vars  <- attr(terms(f, lhs = TRUE,  rhs = FALSE), "term.labels")
     time  <- attr(terms(f, lhs = FALSE, rhs = 1),     "term.labels")
     group <- if (length(f)[2] == 2) attr(terms(f, lhs = FALSE, rhs = 2), "term.labels") else NULL
 
@@ -175,11 +176,11 @@ annex_parse_formula <- function(f, verbose = FALSE) {
 }
 
 
-#' Check Regularity of an Annex series
+#' Check Regularity of an Annex Series
 #'
 #' \code{is.regular} is a regular function for checking whether a series
 #' of observations has an underlying regularity or is even
-#' strictly regular. Evaulate for each group of an Annex object.
+#' strictly regular. Evaulate for each group of an annex object.
 #'
 #' @param x object of class \code{annex}.
 #' @param strict logical, defaults to \code{TRUE}. If \code{FALSE},
@@ -275,6 +276,8 @@ annex_stats <- function(object, format = "wide", ...) {
         x <- aggregate(formula(af), x, get_stats)
         return(lapply(use_var, convert, data = x, f = f, format = format)) # Wide to long
     }
+
+    # Splitting data; aggregate data
     res <- unlist(lapply(object_split, fn, f = f), recursive = FALSE)
     res <- if (length(res) == 1) res[[1]] else bind_rows(res)
     rownames(res) <- NULL
@@ -284,7 +287,7 @@ annex_stats <- function(object, format = "wide", ...) {
 }
 
 
-#' Annex summary
+#' Annex Summary
 #'
 #' Numeric summary of an annex object.
 #'

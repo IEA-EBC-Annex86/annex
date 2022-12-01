@@ -1,6 +1,6 @@
-Package: Annex
+Package: annex
 Title: Annex86 Data Analysis Package
-Version: 0.1-4
+Version: 0.1-5
 Date: 2022-12-01
 Authors@R: 
     c(person(given = "Gabriel", family = "Rojas-Kopeinig", role = c("fnd", "aut"),

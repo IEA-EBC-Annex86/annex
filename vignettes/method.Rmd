@@ -6,7 +6,7 @@ output:
     toc: true
     toc_float: true
     theme: flatly
-bibliography: Annex.bib
+bibliography: annex.bib
 link-citations: true
 ---
 

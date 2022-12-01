@@ -7,7 +7,9 @@
 #'
 #' @param x data.frame, the data itself.
 #' @param config data.frame, config information (see
-#'        \code{link{check_config()}}).
+#'        [annex::annex_check_config()]).
+#' @param quiet logical, default \code{FALSE}. If set \code{TRUE},
+#'        messages and warnings will be suppressed.
 #'
 #' @return Prepared \code{data.frame} for further processing with
 #'         the annex package.
@@ -15,18 +17,31 @@
 #' @importFrom dplyr bind_rows
 #' @author Reto Stauffer
 #' @export
-annex_prepare <- function(x, config) {
+annex_prepare <- function(x, config, quiet = FALSE) {
     stopifnot(is.data.frame(x), is.data.frame(config))
 
     # Checking config; this would fail if it does not contain 
     # the expected information.
-    config <- check_config(config)
+    config <- annex_check_config(config)
 
-    # Next we need to check if all columns in 'data' are described
-    # in 'config'.
+    # Check if there are columns described in 'config' which are not
+    # existing in the data set. If we find these, we'll drop a warning
+    # but are OK to continue.
+    idx <- which(!config$column %in% names(x))
+    if (length(idx) > 0 & !quiet)
+        warning("Defined columns in `config` not present in `x`: ",
+                paste(sprintf("'%s'", config$column[idx]), collapse = ", "))
+
+    # Inform the user that not all columns are used
     idx <- which(!names(x) %in% config$column)
-    if (length(idx) > 0)
-        stop("cannot find config for data columns: ", paste(names(x)[idx], collapse = ", "))
+    if (length(idx) > 0 & !quiet)
+        message("Columns in `x` not in `config` (will be ignored): ",
+                paste(sprintf("'%s'", names(x)[idx]), collapse = ", "))
+
+    # Subsetting the data set to the requested (defined) columns
+    idx <- which(names(x) %in% config$column)
+    if (length(idx) <= 1) stop("no data columns in `config` found in object `x`")
+    x <- x[, idx]
 
     # Preparing the data set
     # (1) Find all unique variables
