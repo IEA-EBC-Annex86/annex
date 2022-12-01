@@ -18,6 +18,12 @@ library('remotes')
 install_github("Annex86/annex")
 ```
 
+## Documentation
+
+Documentation and examples are available on [github.io](https://iea-ebc-annex86.github.io/annex/)
+
+* <https://iea-ebc-annex86.github.io/annex/>
+
 ## Getting started
 
 To get started, check out [Get started](articles/Annex.html).
