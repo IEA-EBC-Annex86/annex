@@ -3,6 +3,7 @@
 
 # vim swap files
 *.swp
+*.xlsx
 
 # Test files
 /*.R

@@ -90,7 +90,7 @@ annex_stats <- function(object, format = "wide", ...) {
     res <- res[, c(first[first %in% names(res)], names(res)[!names(res) %in% first])]
 
     rownames(res) <- NULL
-    class(res) <- c("annex_stats", class(res))
+    class(res) <- c("annex_stats", paste("annex_stats", format, sep = "_"), class(res))
     attr(res, "formula") <- attr(object, "formula")
     return(res)
 }

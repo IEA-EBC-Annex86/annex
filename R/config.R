@@ -111,7 +111,7 @@ annex_check_config <- function(x) {
 #' @return Character vector (with possibly adjusted) variable
 #' names, or fails.
 #'
-#' @importFrom readxl read_excel
+#' @importFrom openxlsx read.xlsx
 #' @author Reto Stauffer
 check_for_allowed_pollutants <- function(x) {
     stopifnot(is.character(x), length(x) > 0, !any(is.na(x)))

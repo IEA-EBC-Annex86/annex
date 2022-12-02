@@ -177,10 +177,28 @@ stats <- annex_stats(annex_df, format = "long")
 head(stats)
 ```
 
+### Write data to XLSX (final file format)
+
+To be able to write the statistics into the final XLSX file,
+the statistics must be in the wide format (TODO(R): Convert on the fly?).
+
+```{r, include = FALSE}
+# Make sure this is not yet existing (dynamically created by this vignette)
+if (file.exists("final_UIBK.xlsx")) file.remove("final_UIBK.xlsx")
+```
+
+
+```{r}
+stats_wide <- annex_stats(annex_df, format = "wide")
+annex_write(stats_wide, file = "final_UIBK.xlsx", user = 123)
+```
+
+This creates the file `r xfun::embed_file("final_UIBK.xlsx", text = "final_UIBK.xlsx")`
+when successful.
 
 
 ```{r, include = FALSE}
-files <- c("demo_UIBK_config.csv", "demo_UIBK.xlsx")
+files <- c("demo_UIBK_config.csv", "demo_UIBK.xlsx", "final_UIBK.xlsx")
 for (f in files) {
     if (file.exists(f)) file.remove(f)
 }

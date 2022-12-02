@@ -1,7 +1,7 @@
 Package: annex
 Title: Annex86 Data Analysis Package
-Version: 0.1-7
-Date: 2022-12-01
+Version: 0.1-8
+Date: 2022-12-02
 Authors@R: 
     c(person(given = "Gabriel", family = "Rojas-Kopeinig", role = c("fnd", "aut"),
              email = "gabi.rojas@uibk.ac.at"),
@@ -12,7 +12,7 @@ Authors@R:
               comment = c(ORCID = "0000-0002-3798-5507")))
 Description: What the package does (one paragraph).
 Depends: R (>= 4.0.0)
-Imports: Formula, zoo, tidyr, dplyr, readxl
+Imports: Formula, zoo, tidyr, dplyr, openxlsx
 License: MIT, GPL-2 | GPL-3
 URL: https://github.com/IEA-EBC-Annex86/annex/
 BugReports: https://github.com/IEA-EBC-Annex86/annex/issues
