@@ -1,0 +1,20 @@
+---
+title: "Config File"
+author: "Reto Stauffer"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+bibliography: annex.bib
+link-citations: true
+vignette: >
+  %\VignetteIndexEntry{annex: Annex86 Data Analysis Package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteDepends{Formula}
+  %\VignetteKeywords{Annex86}
+  %\VignettePackage{annex}
+---
+
+To be written; explain features of the config file which can
+be used with the annex package.

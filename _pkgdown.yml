@@ -17,10 +17,10 @@ navbar:
       href: articles/Annex.html
     - text: "Articles"
       menu:
-      - text: "Reading XLSX"
-        href: articles/reading_xlsx.html
-      - text: "Reading Textfile"
-        href: articles/reading_textfile.html
+      - text: "Data from XLSX"
+        href: articles/from_xlsx.html
+      - text: "Data from Textfiles"
+        href: articles/from_textfiles.html
 #    - text: "Importing data"
 #      menu:
 #        - text: "XLSX"

@@ -8,7 +8,10 @@ package in its `0.1-X` state.
 * New infrastructure with custom S3 class with a series of handy methods
 * Introducing a `config` object for easy control
 * Moving project to <https://github.com/IEA-EBC-Annex86/annex/>
-* Adding first version of `annex_write()`; no overwrite mode for now
+* Adding first version of `annex_write_stats()`; no overwrite mode for now
+* Added method to reshape `annex_stats` objects from long to wirde form and vice versa
+* `annex_write_stats` now accepts long and wide formats
+* Added logo (draft)
 
 # Annex 0.0-9000
 

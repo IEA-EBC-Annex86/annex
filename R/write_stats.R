@@ -5,7 +5,7 @@
 #' TODO(R)
 #'
 #' @param x object of class \code{annex_stat} as returned by
-#'        [annex::annex_stats()].
+#'        [annex::annex_stats()] (wide or long format).
 #' @param file name (or path) to the XLSX file where to store
 #'        the data. Must end with `xlsx` (not case sensitive).
 #'        See 'Details'.
@@ -28,7 +28,7 @@
 #'
 #' By default, `overwrite = FALSE`. If the output `file` already
 #' exists, the function will be terminated. However, it can be set
-#' to `TRUE` to allow [annex::annex_write()] to manipulate/overwrite
+#' to `TRUE` to allow [annex::annex_write_stats()] to manipulate/overwrite
 #' the current data in that XLSX file. It tries to preserve all
 #' custom data (TODO(R): not yet implemented).
 #'
@@ -40,7 +40,7 @@
 #' @importFrom openxlsx getSheetNames
 #' @author Reto Stauffer
 #' @export
-annex_write <- function(x, file, user, overwrite = FALSE, ..., quiet = FALSE) {
+annex_write_stats <- function(x, file, user, overwrite = FALSE, ..., quiet = FALSE) {
     # Stay sane!
     stopifnot(is.character(file), length(file) == 1)
     stopifnot(is.numeric(user), length(user) == 1, user > 0)
@@ -52,7 +52,8 @@ annex_write <- function(x, file, user, overwrite = FALSE, ..., quiet = FALSE) {
         sto("directory '", dirname(file), "' does not exist; can't create output file")
 
     # Check if the input object is what we expect;
-    # Also used as sanity check for the annex_write function.
+    # Also used as sanity check for the annex_write_stats function.
+    x <- annex_stats_reshape(x, format = "wide")
     annex_check_stats_object(x)
 
     # Does the file already exist and overwrite is FALSE?
@@ -195,7 +196,7 @@ write_annex_metaPeriod <- function(wb, x, quiet, sheet) {
 #' Checking Annex Stats to XML
 #'
 #' Used for checking/validating \code{annex_stat} objects;
-#' used internally by [annex::annex_write()] to ensure that
+#' used internally by [annex::annex_write_stats()] to ensure that
 #' what the users (try to) store to the final XLSX files
 #' is what is expected for the final output file.
 #'
@@ -218,7 +219,7 @@ write_annex_metaPeriod <- function(wb, x, quiet, sheet) {
 #' @author Reto Stauffer
 #'
 annex_check_stats_object <- function(x) {
-    stopifnot(inherits(x, "annex_stats_wide"), is.data.frame(x), NROW(x) > 0)
+    stopifnot(inherits(x, "annex_stats"), is.data.frame(x), NROW(x) > 0)
 
     # The following variables must exist and be either
     # character or factor to count as valid

@@ -7,7 +7,6 @@
 #'
 #' @return Returns an object of class \code{c("annex_stats", "data_frame")}.
 #'
-#' @importFrom tidyr pivot_longer
 #' @importFrom dplyr bind_rows
 #' @author Reto Stauffer
 #' @export
@@ -30,11 +29,11 @@ annex_stats <- function(object, format = "wide", ...) {
     convert <- function(var, data, f, gx = c("season", "tod")) {
         res <- as.data.frame(data[, var])
         res <- cbind(transform(data[, c(f$group, gx)], variable = var), res)
-        if (format == "long") {
-            idvar   <- c(f$group, "season", "tod", "variable")
-            varying <- names(res)[!names(res) %in% idvar]
-            res     <- as.data.frame(pivot_longer(res, cols = varying, names_to = "stats"))
-        }
+########if (format == "long") {
+########    idvar   <- c(f$group, "season", "tod", "variable")
+########    varying <- names(res)[!names(res) %in% idvar]
+########    res     <- as.data.frame(pivot_longer(res, cols = varying, names_to = "stats"))
+########}
         return(res)
     }
 
@@ -89,10 +88,58 @@ annex_stats <- function(object, format = "wide", ...) {
     first <- c("study", "home", "room", "season", "tod", "variable")
     res <- res[, c(first[first %in% names(res)], names(res)[!names(res) %in% first])]
 
-    rownames(res) <- NULL
-    class(res) <- c("annex_stats", paste("annex_stats", format, sep = "_"), class(res))
-    attr(res, "formula") <- attr(object, "formula")
+    # Structuring return; by default 'wide' format
+    res <- structure(res, row.names = seq_len(NROW(res)),
+                     class = c("annex_stats", "annex_stats_wide", class(res)),
+                     formula = attr(object, "formula"))
+
+    # Reshape to long format if required
+    if (format == "long") res <- annex_stats_reshape(res)
     return(res)
 }
 
+#' Reshaping Annex Stats Objects
+#'
+#' @param x object of class \code{annex_stats} as returned
+#'        by [annex::annex_stats()].
+#' @param format \code{NULL} by default or one of \code{"long"}
+#'        or \code{"wide"} (see Details).
+#'
+#' @return Returns a reshaped version of the input. If the
+#' Object provided on `x` inherits \code{annex_stats_wide} (wide format)
+#' the long format will be returned and vice versa if \code{format = NULL}.
+#' If the format is specified as either \code{"long"} or \code{"wide"}
+#' the long or wide format will be returned (possibly an unmodified version
+#' of the input if the input is already in the desired format).
+#'
+#' @seealso annex_stats
+#' @importFrom tidyr pivot_longer pivot_wider
+#' @author Reto Stauffer
+#' @export
+annex_stats_reshape <- function(x, format = NULL) {
+    stopifnot(inherits(x, "annex_stats"))
+    stopifnot(is.null(format) || (is.character(format) && length(format) == 1L))
+    if (!is.null(format)) format <- match.arg(format, c("long", "wide"))
+
+    is_long <- inherits(x, "annex_stats_long")
+    formula <- attr(x, "formula")           # we need it later
+    f       <- annex_parse_formula(formula) # deparse
+    # Identify grouping variable (plus season, tod, and variable if existing)
+    idvar   <- c("season", "tod", "variable")
+    idvar   <- c(f$group, idvar[idvar %in% names(x)])
+
+    # Reshape to wide format
+    if (is_long && (is.null(format) || format == "wide")) {
+        x        <- pivot_wider(x, names_from = "stats", values_from = "value")
+        x        <- structure(x, class = c("annex_stats", "annex_stats_wide", "data.frame"),
+                              formula = formula)
+    # Reshape to long format
+    } else if (!is_long && (is.null(format) || format == "long")) {
+        varying  <- names(x)[!names(x) %in% idvar]
+        x        <- pivot_longer(x, cols = varying, names_to = "stats")
+        x        <- structure(x, class = c("annex_stats", "annex_stats_long", "data.frame"),
+                              formula = formula)
+    }
+    return(x)
+}
 

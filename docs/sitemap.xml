@@ -10,6 +10,15 @@
     <loc>https://some.example-url.com/articles/Annex.html</loc>
   </url>
   <url>
+    <loc>https://some.example-url.com/articles/configfile.html</loc>
+  </url>
+  <url>
+    <loc>https://some.example-url.com/articles/from_textfiles.html</loc>
+  </url>
+  <url>
+    <loc>https://some.example-url.com/articles/from_xlsx.html</loc>
+  </url>
+  <url>
     <loc>https://some.example-url.com/articles/import_csv.html</loc>
   </url>
   <url>
@@ -20,12 +29,6 @@
   </url>
   <url>
     <loc>https://some.example-url.com/articles/method.html</loc>
-  </url>
-  <url>
-    <loc>https://some.example-url.com/articles/reading_textfile.html</loc>
-  </url>
-  <url>
-    <loc>https://some.example-url.com/articles/reading_xlsx.html</loc>
   </url>
   <url>
     <loc>https://some.example-url.com/authors.html</loc>
@@ -61,7 +64,10 @@
     <loc>https://some.example-url.com/reference/annex_stats.html</loc>
   </url>
   <url>
-    <loc>https://some.example-url.com/reference/annex_write.html</loc>
+    <loc>https://some.example-url.com/reference/annex_stats_reshape.html</loc>
+  </url>
+  <url>
+    <loc>https://some.example-url.com/reference/annex_write_stats.html</loc>
   </url>
   <url>
     <loc>https://some.example-url.com/reference/check_for_allowed_pollutants.html</loc>

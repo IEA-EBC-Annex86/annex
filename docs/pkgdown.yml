@@ -3,12 +3,13 @@ pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
   Annex: Annex.html
+  configfile: configfile.html
+  from_textfiles: from_textfiles.html
+  from_xlsx: from_xlsx.html
   import_csv: import_csv.html
   import_xlsx: import_xlsx.html
   method: method.html
-  reading_textfile: reading_textfile.html
-  reading_xlsx: reading_xlsx.html
-last_built: 2022-12-02T10:49Z
+last_built: 2022-12-02T15:53Z
 urls:
   reference: https://some.example-url.com/reference
   article: https://some.example-url.com/articles
