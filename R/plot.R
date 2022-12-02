@@ -11,7 +11,7 @@
 #' @param end the end time of the period of interest.
 #' @param \dots currently unused.
 #'
-#' @importFrom zoo zoo
+#' @importFrom zoo zoo index coredata
 #' @author Reto Stauffer
 #' @method plot annex
 #' @export
@@ -79,7 +79,8 @@ plot.annex <- function(x, bygroup = FALSE, start = NULL, end = NULL, ...) {
             }
             if (is_first) {
                 legend("topleft", legend = names(tmp),
-                       col = seq_along(tmp), bty = "n", lty = 1)
+                       col = seq_along(tmp), bty = "n", lty = 1,
+                       ncol = 1 + (length(tmp) - 1) %/% 10)
                 is_first <- FALSE
             }
         }

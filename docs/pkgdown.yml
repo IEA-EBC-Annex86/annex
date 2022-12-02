@@ -8,7 +8,7 @@ articles:
   method: method.html
   reading_textfile: reading_textfile.html
   reading_xlsx: reading_xlsx.html
-last_built: 2022-12-02T09:46Z
+last_built: 2022-12-02T10:49Z
 urls:
   reference: https://some.example-url.com/reference
   article: https://some.example-url.com/articles
