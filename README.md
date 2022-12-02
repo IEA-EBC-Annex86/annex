@@ -3,6 +3,8 @@
 
 # `Annex`; Annex86 Data Analysis Package
 
+<img src="inst/logo.png" align="right" height="200" style="float:right; height:200px;">
+
 ## Installation
 
 TODO(R): Installation instructions; depends a little bit on where
