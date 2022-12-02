@@ -190,7 +190,7 @@ if (file.exists("final_UIBK.xlsx")) file.remove("final_UIBK.xlsx")
 
 ```{r}
 stats_wide <- annex_stats(annex_df, format = "wide")
-annex_write(stats_wide, file = "final_UIBK.xlsx", user = 123)
+annex_write(stats_wide, file = "final_UIBK.xlsx", user = 123, quiet = TRUE)
 ```
 
 This creates the file `r xfun::embed_file("final_UIBK.xlsx", text = "final_UIBK.xlsx")`
