@@ -1,5 +1,5 @@
 ---
-title: "Reading from Textfiles"
+title: "Textfile Based"
 author: "Reto Stauffer"
 output:
   html_document:

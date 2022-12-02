@@ -1,5 +1,5 @@
 ---
-title: "From XLSX"
+title: "XLSX Based"
 author: "Reto Stauffer"
 output:
   html_document:
@@ -156,10 +156,10 @@ class(annex_df)
 A series of S3 methods exist for `annex` objects which might be extended
 in the future.
 
-* [annex::summary()]
-* [annex::head()]/[annex::tail()]
-* [annex::is.regular()]
-* [annex::plot()]
+* `summary()`
+* `head()]/[annex::tail()`
+* `is.regular()`
+* `plot()`
 
 ### Perform analysis
 
@@ -175,8 +175,9 @@ stats <- annex_stats(annex_df, format = "long")
 head(stats)
 ```
 
-By default, `format = "wide"` which will return the statistics in a wide
-format.
+By default, the argument format is set to `"wide"` which will return the
+statistics in a wide format. Does not matter for the further analysis but
+can be convenient when processed manually.
 
 
 ### Write data to XLSX (final file format)

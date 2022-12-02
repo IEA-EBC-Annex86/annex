@@ -17,9 +17,11 @@ navbar:
       href: articles/Annex.html
     - text: "Articles"
       menu:
-      - text: "Data from XLSX"
+      - text: "Config files/objects"
+        href: articles/config.html
+      - text: "XLSX Based Analysis"
         href: articles/from_xlsx.html
-      - text: "Data from Textfiles"
+      - text: "Textfile Based Analysis"
         href: articles/from_textfiles.html
 #    - text: "Importing data"
 #      menu:
