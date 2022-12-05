@@ -1,3 +1,8 @@
+# ----------------------------------------------------------------------
+# Bedroom demo config
+# Simple tabular text file containing the required information
+# to process the file 'demo_Bedroom.txt' with the annex package.
+# ----------------------------------------------------------------------
 "column"            "variable"      "study"        "home"         "room"
 "X"                 "datetime"      empty          empty          empty
 "co2"               "CO2"           "DEMO_STUD"    "Casa_Blanca"  "Bed"

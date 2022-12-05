@@ -19,163 +19,211 @@ vignette: >
 ```{r setup, include = FALSE}
 suppressPackageStartupMessages(library('zoo'))
 suppressPackageStartupMessages(library('Formula'))
+# Make a copy when building the article
+file <- system.file("data/demo_Bedroom_config.TXT", package = "annex")
+file.copy(file, "demo_Bedroom_config.TXT")
+file <- system.file("data/demo_Bedroom.txt", package = "annex")
+file.copy(file, "demo_Bedroom.txt")
 ```
 
 ## Introduction
 
-See [this](reading_xlsx.Rmd).
+This article explains how to import and process data with the `annex` package
+when the require data is available as tabular text files (CSV).
 
-# The configuration
+To demonstrate this, two files are used called
+`r xfun::embed_file("demo_Bedroom.txt", text = "demo_Bedroom.txt")`
+(contains the measurement data) as well as
+`r xfun::embed_file("demo_Bedroom_config.TXT", text = "demo_Bedroom_config.TXT")`
+(contains configuration; see article [Config file](configfile.html)).
 
-```{r, include = FALSE}
-# Make a copy when building the article
-file <- system.file("data/demo_Bedroom_config.TXT", package = "annex")
-file.copy(file, "demo_Bedroom_config.TXT")
-```
 
-The config must be a `data.frame` with specific content,
-the package does not care where this `data.frame` comes
-from. In this case we are using a textfile 
-called `r xfun::embed_file("demo_Bedroom_config.TXT", text = "demo_Bedroom_config.TXT")`
-(shipped with the package). Whilst the file extension is not 'CSV', the
-content is still CSV-alike, however, we must specify some details when reading
-the file. For details, read the manual page `?read.table` (R base functionality).
+Both files can easily be read using base R functions, namely `read.table()` and its
+interfacing functions like [utils::read.csv()], [utils::read.delim()] etc.
+(see `?read.table` for more details).
 
+## Reading the data
+
+The first step is to import both (i) the measurement data (stored on `raw_df`)
+and (ii) the configuration (stored on `config`):
 
 ```{r}
+raw_df <- read.csv("demo_Bedroom.txt")
 config <- read.table("demo_Bedroom_config.TXT",
-                     sep = "",             # Separator: one or multiple spaces
-                     quote = "\"",         # Characters are in quotes
-                     header = TRUE,        # First row contains variable names
-                     na.strings = "empty") # Custom value for 'not defined'
-print(config)
+                     comment.char = "#", sep = "",
+                     header = TRUE, na.strings = c("NA", "empty"))
+                     # see ?read.table for details
+
+# Class and dimension of the objects
+c("raw_df" = is.data.frame(raw_df), "config" = is.data.frame(config))
+cbind("raw_df" = dim(raw_df), "config" = dim(config))
 ```
+
+Both objects are of class `data.frame` (tibble data frames to be precise)
+with a dimension of $`r paste(dim(raw_df), collapse = " \\times ")`$ (`raw_df`)
+and  $`r paste(dim(raw_df), collapse = " \\times ")`$  (`config`) respectively.
+
+The first few observations (rows) of the two objects look as follows:
+
+```{r}
+head(raw_df[, 1:4], n = 3) # First three columns only
+head(config, n = 3)
+```
+
+The object `raw_df` contains variables (columns) named
+`r paste(sprintf("\"%s\"", names(raw_df)[1:4]), collapse = ", ")` which
+are the original names from the XLSX sheet, the `config` object contains
+the definition what the columns in `raw_df` contains and where they belong to.
+For more details read the article about the [Config file](configfile.html).
 
 ### Checking the config object
 
-We can check/validate whether or not our `config` object contains
-what is expected by `annex_prepare()` used in the next step.
+To check whether or not the `config` object is as expected by the `annex` package,
+the function [annex::annex_check_config()] can be used. In case problems would
+be detected, an error will be thrown (see [Config file](configfile.html)).
+Else, the function is silent as in this example:
 
 ```{r}
 library("annex")
 annex_check_config(config)
 ```
 
-Note that this step is not required as the `config` object will
-be validated inside `annex_prepare()` in any case.
+... no errors, the `config` object meets the `annex` requirements. Note that
+this step is _not_ necessary as it will be performed automatically when
+calling [annex::annex_prepare()] but can be handy during development.
 
 
-# The data
+### Preparing data
 
-```{r, include = FALSE}
-# Make a copy when building the article
-file <- system.file("data/demo_Bedroom.txt", package = "annex")
-file.copy(file, "demo_Bedroom.txt")
+While `raw_df` contains the raw data set, the `config` object
+contains the information on how to rename the columns and where the
+observations belong to. [annex::prepare_annex()] is a helper function
+to prepare the data set for further steps.
+
+```{r, error = TRUE}
+prepared_df <- annex_prepare(raw_df, config, quiet = TRUE)
 ```
 
-As well as the configuration, this demo data set comes as a 
-tabular text file called `r xfun::embed_file("demo_Bedroom.txt", text = "demo_Bedroom.txt")`
-(also shipped with the package).
-
-The content (first few lines) of the file look as follows:
-
-```{r, echo = FALSE, result = "asis", comment = ""}
-x <- readLines("demo_Bedroom.txt", n = 5)
-cat(paste(x, collapse = "\n"))
-```
-
-To import the data one can again use `read.csv()` or `read.table()`.
-As the format follows the defaults of `read.csv()` this is most
-efficient to use:
+At this moment we get an error as the variable containing the date and time
+information is not a proper datetime object (object of class `POSIXt`) but
+a character. As the information comes in a proper ISO format, we simply
+convert the column (column `X` in `raw_df`) and call [annex::annex_prepare()] again.
 
 ```{r}
-raw_df <- read.csv("demo_Bedroom.txt")
-head(raw_df)
-```
-
-Note that the first column (first variable) with the date and time
-information is called `"X"`. This has been set automatically by _R_
-as the column the first column in the `.txt` file is unnamed (see
-output above). Could of course be renamed, however, one can also
-work with this - we have defined the datetime variable in the config
-file as being named `"X"`.
-
-### Date and time information
-
-What we need to ensure is that our datetime column (variable `"X"`)
-is of class `POSIXt`, else `prepare_annex()` will throw an error.
-Currently, the variable is stored as `r class(raw_df$X)` (text).
-
-```{r}
+# see ?as.POSIXct for details and options
+raw_df <- transform(raw_df, X = as.POSIXct(X, tz = "UTC"))
 class(raw_df$X)
-```
-
-As the date and time information is following the ISO standard,
-all needed is to take `raw_df$X` and convert the information
-to a proper datetime variable by calling `as.POSIXct()` without
-providing a format specification. In case the information does
-not follow the ISO representation, a format can be given.
-For details read the manual `?POSIXct`; all available format
-specifications can be found in the details section of the manual
-for `?strftime`.
-
-```{r}
-# Note: Format not required in this case (but can be given)
-# Convert chracter; store back on the original data.frame
-raw_df$X <- as.POSIXct(raw_df$X, format = "%Y-%m-%d %H:%M:%S", tz = "UTC")
-class(raw_df$X)
-```
-
-# Preparing data
-
-We can now use this `raw_df` object in combination with our
-`config` to prepare the data. 
-
-```{r}
-prepared_df <- annex_prepare(raw_df, config)
+prepared_df <- annex_prepare(raw_df, config, quiet = TRUE)
 head(prepared_df)
 ```
 
-As shown, the data set `raw_df` has been brought into a new format.
+[annex::annex_prepare()] performs a series of tasks:
 
-* `datetime`: time of observation
-* `study`/`home`/`room`: identifiers
-* ... followed by all variables found.
+* Checking the `config` object (calls [annex::annex_check_config()] internally).
+  If the `config` object is valid,
+* the variables (columns) in `raw_df` are renamed and checked to be of the
+  correct class,
+* informs the user if there are any columns in `raw_df` not included in
+  `config` (just a note) and additional columns defined in `config` which
+  do not occur in `raw_df`, and returns the modified (possibly subsetted) object,
+* ensures that `datetime` is a proper datetime object (`POSIXt`).
+
+The checks of missing/additional definitions in `config` are intended to inform
+the user about possible misspecifications and will not result in an error.
 
 
 # Performing the analysis
 
-The object `prepared_df` is now ready to (i) create an object
-of class `"annex"` and perform the analysis.
-
-Just for fun, even if it does not make most sense
+Once the data set is prepared properly (note that [annex::annex_prepare()]
+is a convenience function, can also be done manually) the final object
+can be prepared.
 
 ### Prepare `annex` object
 
-TODO(R): Briefly explain what's going on here.
+[annex::annex()] is the creator function which creates an object of class
+`annex` (S3) providing a series of methods and functions to conduct the
+final analysis.
+
+The function expects a formula as input which describes how to process
+the data. The three parts of the formula are:
+
+* `<measurements to be processed> ~ <datetime> | <grouping variables>`
+* The first part defines which variables (measurements) should be processed
+* Part two is always `~ datetime`; the date and time information for the statistics
+* Part three the grouping, typically `study + home + room`
 
 ```{r}
-names(prepared_df)
-annex_df <- annex(Light + CO2 + RH + T ~ datetime | study + home + room, data = prepared_df)
+annex_df <- annex(Radon + T + VOC ~ datetime| study + home + room, data = prepared_df)
 head(annex_df)
+class(annex_df)
 ```
 
-### Plotting
+A series of S3 methods exist for `annex` objects which might be extended
+in the future.
 
-```{r, fig.width = 8, fig.height = 6, out.width = "100%"}
-plot(annex_df)
-plot(annex_df, start = "2011-03-01")
-plot(annex_df, start = "2011-03-01", end = as.POSIXct("2011-03-10"))
-```
+* `summary()`
+* `head()]/[annex::tail()`
+* `is.regular()`
+* `plot()`
 
 ### Perform analysis
 
-TODO(R): Still contains the error seen yesterday.
+Based on the object returned by [annex::annex()] the analysis
+can be performed by calling [annex::annex_stats()]. The function
+aggregates the data based on the formula provided above,
+calculates a series of statistical properties, and returns
+an object of class `annex_stats`.
 
 ```{r}
+head(annex_df)
 stats <- annex_stats(annex_df, format = "long")
 head(stats)
 ```
+
+By default, the argument format is set to `"wide"` which will return the
+statistics in a wide format. Does not matter for the further analysis but
+can be convenient when processed manually.
+
+
+### Write data to XLSX (final file format)
+
+```{r, include = FALSE}
+# Make sure this is not yet existing (dynamically created by this vignette)
+if (file.exists("final_Bedroom.xlsx")) file.remove("final_Bedroom.xlsx")
+```
+
+The final step is to write the data into the final standardized file format.
+[annex::annex_write_stats()] takes up a `annex_stat` object (returned by
+[annex::annex_stats()]; long or wide format) and a file name/path where the
+data should be stored. 
+
+In addition, a `user` (integer; user ID provided by the project team) must
+be provided.
+
+TODO(R): Currently no update method is available.
+
+
+```{r}
+annex_write_stats(stats, file = "final_Bedroom.xlsx", user = 123, quiet = TRUE)
+```
+
+This creates the file `r xfun::embed_file("final_Bedroom.xlsx", text = "final_Bedroom.xlsx")`
+when successful.
+
+
+### Plotting
+
+Examples of the default plotting method for objects of class `annex`
+as returned by [annex::annex()]:
+
+```{r, fig.width = 8, fig.height = 6, out.width = "100%"}
+plot(annex_df)
+```
+
+```{r, fig.width = 8, fig.height = 6, out.width = "100%"}
+plot(annex_df, start = "2011-03-01", end = "2011-03-10")
+```
+
 
 
 ```{r, include = FALSE}
@@ -184,7 +232,6 @@ for (f in files) {
     if (file.exists(f)) file.remove(f)
 }
 ```
-
 
 
 

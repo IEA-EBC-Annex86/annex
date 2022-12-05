@@ -9,7 +9,7 @@ articles:
   import_csv: import_csv.html
   import_xlsx: import_xlsx.html
   method: method.html
-last_built: 2022-12-02T16:23Z
+last_built: 2022-12-05T20:23Z
 urls:
   reference: https://some.example-url.com/reference
   article: https://some.example-url.com/articles

@@ -78,5 +78,14 @@ annex_prepare <- function(x, config, quiet = FALSE) {
     config <- transform(config, ID = interaction(study, home, room, sep = ":"))
     config$ID[config$variable == "datetime"] <- NA # Ensure this one is NA
     tmp <- lapply(levels(droplevels(config$ID)), split_data)
-    return(bind_rows(tmp))
+    tmp <- bind_rows(tmp)
+
+    # Stop if `datetime` is not of class POSIXt
+    if (!inherits(tmp$datetime, "POSIXt")) {
+        print(names(tmp))
+        orig <- subset(config, variable == "datetime")$column
+        stop("variable `datetime` (originally column `", orig, "`) must be of class POSIXt")
+    }
+    return(tmp)
+
 }

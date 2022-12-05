@@ -122,7 +122,9 @@ head(prepared_df)
   correct class,
 * informs the user if there are any columns in `raw_df` not included in
   `config` (just a note) and additional columns defined in `config` which
-  do not occur in `raw_df`, and returns the modified (possibly subsetted) object.
+  do not occur in `raw_df`, and returns the modified (possibly subsetted) object,
+* ensures that `datetime` is a proper datetime object (`POSIXt`).
+
 
 The checks of missing/additional definitions in `config` are intended to inform
 the user about possible misspecifications and will not result in an error.
@@ -209,7 +211,7 @@ when successful.
 ### Plotting
 
 Examples of the default plotting method for objects of class `annex`
-as returned by [annex::annes()]:
+as returned by [annex::annex()]:
 
 ```{r, fig.width = 8, fig.height = 6, out.width = "100%"}
 plot(annex_df)
