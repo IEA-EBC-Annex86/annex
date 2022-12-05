@@ -249,11 +249,13 @@ summary.annex <- function(object, type = "default", ...) {
 # --------------------------------------------------
 # S3 classes to keep the class
 
+#' @importFrom utils head
 #' @author Reto Stauffer
 #' @rdname annex
 #' @export
 head.annex <- function(x, ...) structure(NextMethod(), class = class(x))
 
+#' @importFrom utils tail
 #' @author Reto Stauffer
 #' @rdname annex
 #' @export

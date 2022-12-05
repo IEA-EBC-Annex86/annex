@@ -120,7 +120,7 @@ check_for_allowed_pollutants <- function(x) {
     xlsx <- system.file("template/template.xlsx", package = "annex")
 
     library("readxl")
-    tmp <- suppressMessages(read_excel(xlsx, sheet = "Definitions"))
+    tmp <- suppressMessages(read.excel(xlsx, sheet = "Definitions"))
     stopifnot("Pollutants" %in% names(tmp))
     allowed_pollutants <- na.omit(c("datetime", tmp$Pollutants))
 
@@ -153,7 +153,6 @@ check_for_allowed_pollutants <- function(x) {
 #' @return Character vector (with possibly adjusted) room
 #' names, or fails.
 #'
-#' @importFrom readxl read_excel
 #' @author Reto Stauffer
 check_for_allowed_rooms <- function(x) {
     stopifnot(is.character(x), length(x) > 0)
@@ -162,7 +161,7 @@ check_for_allowed_rooms <- function(x) {
     xlsx <- system.file("template/template.xlsx", package = "annex")
 
     library("readxl")
-    tmp <- suppressMessages(read_excel(xlsx, sheet = "Definitions"))
+    tmp <- suppressMessages(read.xlsx(xlsx, sheet = "Definitions"))
     stopifnot("Measurement location" %in% names(tmp))
     allowed_rooms <- na.omit(tmp[["Measurement location"]])
 

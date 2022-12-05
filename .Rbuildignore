@@ -1,10 +1,15 @@
 
 Makefile
 
+pkgdown
 _pkgdown.yml
 contact.md
+NOTES.md
+.github
 
 docs/
 inst/*.Rmd
 
-
+\*.R
+\*.Rmd
+\*.xlsx

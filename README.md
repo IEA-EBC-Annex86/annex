@@ -3,7 +3,7 @@
 
 # `Annex`; Annex86 Data Analysis Package
 
-<img src="inst/logo.png" align="right" height="200" style="float:right; height:200px;">
+<!--<img src="man/figures/logo.png" align="right" height="200" style="float:right; height:200px;">-->
 
 ## Installation
 

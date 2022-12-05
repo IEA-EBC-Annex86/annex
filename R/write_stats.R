@@ -1,4 +1,39 @@
 
+#' Create Copy of annex Output Template
+#'
+#' The main aim of the `annex` package is to standardize data sets for the IEA
+#' EBC Annex86 project.  To create the output file,
+#' [annex::annex_write_stats()] uses a template XLSX file (shipped with the
+#' package).  This function allows to make a local copy to check the format of
+#' the template if needed.
+#'
+#' @param file name of the file to be written, must end on
+#'        xlsx (not case sensitive).
+#' @param overwrite logical, default is \code{FALSE}.
+#'        Can be set to \code{TRUE} to overwrite an existing
+#'        file (be aware of loss of data).
+#'
+#' @return No return.
+#'
+#' @author Reto Stauffer
+#' @export
+annex_template <- function(file, overwrite = FALSE) {
+    stopifnot(is.character(file), length(file) == 1)
+    stopifnot(isTRUE(overwrite) || isFALSE(overwrite))
+
+    # Checking file extension; must be xlsx (not case sensitive)
+    stopifnot(grepl("\\.xlsx$", file, ignore.case = TRUE))
+
+    # File exists and overwrite = FALSE?
+    if (file.exists(file) && !overwrite)
+        stop("file \"", file, "\" already exists (`overwrite = FALSE`)")
+    # Else trying to make a copy of the template
+    template <- system.file("template/template.xlsx", package = "annex")
+    print(template)
+    res <- tryCatch(file.copy(template, file),
+                    error = function(x) stop("cannot create \"", file, "\""))
+    invisible(NULL)
+}
 
 #' Writing Annex Stats to Disc
 #'
@@ -110,7 +145,7 @@ write_annex_STAT <- function(wb, x, quiet, sheet) {
 #' @author Reto Stauffer
 write_annex_metaStudy <- function(wb, x, quiet, sheet) {
     if (!quiet) message(" - Writing ", sheet)
-    tmp <- unique(subset(x, select = c(user, study)))
+    tmp <- unique(subset(x, select = c("user", "study")))
     tmp <- with(tmp, interaction(user, study, sep = "-", drop = TRUE))
     x   <- data.frame(ID           = tmp,
                       Contact      = "<Contact Name>",
@@ -126,7 +161,7 @@ write_annex_metaStudy <- function(wb, x, quiet, sheet) {
 #' @author Reto Stauffer
 write_annex_metaHome <- function(wb, x, quiet, sheet) {
     if (!quiet) message(" - Writing ", sheet)
-    tmp <- unique(subset(x, select = c(user, study, home)))
+    tmp <- unique(subset(x, select = c("user", "study", "home")))
     tmp <- with(tmp, interaction(user, study, home, sep = "-", drop = TRUE))
     x   <- data.frame(ID                      = tmp,
                       LocationCountry         = "<ISO3>",
@@ -153,7 +188,7 @@ write_annex_metaHome <- function(wb, x, quiet, sheet) {
 #' @author Reto Stauffer
 write_annex_metaRoom <- function(wb, x, quiet, sheet) {
     if (!quiet) message(" - Writing ", sheet)
-    tmp <- unique(subset(x, select = c(user, study, home, room)))
+    tmp <- unique(subset(x, select = c("user", "study", "home", "room")))
     tmp <- with(tmp, interaction(user, study, home, room, sep = "-", drop = TRUE))
     x <- data.frame(ID                     = tmp,
                     MeasurementLocation    = "<Measurement location>",
@@ -169,7 +204,7 @@ write_annex_metaRoom <- function(wb, x, quiet, sheet) {
 #' @author Reto Stauffer
 write_annex_metaPollutant <- function(wb, x, quiet, sheet) {
     if (!quiet) message(" - Writing ", sheet)
-    tmp <- unique(subset(x, select = c(user, study, home, room, variable)))
+    tmp <- unique(subset(x, select = c("user", "study", "home", "room", "variable")))
     tmp <- with(tmp, interaction(user, study, home, room, variable, sep = "-", drop = TRUE))
     x <- data.frame(ID                     = tmp,
                     PollutantName          = "<Pollutant Name with Details>",
@@ -184,7 +219,7 @@ write_annex_metaPollutant <- function(wb, x, quiet, sheet) {
 #' @author Reto Stauffer
 write_annex_metaPeriod <- function(wb, x, quiet, sheet) {
     if (!quiet) message(" - Writing ", sheet)
-    tmp <- unique(subset(x, select = c(user, study, home, room, variable)))
+    tmp <- unique(subset(x, select = c("user", "study", "home", "room", "variable")))
     tmp <- with(tmp, interaction(user, study, home, room, variable, sep = "-", drop = TRUE))
     x <- data.frame(ID                     = tmp,
                     Definition             = "<Definition>",

@@ -1,5 +1,5 @@
 Package: annex
-Title: Annex86 Data Analysis Package
+Title: IEA EBC Annex86 Data Analysis Package
 Version: 0.1-8
 Date: 2022-12-02
 Authors@R: 
@@ -10,10 +10,13 @@ Authors@R:
       person(given = "Reto", family = "Stauffer", role = c("cre", "aut"),
              email = "reto.stauffer@uibk.ac.at",
               comment = c(ORCID = "0000-0002-3798-5507")))
-Description: What the package does (one paragraph).
-Depends: R (>= 4.0.0)
+Description: The main aim of the package is to streamline and
+    standardize processing and storing data sets for the IEA EBC
+    Annex 86 project.
+Depends: R (>= 4.0.0), utils
 Imports: Formula, zoo, tidyr, dplyr, openxlsx
-License: MIT, GPL-2 | GPL-3
+Suggest: readxl
+License: MIT | GPL (>=2)
 URL: https://github.com/IEA-EBC-Annex86/annex/
 BugReports: https://github.com/IEA-EBC-Annex86/annex/issues
 Encoding: UTF-8

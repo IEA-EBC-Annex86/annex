@@ -11,6 +11,7 @@
 #' @param end the end time of the period of interest.
 #' @param \dots currently unused.
 #'
+#' @import graphics
 #' @importFrom zoo zoo index coredata
 #' @author Reto Stauffer
 #' @method plot annex
