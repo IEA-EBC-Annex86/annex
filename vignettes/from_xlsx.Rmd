@@ -88,7 +88,7 @@ As `config` is a pure `data.frame`, any subsetting can be used.
 ### Checking the config object
 
 To check whether or not the `config` object is as expected by the `annex` package,
-the function [annex::annex_check_config()] can be used. In case problems would
+the function `annex_check_config()` can be used. In case problems would
 be detected, an error will be thrown (see [Config file](configfile.html)).
 Else, the function is silent as in this example:
 
@@ -99,7 +99,7 @@ annex_check_config(config)
 
 ... no errors, the `config` object meets the `annex` requirements. Note that
 this step is _not_ necessary as it will be performed automatically when
-calling [annex::annex_prepare()] but can be handy during development.
+calling `annex_prepare()` but can be handy during development.
 
 
 ### Preparing data
@@ -114,9 +114,9 @@ prepared_df <- annex_prepare(raw_df, config, quiet = TRUE)
 head(prepared_df)
 ```
 
-[annex::annex_prepare()] performs a series of tasks:
+`annex_prepare()` performs a series of tasks:
 
-* Checking the `config` object (calls [annex::annex_check_config()] internally).
+* Checking the `config` object (calls `annex_check_config()` internally).
   If the `config` object is valid,
 * the variables (columns) in `raw_df` are renamed and checked to be of the
   correct class,
@@ -131,13 +131,13 @@ the user about possible misspecifications and will not result in an error.
 
 # Performing the analysis
 
-Once the data set is prepared properly (note that [annex::annex_prepare()]
+Once the data set is prepared properly (note that `annex_prepare()`
 is a convenience function, can also be done manually) the final object
 can be prepared.
 
 ### Prepare `annex` object
 
-[annex::annex()] is the creator function which creates an object of class
+`annex()` is the creator function which creates an object of class
 `annex` (S3) providing a series of methods and functions to conduct the
 final analysis.
 
@@ -159,14 +159,14 @@ A series of S3 methods exist for `annex` objects which might be extended
 in the future.
 
 * `summary()`
-* `head()]/[annex::tail()`
+* `head()]/`tail()`
 * `is.regular()`
 * `plot()`
 
 ### Perform analysis
 
-Based on the object returned by [annex::annex()] the analysis
-can be performed by calling [annex::annex_stats()]. The function
+Based on the object returned by `annex()` the analysis
+can be performed by calling `annex_stats()`. The function
 aggregates the data based on the formula provided above,
 calculates a series of statistical properties, and returns
 an object of class `annex_stats`.
@@ -190,8 +190,8 @@ if (file.exists("final_UIBK.xlsx")) file.remove("final_UIBK.xlsx")
 ```
 
 The final step is to write the data into the final standardized file format.
-[annex::annex_write_stats()] takes up a `annex_stat` object (returned by
-[annex::annex_stats()]; long or wide format) and a file name/path where the
+`annex_write_stats()` takes up a `annex_stat` object (returned by
+`annex_stats()`; long or wide format) and a file name/path where the
 data should be stored. 
 
 In addition, a `user` (integer; user ID provided by the project team) must
@@ -211,7 +211,7 @@ when successful.
 ### Plotting
 
 Examples of the default plotting method for objects of class `annex`
-as returned by [annex::annex()]:
+as returned by `annex()`:
 
 ```{r, fig.width = 8, fig.height = 6, out.width = "100%"}
 plot(annex_df)

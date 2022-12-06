@@ -120,7 +120,7 @@ check_for_allowed_pollutants <- function(x) {
     xlsx <- system.file("template/template.xlsx", package = "annex")
 
     library("readxl")
-    tmp <- suppressMessages(read.excel(xlsx, sheet = "Definitions"))
+    tmp <- suppressMessages(read.xlsx(xlsx, sheet = "Definitions", sep.names = " "))
     stopifnot("Pollutants" %in% names(tmp))
     allowed_pollutants <- na.omit(c("datetime", tmp$Pollutants))
 
@@ -161,7 +161,7 @@ check_for_allowed_rooms <- function(x) {
     xlsx <- system.file("template/template.xlsx", package = "annex")
 
     library("readxl")
-    tmp <- suppressMessages(read.xlsx(xlsx, sheet = "Definitions"))
+    tmp <- suppressMessages(read.xlsx(xlsx, sheet = "Definitions", sep.names = " "))
     stopifnot("Measurement location" %in% names(tmp))
     allowed_rooms <- na.omit(tmp[["Measurement location"]])
 
