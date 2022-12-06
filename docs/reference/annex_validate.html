@@ -14,7 +14,7 @@ all user-modified META information has been entered correctly."><meta property="
     
     <a class="navbar-brand me-2" href="../index.html">annex</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1-8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1-10</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,7 +71,7 @@ all user-modified META information has been entered correctly.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">annex_validate</span><span class="op">(</span><span class="va">file</span>, <span class="va">user</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">annex_validate</span><span class="op">(</span><span class="va">file</span>, <span class="va">user</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -83,6 +83,11 @@ all user-modified META information has been entered correctly.</p>
 <dt>user</dt>
 <dd><p>positive integer, the user identifier given
 by the project team.</p></dd>
+
+
+<dt>quiet</dt>
+<dd><p>logical, defaults to <code>FALSE</code>. If <code>TRUE</code>,
+the output will be limited.</p></dd>
 
 
 <dt>...</dt>

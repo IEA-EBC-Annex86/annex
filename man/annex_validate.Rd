@@ -4,13 +4,16 @@
 \alias{annex_validate}
 \title{Validate annex Output File}
 \usage{
-annex_validate(file, user, ...)
+annex_validate(file, user, quiet = FALSE, ...)
 }
 \arguments{
 \item{file}{name of the file to be validated (XLSX file).}
 
 \item{user}{positive integer, the user identifier given
 by the project team.}
+
+\item{quiet}{logical, defaults to \code{FALSE}. If \code{TRUE},
+the output will be limited.}
 
 \item{\dots}{currently unused.}
 }

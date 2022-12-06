@@ -1,7 +1,7 @@
 Package: annex
 Title: IEA EBC Annex86 Data Analysis Package
-Version: 0.1-8
-Date: 2022-12-02
+Version: 0.1-10
+Date: 2022-12-06
 Authors@R: 
     c(person(given = "Gabriel", family = "Rojas-Kopeinig", role = c("fnd", "aut"),
              email = "gabi.rojas@uibk.ac.at"),
@@ -16,7 +16,7 @@ Description: The main aim of the package is to streamline and
 Depends: R (>= 4.0.0), utils
 Imports: Formula, zoo, tidyr, dplyr, openxlsx
 Suggest: readxl
-License: MIT | GPL (>=2)
+License: GPL-2 | GPL-3
 URL: https://github.com/IEA-EBC-Annex86/annex/
 BugReports: https://github.com/IEA-EBC-Annex86/annex/issues
 Encoding: UTF-8

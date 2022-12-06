@@ -23,6 +23,10 @@ about study, home, and room (see 'Details').}
 
 \item{verbose}{logical, defaults to \code{FALSE}. Can be set
 to \code{TRUE} to increase verbosity.}
+
+\item{x}{object of class \code{annex}.}
+
+\item{\dots}{arguments to be passed to or from other methods.}
 }
 \description{
 Creates an object of class \code{c("annex", "data.frame")}.

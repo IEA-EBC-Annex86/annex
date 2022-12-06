@@ -29,9 +29,9 @@ annex_template <- function(file, overwrite = FALSE) {
         stop("file \"", file, "\" already exists (`overwrite = FALSE`)")
     # Else trying to make a copy of the template
     template <- system.file("template/template.xlsx", package = "annex")
-    print(template)
-    res <- tryCatch(file.copy(template, file),
-                    error = function(x) stop("cannot create \"", file, "\""))
+    # Catch return unused for now
+    res      <- tryCatch(file.copy(template, file),
+                         error = function(x) stop("cannot create \"", file, "\""))
     invisible(NULL)
 }
 
@@ -91,14 +91,9 @@ annex_write_stats <- function(x, file, user, overwrite = FALSE, ..., quiet = FAL
     x <- annex_stats_reshape(x, format = "wide")
     annex_check_stats_object(x)
 
-    # Does the file already exist and overwrite is FALSE?
-    if (!overwrite & file.exists(file)) {
-        stop("file '", file, "' already exists (`overwrite = FALSE`)")
-    } else if (!overwrite) {
-        # .. copy template
-        xlsx_template <- system.file("template/template.xlsx", package = "annex")
-        stopifnot(file.exists(xlsx_template))
-        file.copy(xlsx_template, file)
+    # Create or overwrite file
+    if (!file.exists(file) || (file.exists(file) && overwrite)) {
+        annex_template(file, overwrite = overwrite)
     } else {
         stop("TODO(R): Mode to overwrite existing data not yet implemented")
     }
@@ -118,32 +113,29 @@ annex_write_stats <- function(x, file, user, overwrite = FALSE, ..., quiet = FAL
     if (!quiet) message("Starting to write ", file)
     workbook <- loadWorkbook(file)
 
-    write_annex_metaStudy(workbook, x, quiet, "META-Study")
-    write_annex_metaHome(workbook, x, quiet, "META-Home")
-    write_annex_metaRoom(workbook, x, quiet, "META-Room")
-    write_annex_metaRoom(workbook, x, quiet, "META-Pollutant")
-    write_annex_metaPeriod(workbook, x, quiet, "META-Period")
-    write_annex_STAT(workbook, x, quiet, "STAT")
+    write_annex_metaStudy(workbook,     x, quiet)
+    write_annex_metaHome(workbook,      x, quiet)
+    write_annex_metaRoom(workbook,      x, quiet)
+    write_annex_metaPollutant(workbook, x, quiet)
+    write_annex_metaPeriod(workbook,    x, quiet)
+    write_annex_STAT(workbook,          x, quiet)
 
+    # Saving final file
     if (!quiet) message(" - Saving file")
     saveWorkbook(workbook, file, overwrite = TRUE)
 
 }
 
-#' @importFrom openxlsx writeData createStyle addStyle
+#' @importFrom openxlsx writeData
 #' @author Reto Stauffer
-write_annex_STAT <- function(wb, x, quiet, sheet) {
+write_annex_STAT <- function(wb, x, quiet, sheet = "STAT") {
     if (!quiet) message(" - Writing ", sheet)
     writeData(wb, sheet = sheet, x = x, colNames = TRUE)
-    header_style <- createStyle(fontSize = 11, fontColour = "#44546a",
-                                halign = "center", fgFill = "#fff2cc")
-    addStyle(wb, sheet = sheet, style = header_style,
-             cols = seq_len(length(x)), rows = 1, gridExpand = TRUE)
 }
 
-#' @importFrom openxlsx writeData createStyle addStyle
+#' @importFrom openxlsx writeData
 #' @author Reto Stauffer
-write_annex_metaStudy <- function(wb, x, quiet, sheet) {
+write_annex_metaStudy <- function(wb, x, quiet, sheet = "META-Study") {
     if (!quiet) message(" - Writing ", sheet)
     tmp <- unique(subset(x, select = c("user", "study")))
     tmp <- with(tmp, interaction(user, study, sep = "-", drop = TRUE))
@@ -154,12 +146,12 @@ write_annex_metaStudy <- function(wb, x, quiet, sheet) {
                       Publications = "<doi:....>",
                       Links        = "<https://...>")
 
-    writeData(wb, sheet = sheet, x = x, colNames = FALSE, startRow = 3, startCol = 1)
+    writeData(wb, sheet = sheet, x = x, colNames = FALSE, startRow = 2, startCol = 1)
 }
 
-#' @importFrom openxlsx writeData createStyle addStyle
+#' @importFrom openxlsx writeData
 #' @author Reto Stauffer
-write_annex_metaHome <- function(wb, x, quiet, sheet) {
+write_annex_metaHome <- function(wb, x, quiet, sheet = "META-Home") {
     if (!quiet) message(" - Writing ", sheet)
     tmp <- unique(subset(x, select = c("user", "study", "home")))
     tmp <- with(tmp, interaction(user, study, home, sep = "-", drop = TRUE))
@@ -181,12 +173,12 @@ write_annex_metaHome <- function(wb, x, quiet, sheet) {
                       EnergyStandard          = "<Energy Standard>",
                       YearOfConstruction      = "<4 Digit Year>")
 
-    writeData(wb, sheet = sheet, x = x, colNames = FALSE, startRow = 3, startCol = 1)
+    writeData(wb, sheet = sheet, x = x, colNames = FALSE, startRow = 2, startCol = 1)
 }
 
-#' @importFrom openxlsx writeData createStyle addStyle
+#' @importFrom openxlsx writeData
 #' @author Reto Stauffer
-write_annex_metaRoom <- function(wb, x, quiet, sheet) {
+write_annex_metaRoom <- function(wb, x, quiet, sheet = "META-Room") {
     if (!quiet) message(" - Writing ", sheet)
     tmp <- unique(subset(x, select = c("user", "study", "home", "room")))
     tmp <- with(tmp, interaction(user, study, home, room, sep = "-", drop = TRUE))
@@ -197,12 +189,12 @@ write_annex_metaRoom <- function(wb, x, quiet, sheet) {
                     VentilationRateMethod  = "<Rate Method>",
                     Comments               = "<Comments>")
 
-    writeData(wb, sheet = sheet, x = x, colNames = FALSE, startRow = 3, startCol = 1)
+    writeData(wb, sheet = sheet, x = x, colNames = FALSE, startRow = 2, startCol = 1)
 }
 
-#' @importFrom openxlsx writeData createStyle addStyle
+#' @importFrom openxlsx writeData
 #' @author Reto Stauffer
-write_annex_metaPollutant <- function(wb, x, quiet, sheet) {
+write_annex_metaPollutant <- function(wb, x, quiet, sheet = "META-Pollutant") {
     if (!quiet) message(" - Writing ", sheet)
     tmp <- unique(subset(x, select = c("user", "study", "home", "room", "variable")))
     tmp <- with(tmp, interaction(user, study, home, room, variable, sep = "-", drop = TRUE))
@@ -212,12 +204,12 @@ write_annex_metaPollutant <- function(wb, x, quiet, sheet) {
                     PollutantInfo          = "<Additional Information>",
                     MeasurementDevice      = "<Measurement Device Info>")
 
-    writeData(wb, sheet = sheet, x = x, colNames = FALSE, startRow = 3, startCol = 1)
+    writeData(wb, sheet = sheet, x = x, colNames = FALSE, startRow = 2, startCol = 1)
 }
 
-#' @importFrom openxlsx writeData createStyle addStyle
+#' @importFrom openxlsx writeData
 #' @author Reto Stauffer
-write_annex_metaPeriod <- function(wb, x, quiet, sheet) {
+write_annex_metaPeriod <- function(wb, x, quiet, sheet = "META-Period") {
     if (!quiet) message(" - Writing ", sheet)
     tmp <- unique(subset(x, select = c("user", "study", "home", "room", "variable")))
     tmp <- with(tmp, interaction(user, study, home, room, variable, sep = "-", drop = TRUE))
@@ -225,7 +217,7 @@ write_annex_metaPeriod <- function(wb, x, quiet, sheet) {
                     Definition             = "<Definition>",
                     Comments               = "<Comments>")
 
-    writeData(wb, sheet = sheet, x = x, colNames = FALSE, startRow = 3, startCol = 1)
+    writeData(wb, sheet = sheet, x = x, colNames = FALSE, startRow = 2, startCol = 1)
 }
 
 #' Checking Annex Stats to XML

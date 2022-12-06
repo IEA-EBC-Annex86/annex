@@ -10,6 +10,3 @@ NOTES.md
 docs/
 inst/*.Rmd
 
-\*.R
-\*.Rmd
-\*.xlsx

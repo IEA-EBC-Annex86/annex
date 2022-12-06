@@ -82,6 +82,18 @@
     <loc>https://some.example-url.com/reference/check_for_allowed_rooms.html</loc>
   </url>
   <url>
+    <loc>https://some.example-url.com/reference/demo_Bedroom.html</loc>
+  </url>
+  <url>
+    <loc>https://some.example-url.com/reference/demo_Bedroom_config.html</loc>
+  </url>
+  <url>
+    <loc>https://some.example-url.com/reference/demo_UIBK.html</loc>
+  </url>
+  <url>
+    <loc>https://some.example-url.com/reference/demo_UIBK_config.html</loc>
+  </url>
+  <url>
     <loc>https://some.example-url.com/reference/evaluate.html</loc>
   </url>
   <url>

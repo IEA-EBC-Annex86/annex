@@ -8,6 +8,7 @@
 #' @return Returns an object of class \code{c("annex_stats", "data_frame")}.
 #'
 #' @importFrom dplyr bind_rows
+#' @import stats
 #' @author Reto Stauffer
 #' @export
 annex_stats <- function(object, format = "wide", ...) {

@@ -112,15 +112,14 @@ annex_check_config <- function(x) {
 #' names, or fails.
 #'
 #' @importFrom openxlsx read.xlsx
+#' @importFrom stats na.omit
 #' @author Reto Stauffer
 check_for_allowed_pollutants <- function(x) {
     stopifnot(is.character(x), length(x) > 0, !any(is.na(x)))
 
     # Path to XLSX file to be read
-    xlsx <- system.file("template/template.xlsx", package = "annex")
-
-    library("readxl")
-    tmp <- suppressMessages(read.xlsx(xlsx, sheet = "Definitions", sep.names = " "))
+    template_xlsx <- system.file("template/template.xlsx", package = "annex")
+    tmp <- suppressMessages(read.xlsx(template_xlsx, sheet = "Definitions", sep.names = " "))
     stopifnot("Pollutants" %in% names(tmp))
     allowed_pollutants <- na.omit(c("datetime", tmp$Pollutants))
 
@@ -158,10 +157,8 @@ check_for_allowed_rooms <- function(x) {
     stopifnot(is.character(x), length(x) > 0)
 
     # Path to XLSX file to be read
-    xlsx <- system.file("template/template.xlsx", package = "annex")
-
-    library("readxl")
-    tmp <- suppressMessages(read.xlsx(xlsx, sheet = "Definitions", sep.names = " "))
+    template_xlsx <- system.file("template/template.xlsx", package = "annex")
+    tmp <- suppressMessages(read.xlsx(template_xlsx, sheet = "Definitions", sep.names = " "))
     stopifnot("Measurement location" %in% names(tmp))
     allowed_rooms <- na.omit(tmp[["Measurement location"]])
 
