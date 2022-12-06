@@ -12,6 +12,9 @@ package in its `0.1-X` state.
 * Added method to reshape `annex_stats` objects from long to wirde form and vice versa
 * `annex_write_stats` now accepts long and wide formats
 * Added logo (draft)
+* Added `annex_validate` to validate an XLSX output file; likely missing some checks.
+* Resolving a series of notes/warnings during build check
+* Properly adding licenses (GPL-2 + GPL-3)
 
 # Annex 0.0-9000
 
