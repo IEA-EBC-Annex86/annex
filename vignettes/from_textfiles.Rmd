@@ -217,7 +217,7 @@ when successful.
 After performing the data preparation and calculating the statistics,
 the following steps can be performed:
 
-* [Plotting the data](plotting.html)
+* [Visualizing the data](visualization.html)
 * [Write annex stats to final file](write_and_validate.html#write)
 * [Update meta data in final file](write_and_validate.html#meta)
 * [Validate final file](write_and_validate.html#validate)
