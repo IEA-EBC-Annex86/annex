@@ -1,5 +1,5 @@
 ---
-title: "Textfile Based"
+title: "Analysis from textfiles"
 author: "Reto Stauffer"
 output:
   html_document:
@@ -61,7 +61,7 @@ cbind("raw_df" = dim(raw_df), "config" = dim(config))
 
 Both objects are of class `data.frame` (tibble data frames to be precise)
 with a dimension of $`r paste(dim(raw_df), collapse = " \\times ")`$ (`raw_df`)
-and  $`r paste(dim(raw_df), collapse = " \\times ")`$  (`config`) respectively.
+and  $`r paste(dim(config), collapse = " \\times ")`$  (`config`) respectively.
 
 The first few observations (rows) of the two objects look as follows:
 
@@ -162,7 +162,7 @@ A series of S3 methods exist for `annex` objects which might be extended
 in the future.
 
 * `summary()`
-* `head()]/`tail()`
+* `head()`/`tail()`
 * `is.regular()`
 * `plot()`
 
@@ -187,6 +187,8 @@ can be convenient when processed manually.
 
 ### Write data to XLSX (final file format)
 
+TODO(R): Only include this in the `write_and_validate.html` article?
+
 ```{r, include = FALSE}
 # Make sure this is not yet existing (dynamically created by this vignette)
 if (file.exists("final_Bedroom.xlsx")) file.remove("final_Bedroom.xlsx")
@@ -210,19 +212,15 @@ annex_write_stats(stats, file = "final_Bedroom.xlsx", user = 123, quiet = TRUE)
 This creates the file `r xfun::embed_file("final_Bedroom.xlsx", text = "final_Bedroom.xlsx")`
 when successful.
 
+## Next steps
 
-### Plotting
+After performing the data preparation and calculating the statistics,
+the following steps can be performed:
 
-Examples of the default plotting method for objects of class `annex`
-as returned by `annex()`:
-
-```{r, fig.width = 8, fig.height = 6, out.width = "100%"}
-plot(annex_df)
-```
-
-```{r, fig.width = 8, fig.height = 6, out.width = "100%"}
-plot(annex_df, start = "2011-03-01", end = "2011-03-10")
-```
+* [Plotting the data](plotting.html)
+* [Write annex stats to final file](write_and_validate.html#write)
+* [Update meta data in final file](write_and_validate.html#meta)
+* [Validate final file](write_and_validate.html#validate)
 
 
 

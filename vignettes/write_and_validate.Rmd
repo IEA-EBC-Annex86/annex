@@ -1,0 +1,80 @@
+---
+title: "Write output"
+author: "Reto Stauffer"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+bibliography: annex.bib
+link-citations: true
+vignette: >
+  %\VignetteIndexEntry{annex: Annex86 Data Analysis Package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteDepends{Formula}
+  %\VignetteKeywords{Annex86}
+  %\VignettePackage{annex}
+---
+
+```{r setup, include = FALSE}
+suppressPackageStartupMessages(library('zoo'))
+suppressPackageStartupMessages(library('Formula'))
+
+# Make a copy when building the article
+file <- system.file("data/demo_UIBK.xlsx", package = "annex")
+file.copy(file, "demo_UIBK.xlsx")
+```
+
+## Introduction
+
+TODO(R) Write output to XLSX
+
+```{r prepare_dataset}
+library("readxl")
+
+# Reading measurement data
+raw_df <- read_excel("demo_UIBK.xlsx", sheet = "measurements")
+
+# Read and prepare config object
+config <- read_excel("demo_UIBK.xlsx", sheet = "annex_configuration")
+config <- subset(config, process == TRUE) # Remove all rows process = FALSE
+
+# Prepare annex object
+library("annex")
+prepared_df <- annex_prepare(raw_df, config, quiet = TRUE)
+annex_df    <- annex(RH + T + CO2 ~ datetime | study + home + room, data = prepared_df)
+stats       <- annex_stats(annex_df)
+```
+
+
+## Write annex statistics to file {#write}
+
+```{r delete_output_for_docs_start, include = FALSE}
+if (file.exists("final_UIBK.xlsx")) file.remove("final_UIBK.xlsx")
+```
+
+```{r}
+annex_write_stats(stats, file = "final_UIBK.xlsx", user = 1234)
+```
+
+#### Where to get a user ID?
+
+tbd [ask Gabi]
+
+## Update meta information {#meta}
+
+tbd
+
+## Validate final file {#validate}
+
+```{r, warning = TRUE, error = TRUE}
+annex_validate("final_UIBK.xlsx", user = 1234)
+```
+
+```{r delete_output_for_docs_end, include = FALSE}
+if (file.exists("final_UIBK.xlsx")) file.remove("final_UIBK.xlsx")
+```
+
+
+
+

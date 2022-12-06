@@ -13,22 +13,18 @@ template:
 
 navbar:
   left:
-    - text: "Get started"
-      href: articles/Annex.html
     - text: "Articles"
       menu:
       - text: "Config files/objects"
         href: articles/config.html
-      - text: "XLSX Based Analysis"
+      - text: "Analysis from XLSX"
         href: articles/from_xlsx.html
-      - text: "Textfile Based Analysis"
+      - text: "Analysis from textfiles"
         href: articles/from_textfiles.html
-#    - text: "Importing data"
-#      menu:
-#        - text: "XLSX"
-#          href: articles/import_xlsx.html
-#        - text: "TEXT/CSV"
-#          href: article/import_csv.html
+      - text: "Visualization"
+        href: articles/visualization.html
+      - text: "Write and validate output"
+        href: articles/write_and_validate.html
 #    - text: "Articles"
 #      menu:
 #        - text: "Method"

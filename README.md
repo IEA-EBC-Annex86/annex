@@ -21,7 +21,7 @@ that you may need to install the remotes package first.
 
 ```
 library('remotes')
-install_github("Annex86/annex")
+install_github("IEA-EBC-Annex86/annex")
 ```
 
 **Dependencies**

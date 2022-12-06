@@ -1,0 +1,77 @@
+---
+title: "Visualization (plotting)"
+author: "Reto Stauffer"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+bibliography: annex.bib
+link-citations: true
+vignette: >
+  %\VignetteIndexEntry{annex: Annex86 Data Analysis Package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteDepends{Formula}
+  %\VignetteKeywords{Annex86}
+  %\VignettePackage{annex}
+---
+
+```{r setup, include = FALSE}
+suppressPackageStartupMessages(library('zoo'))
+suppressPackageStartupMessages(library('Formula'))
+
+# Make a copy when building the article
+file <- system.file("data/demo_UIBK.xlsx", package = "annex")
+file.copy(file, "demo_UIBK.xlsx")
+```
+
+## Introduction
+
+The package comes with some simple default plots for `annex` objects
+(as returned by `annex()`). The following demonstration is based on the
+example as shown in the article [From XLSX](from_xlsx.html), using the
+file `r xfun::embed_file("demo_UIBK.xlsx", text = "demo_UIBK.xlsx")`
+(please read [From XLSX](from_xlsx.html) for details).
+
+```{r prepare_dataset}
+library("readxl")
+
+# Reading measurement data
+raw_df <- read_excel("demo_UIBK.xlsx", sheet = "measurements")
+
+# Read and prepare config object
+config <- read_excel("demo_UIBK.xlsx", sheet = "annex_configuration")
+config <- subset(config, process == TRUE) # Remove all rows process = FALSE
+
+# Prepare annex object
+library("annex")
+prepared_df <- annex_prepare(raw_df, config, quiet = TRUE)
+annex_df    <- annex(RH + T + CO2 ~ datetime | study + home + room, data = prepared_df)
+dim(annex_df)
+class(annex_df)
+```
+
+### Plotting
+
+Once prepared, we can call the default (base R) plotting methods:
+
+```{r plotting_all, fig.width = 8, fig.height = 6, out.width = "100%"}
+plot(annex_df)
+```
+
+Additional arguments `start` and `end` can be given (either objects
+of class `POSIXt` or characters in the ISO format) to only plot
+a specific time period.
+
+```{r plotting_subset, fig.width = 8, fig.height = 6, out.width = "100%"}
+plot(annex_df, start = "2011-10-03", end = "2011-10-04")
+```
+
+
+```{r, include = FALSE}
+files <- c("demo_UIBK.xlsx")
+for (f in files) {
+    if (file.exists(f)) file.remove(f)
+}
+```
+

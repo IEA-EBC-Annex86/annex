@@ -2,14 +2,13 @@ pandoc: 2.9.2.1
 pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
-  Annex: Annex.html
   config: config.html
   from_textfiles: from_textfiles.html
   from_xlsx: from_xlsx.html
-  import_csv: import_csv.html
-  import_xlsx: import_xlsx.html
   method: method.html
-last_built: 2022-12-06T18:57Z
+  visualization: visualization.html
+  write_and_validate: write_and_validate.html
+last_built: 2022-12-06T19:40Z
 urls:
   reference: https://some.example-url.com/reference
   article: https://some.example-url.com/articles

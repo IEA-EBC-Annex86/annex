@@ -7,9 +7,6 @@
     <loc>https://some.example-url.com/NOTES.html</loc>
   </url>
   <url>
-    <loc>https://some.example-url.com/articles/Annex.html</loc>
-  </url>
-  <url>
     <loc>https://some.example-url.com/articles/config.html</loc>
   </url>
   <url>
@@ -19,16 +16,16 @@
     <loc>https://some.example-url.com/articles/from_xlsx.html</loc>
   </url>
   <url>
-    <loc>https://some.example-url.com/articles/import_csv.html</loc>
-  </url>
-  <url>
-    <loc>https://some.example-url.com/articles/import_xlsx.html</loc>
-  </url>
-  <url>
     <loc>https://some.example-url.com/articles/index.html</loc>
   </url>
   <url>
     <loc>https://some.example-url.com/articles/method.html</loc>
+  </url>
+  <url>
+    <loc>https://some.example-url.com/articles/visualization.html</loc>
+  </url>
+  <url>
+    <loc>https://some.example-url.com/articles/write_and_validate.html</loc>
   </url>
   <url>
     <loc>https://some.example-url.com/authors.html</loc>
