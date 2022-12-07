@@ -27,7 +27,12 @@ file.copy(file, "demo_UIBK.xlsx")
 
 ## Introduction
 
-TODO(R) Write output to XLSX
+This article demonstrates on how to write the processed data (annex
+statistics) into the final pre-filled XLSX file and how to validate
+the file format. The example is based on the demo data set
+`r xfun::embed_file("demo_UIBK.xlsx", text = "demo_UIBK.xlsx")` again,
+for details about the following code chunk please read the article
+[From XLSX](from_xlsx.html).
 
 ```{r prepare_dataset}
 library("readxl")
@@ -43,19 +48,30 @@ config <- subset(config, process == TRUE) # Remove all rows process = FALSE
 library("annex")
 prepared_df <- annex_prepare(raw_df, config, quiet = TRUE)
 annex_df    <- annex(RH + T + CO2 ~ datetime | study + home + room, data = prepared_df)
-stats       <- annex_stats(annex_df)
+stats       <- annex_stats(annex_df, format = "long")
+head(stats)
 ```
 
 
 ## Write annex statistics to file {#write}
 
+Once the statistics have been calculated, the data - as returned
+by `annex_stats()` - can be written into the final ouput file.
+
 ```{r delete_output_for_docs_start, include = FALSE}
 if (file.exists("final_UIBK.xlsx")) file.remove("final_UIBK.xlsx")
 ```
 
+The function `annex_write_stats()` will create a new XLSX file
+based on an `annex` template, store the calculated statistics,
+and pre-fill a series of META sheets to take up the required
+meta information. This information must be added manually by
+the user.
+
 ```{r, warning = TRUE}
 annex_write_stats(stats, file = "final_UIBK.xlsx", user = 1234)
 ```
+
 
 #### Where to get a user ID?
 
@@ -63,13 +79,50 @@ tbd [ask Gabi]
 
 ## Update meta information {#meta}
 
-tbd
+At this point, the XLSX file `r xfun::embed_file("final_UIBK.xlsx")`
+does contain all the statistics, but missing the meta information.
+
+Where additional information is needed, the XLSX sheet contains
+`<....>` (check any of the META sheets) to be updated.
+
+At any time the file can be validated (see next section) to see
+if everything is according to the requested standard of information
+is still missing or invalid information has been entered.
+
 
 ## Validate final file {#validate}
 
+The function `annex_validate()` performs a series of checks both
+against the original template (included in the package; always
+uses current version) as well as within the XLSX file provided
+as input.
+
+There are critical checks which will result in an exception (error;
+stops execution) as well as checks resulting in notes for the user.
+These notes will tell what's wrong or missing to allow the user
+to make the appropriate changes, before validating the file again.
+
+The function returns `TRUE` or `FALSE` (if it does not throw an
+error), once `TRUE` is returned everything is OK with the file
+and all required meta information has been entered properly.
+At this stage, the file can be used for further processing or to
+upload to the research repository (planned for the near future).
+
 ```{r, warning = TRUE, error = TRUE}
-annex_validate("final_UIBK.xlsx", user = 1234)
+check <- annex_validate("final_UIBK.xlsx", user = 1234)
 ```
+
+In his case no changes have been made to the file written by
+`annex_write_stats()`. As no illegal changes have been made, no
+critical errors are detected. However, a series of messages are
+printed to inform that not everything has been filled in properly.
+
+Simply open the file in the spreadsheet editing software of your
+choice (MS Excel, Libreoffice, ...), make the required changes,
+save the file, and repeat validation until the `annex_validate()`
+is happy and returns `TRUE`.
+
+
 
 ```{r delete_output_for_docs_end, include = FALSE}
 if (file.exists("final_UIBK.xlsx")) file.remove("final_UIBK.xlsx")
