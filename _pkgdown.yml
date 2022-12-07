@@ -10,6 +10,13 @@ template:
   #twitter:
   #   image:
   #     src: logo.png
+  #
+home:
+  links:
+    - text: Start discussion
+      href: https://github.com/IEA-EBC-Annex86/annex/discussions
+    - text: Digital Science Center
+      href: https://uibk.ac.at/disc
 
 navbar:
   left:
