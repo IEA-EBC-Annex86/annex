@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">annex</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1-11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1-12</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,7 +64,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">annex_stats</span><span class="op">(</span><span class="va">object</span>, format <span class="op">=</span> <span class="st">"wide"</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">annex_stats</span><span class="op">(</span><span class="va">object</span>, format <span class="op">=</span> <span class="st">"wide"</span>, <span class="va">...</span>, probs <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -80,12 +80,35 @@
 <dt>...</dt>
 <dd><p>currently unused.</p></dd>
 
+
+<dt>probs</dt>
+<dd><p><code>NULL</code> (default; see Details) or a numeric vector of probabilities
+with values in <code>[0,1]</code> (Values will be rounded to closest 3 digits).</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
 <p>Returns an object of class <code>c("annex_stats", "data_frame")</code>.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>The function allows to return the statistics in a wide format or long format.
+Both can be used when calling <code><a href="annex_write_stats.html">annex_write_stats()</a></code>, but he long/wide
+format can be handy fur custom applications (e.g., plotting, ...).</p>
+<p>Argument <code>probs</code> will be forwarded to the <code><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">stats::quantile()</a></code> function.
+If <code>probs = NULL</code> (default) the empirical quantiles will be calculated
+from <code>0</code> (the minimum) up to <code>1</code> (the maximum) in an interval of
+<code>0.05</code> (five percent steps), including quantiles <code>0.005</code>,
+<code>0.025</code>, <code>0.975</code> and <code>0.995</code>. Can be specified differently
+by the user if needed, however, this no longer yields the standard statistics
+and the validation will report a problem.</p>
+<p>TODO(R): Include this check in the STAT validation function.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p>annex_stats_reshape annes_write_stats</p></div>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>

@@ -4,22 +4,56 @@
 #' @param object an object of class \code{annex}.
 #' @param format character, either \code{"wide"} (default) or \code{"long"}.
 #' @param \dots currently unused.
+#' @param probs \code{NULL} (default; see Details) or a numeric vector of probabilities 
+#'        with values in \code{[0,1]} (Values will be rounded to closest 3 digits).
+#'
+#' @details
+#' The function allows to return the statistics in a wide format or long format.
+#' Both can be used when calling [annex::annex_write_stats()], but he long/wide
+#' format can be handy fur custom applications (e.g., plotting, ...).
+#'
+#' Argument \code{probs} will be forwarded to the [stats::quantile()] function.
+#' If \code{probs = NULL} (default) the empirical quantiles will be calculated
+#' from \code{0} (the minimum) up to \code{1} (the maximum) in an interval of
+#' \code{0.05} (five percent steps), including quantiles \code{0.005},
+#' \code{0.025}, \code{0.975} and \code{0.995}. Can be specified differently
+#' by the user if needed, however, this no longer yields the standard statistics
+#' and the validation will report a problem.
+#'
+#' TODO(R): Include this check in the STAT validation function.
 #'
 #' @return Returns an object of class \code{c("annex_stats", "data_frame")}.
+#'
+#' @seealso annex_stats_reshape annes_write_stats
 #'
 #' @importFrom dplyr bind_rows
 #' @import stats
 #' @author Reto Stauffer
 #' @export
-annex_stats <- function(object, format = "wide", ...) {
+annex_stats <- function(object, format = "wide", ..., probs = NULL) {
     stopifnot(inherits(object, "annex"))
     format <- match.arg(format, c("wide", "long"))
     f <- annex_parse_formula(attr(object, "formula"))
 
+    # probs is used to get the quantiles. By default probs will
+    # be seq(0, 1, by = 0.05) including (0.005, 0.025 and 0.975, 0.995)
+    # for the 95 and 99 percent width/interval.
+    stopifnot(is.null(probs) || is.numeric(probs))
+    if (is.numeric(probs)) {
+        if (!all(probs >= 0 & probs <= 1) && !any(is.na(probs)))
+            stop("argument `probs` must be numeric [0, 1] without missing values")
+        probs <- unique(sort(round(probs, 3)))
+    } else {
+        probs <- sort(c(c(0.005, 0.995, 0.025, 0.975), seq(0, 1, by = 0.05)))
+    }
+
     # Functions to apply to calculate the stats
-    get_summary <- function(x, digits = 4)
-        return(round(setNames(quantile(x, p = c(0, 0.025, 0.25, 0.5, 0.75, 0.975, 1), na.rm = TRUE),
-                              c("Min", "p2.5", "p25", "p50", "p75", "p97.5", "Max")), digits = digits))
+    # Note that `probs` is scoped!
+    get_quantiles <- function(x, digits = 4) {
+        tmp   <- abs(round(probs, digits = 2) - probs) < sqrt(.Machine$double.eps)
+        names <- ifelse(tmp, sprintf("p%02.0f", 100 * probs), sprintf("p%04.1f", 100 * probs))
+        return(round(setNames(quantile(x, probs = probs, na.rm = TRUE), names), digits = digits))
+    }
 
     # Helper function to caluclate the shape
     shape <- function(x, na.rm = TRUE) {
@@ -30,23 +64,15 @@ annex_stats <- function(object, format = "wide", ...) {
     convert <- function(var, data, f, gx = c("season", "tod")) {
         res <- as.data.frame(data[, var])
         res <- cbind(transform(data[, c(f$group, gx)], variable = var), res)
-########if (format == "long") {
-########    idvar   <- c(f$group, "season", "tod", "variable")
-########    varying <- names(res)[!names(res) %in% idvar]
-########    res     <- as.data.frame(pivot_longer(res, cols = varying, names_to = "stats"))
-########}
         return(res)
     }
 
     # List of functions to be applied; must all return a named vector
     functionlist <- list(
-        get_summary,
-        function(x) c(Sd     = sd(x, na.rm = TRUE)),
         function(x) c(Mean   = mean(x, na.rm = TRUE)),
+        function(x) c(Sd     = sd(x, na.rm = TRUE)),
         function(x) c(N      = length(x), NAs = sum(is.na(x))),
-        function(x) c(shape1 = shape(x)),
-        function(x) c(shape2 = shape(x) * (1 / mean(x, na.rm = TRUE) - 1)),
-        function(x) c(exp_param = 1 / mean(x, na.rm = TRUE))
+        function(x) get_quantiles(x)
         )
 
     # Applies all the functions of the functionlist to an input x

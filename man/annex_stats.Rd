@@ -4,7 +4,7 @@
 \alias{annex_stats}
 \title{Calculate Statistics on Annex object}
 \usage{
-annex_stats(object, format = "wide", ...)
+annex_stats(object, format = "wide", ..., probs = NULL)
 }
 \arguments{
 \item{object}{an object of class \code{annex}.}
@@ -12,12 +12,33 @@ annex_stats(object, format = "wide", ...)
 \item{format}{character, either \code{"wide"} (default) or \code{"long"}.}
 
 \item{\dots}{currently unused.}
+
+\item{probs}{\code{NULL} (default; see Details) or a numeric vector of probabilities
+with values in \code{[0,1]} (Values will be rounded to closest 3 digits).}
 }
 \value{
 Returns an object of class \code{c("annex_stats", "data_frame")}.
 }
 \description{
 Calculate Statistics on Annex object
+}
+\details{
+The function allows to return the statistics in a wide format or long format.
+Both can be used when calling \code{\link[=annex_write_stats]{annex_write_stats()}}, but he long/wide
+format can be handy fur custom applications (e.g., plotting, ...).
+
+Argument \code{probs} will be forwarded to the \code{\link[stats:quantile]{stats::quantile()}} function.
+If \code{probs = NULL} (default) the empirical quantiles will be calculated
+from \code{0} (the minimum) up to \code{1} (the maximum) in an interval of
+\code{0.05} (five percent steps), including quantiles \code{0.005},
+\code{0.025}, \code{0.975} and \code{0.995}. Can be specified differently
+by the user if needed, however, this no longer yields the standard statistics
+and the validation will report a problem.
+
+TODO(R): Include this check in the STAT validation function.
+}
+\seealso{
+annex_stats_reshape annes_write_stats
 }
 \author{
 Reto Stauffer

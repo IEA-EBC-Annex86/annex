@@ -84,7 +84,7 @@ annex_write_stats <- function(x, file, user, overwrite = FALSE, ..., quiet = FAL
         stop("the `file` must end on `.xlsx` (not case sensitive); ",
              file, " is invalid")
     if (!dir.exists(dirname(file)))
-        sto("directory '", dirname(file), "' does not exist; can't create output file")
+        stop("directory '", dirname(file), "' does not exist; can't create output file")
 
     # Check if the input object is what we expect;
     # Also used as sanity check for the annex_write_stats function.

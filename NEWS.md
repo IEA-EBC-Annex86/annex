@@ -1,4 +1,11 @@
 
+# Development todo list
+
+* [ ] Currently I rely on the order of the columns
+* [ ] Remove stats which are always NA
+* [ ] When checking METa (annex_validate_sheet_metaXxxx)
+      some columns must be numeric; check for numeric? Not yet implemented
+* [ ] Allow for custom user functions when calling annex_stats?
 
 # Annex 0.1
 
@@ -16,6 +23,7 @@ package in its `0.1-X` state.
 * Resolving a series of notes/warnings during build check
 * Properly adding licenses (GPL-2 + GPL-3)
 * Updating documentation and readme; adding process schematic.
+* Removing unused R scripts (version 0 of the annex package).
 
 # Annex 0.0-9000
 

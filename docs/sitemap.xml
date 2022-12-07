@@ -4,9 +4,6 @@
     <loc>https://some.example-url.com/404.html</loc>
   </url>
   <url>
-    <loc>https://some.example-url.com/NOTES.html</loc>
-  </url>
-  <url>
     <loc>https://some.example-url.com/articles/config.html</loc>
   </url>
   <url>
@@ -91,9 +88,6 @@
     <loc>https://some.example-url.com/reference/demo_UIBK_config.html</loc>
   </url>
   <url>
-    <loc>https://some.example-url.com/reference/evaluate.html</loc>
-  </url>
-  <url>
     <loc>https://some.example-url.com/reference/formatting.html</loc>
   </url>
   <url>
@@ -107,9 +101,6 @@
   </url>
   <url>
     <loc>https://some.example-url.com/reference/plot.annex_stats.html</loc>
-  </url>
-  <url>
-    <loc>https://some.example-url.com/reference/statistics.html</loc>
   </url>
   <url>
     <loc>https://some.example-url.com/reference/summary.annex.html</loc>

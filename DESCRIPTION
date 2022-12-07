@@ -1,7 +1,7 @@
 Package: annex
 Title: IEA EBC Annex86 Data Analysis Package
-Version: 0.1-11
-Date: 2022-12-06
+Version: 0.1-12
+Date: 2022-12-07
 Authors@R: 
     c(person(given = "Gabriel", family = "Rojas-Kopeinig", role = c("fnd", "aut"),
              email = "gabi.rojas@uibk.ac.at"),
