@@ -93,7 +93,7 @@ this step is _not_ necessary as it will be performed automatically when
 calling `annex_prepare()` but can be handy during development.
 
 
-### Preparing data
+## Preparing data
 
 While `raw_df` contains the raw data set, the `config` object
 contains the information on how to rename the columns and where the
@@ -166,7 +166,7 @@ in the future.
 * `is.regular()`
 * `plot()`
 
-### Perform analysis
+## Performing analysis
 
 Based on the object returned by `annex()` the analysis
 can be performed by calling `annex_stats()`. The function
@@ -185,7 +185,7 @@ statistics in a wide format. Does not matter for the further analysis but
 can be convenient when processed manually.
 
 
-### Write data to XLSX (final file format)
+## Writing output file
 
 TODO(R): Only include this in the `write_and_validate.html` article?
 

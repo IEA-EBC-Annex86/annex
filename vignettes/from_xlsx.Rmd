@@ -102,7 +102,7 @@ this step is _not_ necessary as it will be performed automatically when
 calling `annex_prepare()` but can be handy during development.
 
 
-### Preparing data
+## Preparing data
 
 Based on `raw_df` which still contains the raw data set read from
 the XLSX file and the `config` object with the information about
@@ -163,7 +163,7 @@ in the future.
 * `is.regular()`
 * `plot()`
 
-### Perform analysis
+## Performing analysis
 
 Based on the object returned by `annex()` the analysis
 can be performed by calling `annex_stats()`. The function
@@ -182,7 +182,7 @@ statistics in a wide format. Does not matter for the further analysis but
 can be convenient when processed manually.
 
 
-### Write data to XLSX (final file format)
+## Writing output file
 
 TODO(R): Only include this in the `write_and_validate.html` article?
 
