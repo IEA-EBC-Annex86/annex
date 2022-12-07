@@ -110,7 +110,10 @@ annex_write_stats <- function(x, file, user, overwrite = FALSE, ..., quiet = FAL
     x <- cbind(data.frame(user = sprintf("%04d", user)), x)
 
     # Open connection; write data
-    if (!quiet) message("Starting to write ", file)
+    if (!quiet) {
+        message("Starting to write ", appendLF = FALSE) # Hot fix TODO(R)
+        message(file)
+    }
     workbook <- loadWorkbook(file)
 
     write_annex_metaStudy(workbook,     x, quiet)
@@ -155,6 +158,7 @@ write_annex_metaHome <- function(wb, x, quiet, sheet = "META-Home") {
     if (!quiet) message(" - Writing ", sheet)
     tmp <- unique(subset(x, select = c("user", "study", "home")))
     tmp <- with(tmp, interaction(user, study, home, sep = "-", drop = TRUE))
+
     x   <- data.frame(ID                      = tmp,
                       LocationCountry         = "<ISO3>",
                       LocationCity            = "<City Name>",

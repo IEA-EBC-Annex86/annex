@@ -68,10 +68,9 @@ and pre-fill a series of META sheets to take up the required
 meta information. This information must be added manually by
 the user.
 
-```{r, warning = TRUE}
+```{r, warning = TRUE, error = TRUE}
 annex_write_stats(stats, file = "final_UIBK.xlsx", user = 1234)
 ```
-
 
 #### Where to get a user ID?
 
