@@ -3,9 +3,13 @@
 \docType{data}
 \name{demo_UIBK_config}
 \alias{demo_UIBK_config}
-\title{Dummy text 2}
+\title{Demo data set UIBK config (textfile)}
 \description{
-Dummy text 2
+One of the demo data sets used for testing and for the documentation/manuals.
+A tabular text file (CSV alike) containing the config information
+for the measurement sheet in the \code{demo_UIBK} data set.
+An alternative to the configuration contained in a dedicated sheet
+in the \code{demo_UIBK} data set.
 }
 \author{
 Reto Stauffer

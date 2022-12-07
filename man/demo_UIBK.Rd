@@ -3,9 +3,11 @@
 \docType{data}
 \name{demo_UIBK}
 \alias{demo_UIBK}
-\title{Dummy text 1}
+\title{Demo data set UIBK (XLSX)}
 \description{
-Dummy text 1
+One of the demo data sets used for testing and for the documentation/manuals.
+An XLSX file containing both, the measurements as well as a configuration to
+prepare the annex objects.
 }
 \author{
 Reto Stauffer

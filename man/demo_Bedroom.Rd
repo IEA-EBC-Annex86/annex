@@ -3,9 +3,12 @@
 \docType{data}
 \name{demo_Bedroom}
 \alias{demo_Bedroom}
-\title{Dummy text 3}
+\title{Demo data set Bedroom}
 \description{
-Dummy text 3
+One of the demo data sets used for testing and for the documentation/manuals.
+At tabular text file (CSV alike) containing measurement data.
+The data set \code{demo_Bedroom_config} contains the corresponding
+configuration used when calling \code{\link[=annex_prepare]{annex_prepare()}}.
 }
 \author{
 Reto Stauffer

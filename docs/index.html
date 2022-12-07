@@ -103,15 +103,30 @@
 <p>The <code>annex</code> package available via this repository has a few dependencies required to process the data. R should automatically resolve backwards dependencies on installation. For more information, have a look at the <a href="https://github.com/IEA-EBC-Annex86/annex/blob/main/DESCRIPTION" class="external-link">DESCRIPTION</a> file on github.com.</p>
 </div>
 <div class="section level2">
+<h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
+</h2>
+<p>The figure below shows a schematic of the process on how to use the <code>annex</code> package to process measurements as well as create and validate the final standardized output file.</p>
+<p><img src="reference/figures/annex_scheme.svg" width="100%"></p>
+<p>At first, the user needs to import the required data sets himself/herself. The <code>annex</code> package does not provide functionality as the data come in various different formats, however, the <a href="https://iea-ebc-annex86.github.io/annex/" class="external-link">documentation</a> provides some examples in case the data is available as in the XLSX format or as tabular text files (see <a href="https://iea-ebc-annex86.github.io/annex/articles/from_xlsx.html" class="external-link">Analysis from XLSX</a> or <a href="https://iea-ebc-annex86.github.io/annex/articles/from_textfiles.html" class="external-link">Analysis from textfiles</a>), but the package is not limited to this. All needed is to provide the data as proper R <code>data.frames</code> for further processing.</p>
+<ol style="list-style-type: decimal">
+<li>The function <code><a href="reference/annex_prepare.html">annex_prepare()</a></code> is a helper function to prepare the measurement data set for further processing steps (can be bypassed if needed).</li>
+<li>
+<code><a href="reference/annex.html">annex()</a></code> is the creator function for annex objects. It defines what to process and performs a series of checks.</li>
+<li>
+<code><a href="reference/annex_stats.html">annex_stats()</a></code> takes up the <code>annex</code> object from the previous step to calculate the statistics (aggregated statistical mesures); returns a <code>annex_stats</code> object.</li>
+<li>The object from the previous step can then be written into the final XLSX file.</li>
+<li>The result is an XLSX file containing the statistics as well as pre-filled sheets for the required meta information. This information has to be filled in manually by the user.</li>
+<li>
+<code><a href="reference/annex_validate.html">annex_validate()</a></code> can be used to check if all meta information has been filled in properly or if further manual interaction by the user is required.</li>
+<li>Once the validation is happy with the XLSX file, the analysis is completed and the final analysis can e.g., be submitted to an upcoming research repository or used for further analysis.</li>
+</ol>
+</div>
+<div class="section level2">
 <h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
 </h2>
 <p>Documentation and examples are available on <a href="https://iea-ebc-annex86.github.io/annex/" class="external-link">github.io</a></p>
 <ul><li><a href="https://iea-ebc-annex86.github.io/annex/" class="external-link uri">https://iea-ebc-annex86.github.io/annex/</a></li></ul>
-</div>
-<div class="section level2">
-<h2 id="getting-started">Getting started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
-</h2>
-<p>TODO(R): That’s not the best point to start; update! To get started, check out <a href="articles/Annex.html">Get started</a>.</p>
+<p>The documentation contains a series of articles which explain how to use the <code>annex</code> package as well as some additional information regarding package functionality.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">

@@ -5,7 +5,9 @@
 \alias{demo_Bedroom_config}
 \title{Dummy text 4}
 \description{
-Dummy text 4
+One of the demo data sets used for testing and for the documentation/manuals.
+A tabular text file (CSV alike) containing the config for the
+\code{demo_Bedroom} data set, which contains the actual measurements.
 }
 \author{
 Reto Stauffer

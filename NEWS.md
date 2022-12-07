@@ -15,6 +15,7 @@ package in its `0.1-X` state.
 * Added `annex_validate` to validate an XLSX output file; likely missing some checks.
 * Resolving a series of notes/warnings during build check
 * Properly adding licenses (GPL-2 + GPL-3)
+* Updating documentation and readme; adding process schematic.
 
 # Annex 0.0-9000
 

@@ -53,7 +53,7 @@ stats       <- annex_stats(annex_df)
 if (file.exists("final_UIBK.xlsx")) file.remove("final_UIBK.xlsx")
 ```
 
-```{r}
+```{r, warning = TRUE}
 annex_write_stats(stats, file = "final_UIBK.xlsx", user = 1234)
 ```
 
