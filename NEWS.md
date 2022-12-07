@@ -24,6 +24,8 @@ package in its `0.1-X` state.
 * Properly adding licenses (GPL-2 + GPL-3)
 * Updating documentation and readme; adding process schematic.
 * Removing unused R scripts (version 0 of the annex package).
+* Removing rows in `STAT` when writing the file where N == NAs; no data available at all.
+* Rounding all stats to 4 digits max.
 
 # Annex 0.0-9000
 

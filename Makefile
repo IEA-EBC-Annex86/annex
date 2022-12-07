@@ -25,4 +25,4 @@ all:
 	make document
 	make install
 	make check
-#	make docs
+	make docs

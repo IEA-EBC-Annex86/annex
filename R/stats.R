@@ -69,8 +69,8 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
 
     # List of functions to be applied; must all return a named vector
     functionlist <- list(
-        function(x) c(Mean   = mean(x, na.rm = TRUE)),
-        function(x) c(Sd     = sd(x, na.rm = TRUE)),
+        function(x) c(Mean   = round(mean(x, na.rm = TRUE), digits = 4)),
+        function(x) c(Sd     = round(sd(x, na.rm = TRUE), digits = 4)),
         function(x) c(N      = length(x), NAs = sum(is.na(x))),
         function(x) get_quantiles(x)
         )
@@ -119,6 +119,10 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
     res <- structure(res, row.names = seq_len(NROW(res)),
                      class = c("annex_stats", "annex_stats_wide", class(res)),
                      formula = attr(object, "formula"))
+
+    ## Removing rows (wide format) where the number of values is the same
+    ## as the number of missing values, i.e., no data at all.
+    res <- subset(res, N > NAs)
 
     # Reshape to long format if required
     if (format == "long") res <- annex_stats_reshape(res)
@@ -170,3 +174,31 @@ annex_stats_reshape <- function(x, format = NULL) {
     return(x)
 }
 
+# --------------------------------------------------
+# S3 classes to keep class and formula attribute
+
+#' @param x object of class \code{annex}.
+#' @param \dots arguments to be passed to or from other methods.
+#' @importFrom utils head
+#' @author Reto Stauffer
+#' @rdname annex
+#' @export
+head.annex_stats <- function(x, ...)
+    structure(NextMethod(), class = class(x), formula = attr(x, "formula"))
+
+#' @param x object of class \code{annex}.
+#' @param \dots arguments to be passed to or from other methods.
+#' @importFrom utils tail
+#' @author Reto Stauffer
+#' @rdname annex
+#' @export
+tail.annex_stats <- function(x, ...)
+    structure(NextMethod(), class = class(x), formula = attr(x, "formula"))
+
+#' @param x object of class \code{annex}.
+#' @param \dots arguments to be passed to or from other methods.
+#' @author Reto Stauffer
+#' @rdname annex
+#' @export
+subset.annex_stats <- function(x, ...)
+    structure(NextMethod(), class = class(x), formula = attr(x, "formula"))

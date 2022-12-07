@@ -78,7 +78,8 @@ tbd [ask Gabi]
 
 ## Update meta information {#meta}
 
-At this point, the XLSX file `r xfun::embed_file("final_UIBK.xlsx")`
+At this point, the XLSX file 
+`r xfun::embed_file("final_UIBK.xlsx", text = "final_UIBK.xlsx")`
 does contain all the statistics, but missing the meta information.
 
 Where additional information is needed, the XLSX sheet contains

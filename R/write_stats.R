@@ -91,6 +91,10 @@ annex_write_stats <- function(x, file, user, overwrite = FALSE, ..., quiet = FAL
     x <- annex_stats_reshape(x, format = "wide")
     annex_check_stats_object(x)
 
+    # Replacing NaN (not a number) with a simple NA to avoid having
+    # cells with #NUMBER! or #ZAHL! or whatever in the spreadsheet later on.
+    x[is.na(x)] <- NA
+
     # Create or overwrite file
     if (!file.exists(file) || (file.exists(file) && overwrite)) {
         annex_template(file, overwrite = overwrite)

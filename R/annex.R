@@ -247,7 +247,7 @@ summary.annex <- function(object, type = "default", ...) {
 
 
 # --------------------------------------------------
-# S3 classes to keep the class
+# S3 classes to keep class and formula attribute
 
 #' @param x object of class \code{annex}.
 #' @param \dots arguments to be passed to or from other methods.
@@ -255,7 +255,8 @@ summary.annex <- function(object, type = "default", ...) {
 #' @author Reto Stauffer
 #' @rdname annex
 #' @export
-head.annex <- function(x, ...) structure(NextMethod(), class = class(x))
+head.annex <- function(x, ...)
+    structure(NextMethod(), class = class(x), formula = attr(x, "formula"))
 
 #' @param x object of class \code{annex}.
 #' @param \dots arguments to be passed to or from other methods.
@@ -263,8 +264,16 @@ head.annex <- function(x, ...) structure(NextMethod(), class = class(x))
 #' @author Reto Stauffer
 #' @rdname annex
 #' @export
-tail.annex <- function(x, ...) structure(NextMethod(), class = class(x))
+tail.annex <- function(x, ...)
+    structure(NextMethod(), class = class(x), formula = attr(x, "formula"))
 
+#' @param x object of class \code{annex}.
+#' @param \dots arguments to be passed to or from other methods.
+#' @author Reto Stauffer
+#' @rdname annex
+#' @export
+subset.annex <- function(x, ...)
+    structure(NextMethod(), class = class(x), formula = attr(x, "formula"))
 
 
 
