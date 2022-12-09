@@ -75,3 +75,62 @@ for (f in files) {
 }
 ```
 
+### Using `ggplot2`
+
+The 'long form' of the stats can be handy for plotting with ggplot.
+
+```{r}
+stats <- annex_stats(annex_df)
+```
+
+
+To ensure we have the long form, `annex_stats_reshape()` can be called.
+If it is already in the long format it will simply return itself, else
+it will be reshaped from the wide format to the desired long format.
+
+```{r}
+stats <- annex_stats_reshape(stats, format = "long")
+head(stats, n = 2)
+```
+
+**Empirical CDF:** The `stats` contains a series of quantiles
+following the naming scheme `"^p[0-9\\.]+$"` (e.g., `p00`, `p02.5`, ...).
+The code chunk below subsets the statistics to only get rows containing
+these empirical quantiles, and appends an additional variable `p` with
+the numeric value of the percentile as this is required for the
+demo plot following afterwards.
+
+
+```{r}
+# Extracting rows with empirical quantiles
+tmp    <- stats[grepl("^p[0-9\\.]+$", stats$stats), ]
+# Extract numeric value for plotting
+tmp$p  <- as.numeric(gsub("p", "", tmp$stats))
+# Unique ID as an interaction of study, home, room, season, and tod
+tmp$ID <- with(tmp, interaction(study, home, room, season, tod))
+```
+
+```{r viz_ggplot_T, fig = TRUE, fig.width = 10, fig.height = 8}
+library("ggplot2")
+ggplot(subset(tmp, variable == "T")) +
+    geom_line(aes(x = p, y = value, col = home, group = ID)) +
+    facet_wrap(~ room, scale = "free") +
+    ggtitle("Empirical Cumulative Distribution Function of Temperature by Room Type")
+```
+
+```{r viz_ggplot_CO2, fig = TRUE, fig.width = 10, fig.height = 8}
+ggplot(subset(tmp, variable == "CO2")) +
+    geom_line(aes(x = p, y = value, col = interaction(season, tod, sep = " - "), group = ID)) +
+    facet_wrap(~ room) +
+    ggtitle("Empirical Cumulative Distribution Function of CO2 Concentration by Room Type")
+```
+
+```{r viz_ggplot_RH, fig = TRUE, fig.width = 10, fig.height = 8}
+ggplot(subset(tmp, variable == "RH")) +
+    geom_line(aes(x = p, y = value, col = room, group = ID)) +
+    facet_wrap(~ home) +
+    ggtitle("Empirical Cumulative Distribution Function of Relative Humidity by Home")
+```
+
+
+
