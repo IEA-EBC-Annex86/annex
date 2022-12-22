@@ -120,8 +120,8 @@ check_for_allowed_pollutants <- function(x) {
     # Path to XLSX file to be read
     template_xlsx <- system.file("template/template.xlsx", package = "annex")
     tmp <- suppressMessages(read.xlsx(template_xlsx, sheet = "Definitions", sep.names = " "))
-    stopifnot("Pollutants" %in% names(tmp))
-    allowed_pollutants <- na.omit(c("datetime", tmp$Pollutants))
+    stopifnot("Variable" %in% names(tmp))
+    allowed_pollutants <- na.omit(c("datetime", tmp$Variable))
 
     # Fix casing
     idx_case <- match(tolower(x), tolower(allowed_pollutants))

@@ -1,15 +1,25 @@
 Package: annex
 Title: IEA EBC Annex86 Data Analysis Package
-Version: 0.1-13
-Date: 2022-12-07
+Version: 0.1-14
+Date: 2022-12-22
 Authors@R: 
-    c(person(given = "Gabriel", family = "Rojas-Kopeinig", role = c("fnd", "aut"),
-             email = "gabi.rojas@uibk.ac.at"),
+    c(person(given = "Reto", family = "Stauffer", role = c("cre", "aut"),
+             email = "reto.stauffer@uibk.ac.at",
+             comment = c(ORCID = "0000-0002-3798-5507")),
+      person(given = "Gabriel", family = "Rojas-Kopeinig", role = c("fnd", "aut"),
+             email = "gabi.rojas@uibk.ac.at",
+             comment = c(ORCID = "0000-0001-7439-2260")),
       person(given = "Tobias", family = "Grass", role = "aut",
              email = "tobias.grass@example.com"),
-      person(given = "Reto", family = "Stauffer", role = c("cre", "aut"),
-             email = "reto.stauffer@uibk.ac.at",
-              comment = c(ORCID = "0000-0002-3798-5507")))
+      person(given = "Constanza",  family = "Molina", role = c("ctb")),
+      person(given = "Fabián",     family = "Sepúlveda", role = c("ctb")),
+      person(given = "Benjamin",   family = "Jones", role = c("ctb")),
+      person(given = "James",      family = "McGrath", role = c("ctb")),
+      person(given = "Francesco",  family = "Babich", role = c("ctb")),
+      person(given = "Irene Lara", family = "Ibeas", role = c("ctb")),
+      person(given = "Akshit",     family = "Gupta", role = c("ctb")),
+      person(given = "Marc",       family = "Abadie", role = c("ctb"))
+      )
 Description: The main aim of the package is to streamline and
     standardize processing and storing data sets for the IEA EBC
     Annex 86 project.
@@ -21,5 +31,5 @@ URL: https://github.com/IEA-EBC-Annex86/annex/
 BugReports: https://github.com/IEA-EBC-Annex86/annex/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.0.9000
+RoxygenNote: 7.2.3
 NeedsCompilation: no

@@ -5,8 +5,8 @@
 if (interactive()) library("tinytest")
 
 # Reading the config file with standard tools!
-expect_silent(f_config <- system.file("data/demo_UIBK_config.csv", package = "Annex"))
-expect_silent(f_data   <- system.file("data/demo_UIBK.xlsx", package = "Annex"))
+expect_silent(f_config <- system.file("data/demo_UIBK_config.csv", package = "annex"))
+expect_silent(f_data   <- system.file("data/demo_UIBK.xlsx", package = "annex"))
 
 expect_true(file.exists(f_config))
 expect_true(file.exists(f_data))

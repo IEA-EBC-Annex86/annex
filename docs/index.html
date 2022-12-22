@@ -38,7 +38,7 @@
     
     <a class="navbar-brand me-2" href="index.html">annex</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1-13</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1-14</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,7 +88,7 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header">
 <img src="logo.png" class="logo" alt=""><h1 id="annex-annex86-data-analysis-package">
-<code>Annex</code>; Annex86 Data Analysis Package<a class="anchor" aria-label="anchor" href="#annex-annex86-data-analysis-package"></a>
+<code>annex</code>; Annex86 Data Analysis Package<a class="anchor" aria-label="anchor" href="#annex-annex86-data-analysis-package"></a>
 </h1>
 </div>
 <!--<img src="man/figures/logo.png" align="right" height="200" style="float:right; height:200px;">--><div class="section level2">
@@ -107,7 +107,7 @@
 </h2>
 <p>The figure below shows a schematic of the process on how to use the <code>annex</code> package to process measurements as well as create and validate the final standardized output file.</p>
 <p><img src="reference/figures/annex_scheme.svg" width="100%"></p>
-<p>At first, the user needs to import the required data sets himself/herself. The <code>annex</code> package does not provide functionality as the data come in various different formats, however, the <a href="https://iea-ebc-annex86.github.io/annex/" class="external-link">documentation</a> provides some examples in case the data is available as in the XLSX format or as tabular text files (see <a href="https://iea-ebc-annex86.github.io/annex/articles/from_xlsx.html" class="external-link">Analysis from XLSX</a> or <a href="https://iea-ebc-annex86.github.io/annex/articles/from_textfiles.html" class="external-link">Analysis from textfiles</a>), but the package is not limited to this. All needed is to provide the data as proper R <code>data.frames</code> for further processing.</p>
+<p>At first, the user needs to import the required data sets himself/herself. The <code>annex</code> package does not provide functionality as the data come in various different formats, however, the <a href="https://iea-ebc-annex86.github.io/annex/" class="external-link">documentation</a> provides some examples in case the data is available as in the XLSX format or as tabular text files (see <a href="https://iea-ebc-annex86.github.io/annex/articles/from_xlsx.html" class="external-link">Analysis from XLSX</a> or <a href="https://iea-ebc-annex86.github.io/annex/articles/from_textfiles.html" class="external-link">Analysis from textfiles</a>), but the package is not limited to this. All needed is to provide the data as proper R <a href="https://discdown.org/rprogramming/dataframes.html" class="external-link"><code>data.frames</code></a> for further processing.</p>
 <ol style="list-style-type: decimal">
 <li>The function <code><a href="reference/annex_prepare.html">annex_prepare()</a></code> is a helper function to prepare the measurement data set for further processing steps (can be bypassed if needed).</li>
 <li>
@@ -159,9 +159,10 @@
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Gabriel Rojas-Kopeinig <br><small class="roles"> Funder, author </small>  </li>
-<li>Tobias Grass <br><small class="roles"> Author </small>  </li>
 <li>Reto Stauffer <br><small class="roles"> Maintainer, author </small> <a href="https://orcid.org/0000-0002-3798-5507" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Gabriel Rojas-Kopeinig <br><small class="roles"> Funder, author </small> <a href="https://orcid.org/0000-0001-7439-2260" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Tobias Grass <br><small class="roles"> Author </small>  </li>
+<li><a href="authors.html">More about authors...</a></li>
 </ul>
 </div>
 
@@ -173,7 +174,7 @@
 
     <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by Gabriel Rojas-Kopeinig, Tobias Grass, Reto Stauffer.</p>
+<p>Developed by Reto Stauffer, Gabriel Rojas-Kopeinig, Tobias Grass.</p>
 </div>
 
 <div class="pkgdown-footer-right">
