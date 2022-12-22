@@ -49,7 +49,7 @@ or as tabular text files
 (see [Analysis from XLSX](https://iea-ebc-annex86.github.io/annex/articles/from_xlsx.html) or
 [Analysis from textfiles](https://iea-ebc-annex86.github.io/annex/articles/from_textfiles.html)),
 but the package is not limited to this. All needed is to provide the data as proper
-R `data.frames` for further processing.
+R [`data.frames`](https://discdown.org/rprogramming/dataframes.html) for further processing.
 
 1. The function `annex_prepare()` is a helper function to prepare the measurement data set
     for further processing steps (can be bypassed if needed).

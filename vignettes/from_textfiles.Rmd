@@ -185,39 +185,12 @@ statistics in a wide format. Does not matter for the further analysis but
 can be convenient when processed manually.
 
 
-## Writing output file
-
-TODO(R): Only include this in the `write_and_validate.html` article?
-
-```{r, include = FALSE}
-# Make sure this is not yet existing (dynamically created by this vignette)
-if (file.exists("final_Bedroom.xlsx")) file.remove("final_Bedroom.xlsx")
-```
-
-The final step is to write the data into the final standardized file format.
-`annex_write_stats()` takes up a `annex_stat` object (returned by
-`annex_stats()`; long or wide format) and a file name/path where the
-data should be stored. 
-
-In addition, a `user` (integer; user ID provided by the project team) must
-be provided.
-
-TODO(R): Currently no update method is available.
-
-
-```{r}
-annex_write_stats(stats, file = "final_Bedroom.xlsx", user = 123, quiet = TRUE)
-```
-
-This creates the file `r xfun::embed_file("final_Bedroom.xlsx", text = "final_Bedroom.xlsx")`
-when successful.
-
 ## Next steps
 
 After performing the data preparation and calculating the statistics,
 the following steps can be performed:
 
-* [Visualizing the data](visualization.html)
+* [Visualizing the data(optional)](visualization.html)
 * [Write annex stats to final file](write_and_validate.html#write)
 * [Update meta data in final file](write_and_validate.html#meta)
 * [Validate final file](write_and_validate.html#validate)

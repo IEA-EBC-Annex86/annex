@@ -36,6 +36,7 @@ For this purpose, a demo data set called
 
 * **measurements**: The data (e.g., the logger or pre-processed)
 * **annex_configuration**: Configuration (see article [Config file](configfile.html))
+Save the demo file and/or your xlsx data file in your R working directory.
 
 Importing the data into R is up to the user, the `annex` package does not provide
 import functionality. For XLSX files a multitude of R packages exist; this article
@@ -139,7 +140,8 @@ can be prepared.
 
 `annex()` is the creator function which creates an object of class
 `annex` (S3) providing a series of methods and functions to conduct the
-final analysis.
+final analysis. More information on object orientation system S3 can be found
+e.g. [here](https://discdown.org/rprogramming/classes-and-methods.html#object-orientation)
 
 The function expects a formula as input which describes how to process
 the data. The three parts of the formula are:
@@ -178,48 +180,20 @@ head(stats)
 ```
 
 By default, the argument format is set to `"wide"` which will return the
-statistics in a wide format. Does not matter for the further analysis but
-can be convenient when processed manually.
-
-
-## Writing output file
-
-TODO(R): Only include this in the `write_and_validate.html` article?
-
-```{r, include = FALSE}
-# Make sure this is not yet existing (dynamically created by this vignette)
-if (file.exists("final_UIBK.xlsx")) file.remove("final_UIBK.xlsx")
-```
-
-The final step is to write the data into the final standardized file format.
-`annex_write_stats()` takes up a `annex_stat` object (returned by
-`annex_stats()`; long or wide format) and a file name/path where the
-data should be stored. 
-
-In addition, a `user` (integer; user ID provided by the project team) must
-be provided.
-
-TODO(R): Currently no update method is available.
-
-
-```{r}
-annex_write_stats(stats, file = "final_UIBK.xlsx", user = 123, quiet = TRUE)
-```
-
-This creates the file `r xfun::embed_file("final_UIBK.xlsx", text = "final_UIBK.xlsx")`
-when successful.
+statistics in a wide format, i.e. all calculated values as columns.
+The format "long" will create one line for every calculated value.
+The chosen format (long or wide) does not matter for the further analysis but a particular
+format may be convenient when processed manually.
 
 ## Next steps
 
 After performing the data preparation and calculating the statistics,
 the following steps can be performed:
 
-* [Visualizing the data](visualization.html)
+* [Visualizing the data (optional)](visualization.html)
 * [Write annex stats to final file](write_and_validate.html#write)
 * [Update meta data in final file](write_and_validate.html#meta)
 * [Validate final file](write_and_validate.html#validate)
-
-TODO(R): Only include this in the `write_and_validate.html` article?
 
 
 ```{r, include = FALSE}
