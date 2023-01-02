@@ -41,7 +41,7 @@ Generates a new data frame according to the formula provided.
 }
 \details{
 The function adds columns referring to the specific season and
-time of day (tod) for each time stamp. Pollutants will be on the left side,
+time of day (tod) for each time stamp. Variables will be on the left side,
 the date terms on the right including season and tod as well as other
 mandatory variables (home, room, etc.). If additional variables were given,
 these can also be found in the output.
@@ -53,7 +53,7 @@ mandatory variables, the evaluate function of annex can be used without any
 problems.
 
 The output contains at least seven columns in addition to the columns for
-the respective pollutants.
+the respective variables.
 }
 \seealso{
 \code{\link[base:data.frame]{base::data.frame()}}, \code{\link[stats:formula]{stats::formula()}}

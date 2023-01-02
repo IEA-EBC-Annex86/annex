@@ -70,10 +70,10 @@
     <loc>https://some.example-url.com/reference/annex_write_stats.html</loc>
   </url>
   <url>
-    <loc>https://some.example-url.com/reference/check_for_allowed_pollutants.html</loc>
+    <loc>https://some.example-url.com/reference/check_for_allowed_rooms.html</loc>
   </url>
   <url>
-    <loc>https://some.example-url.com/reference/check_for_allowed_rooms.html</loc>
+    <loc>https://some.example-url.com/reference/check_for_allowed_variables.html</loc>
   </url>
   <url>
     <loc>https://some.example-url.com/reference/demo_Bedroom.html</loc>

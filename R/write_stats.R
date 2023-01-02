@@ -105,7 +105,7 @@ annex_write_stats <- function(x, file, user, overwrite = FALSE, ..., quiet = FAL
     # Ensure all sheets are in the XLSX file (as we don't create them, we manipulate them)
     file_sheets <- getSheetNames(file)
     required_sheets <- c("STAT", "META-Study", "META-Home", "META-Room",
-                         "META-Pollutant", "META-Period")
+                         "META-Variable", "META-Season")
     if (!all(required_sheets %in% file_sheets))
         stop("not all required sheets exist in the XLSX file '", file, "'. Missing: ",
              paste(sprintf("'%s'", required_sheets[!required_sheets %in% file_sheets]), collapse = ", "))
@@ -123,8 +123,8 @@ annex_write_stats <- function(x, file, user, overwrite = FALSE, ..., quiet = FAL
     write_annex_metaStudy(workbook,     x, quiet)
     write_annex_metaHome(workbook,      x, quiet)
     write_annex_metaRoom(workbook,      x, quiet)
-    write_annex_metaPollutant(workbook, x, quiet)
-    write_annex_metaPeriod(workbook,    x, quiet)
+    write_annex_metaVariable(workbook, x, quiet)
+    write_annex_metaSeason(workbook,    x, quiet)
     write_annex_STAT(workbook,          x, quiet)
 
     # Saving final file
@@ -189,9 +189,9 @@ write_annex_metaHome <- function(wb, x, quiet, sheet = "META-Home") {
 write_annex_metaRoom <- function(wb, x, quiet, sheet = "META-Room") {
     if (!quiet) message(" - Writing ", sheet)
     tmp <- unique(subset(x, select = c("user", "study", "home", "room")))
-    tmp <- with(tmp, interaction(user, study, home, room, sep = "-", drop = TRUE))
-    x <- data.frame(ID                     = tmp,
-                    MeasurementLocation    = "<Measurement location>",
+    ID  <- with(tmp, interaction(user, study, home, room, sep = "-", drop = TRUE))
+    x <- data.frame(ID                     = ID,
+                    MeasurementLocation    = tmp$room,
                     FreshAirSupply         = "<Air Supply Description>",
                     VentilationRate        = "<Rate Room in [l/s]>",
                     VentilationRateMethod  = "<Rate Method>",
@@ -202,14 +202,14 @@ write_annex_metaRoom <- function(wb, x, quiet, sheet = "META-Room") {
 
 #' @importFrom openxlsx writeData
 #' @author Reto Stauffer
-write_annex_metaPollutant <- function(wb, x, quiet, sheet = "META-Pollutant") {
+write_annex_metaVariable <- function(wb, x, quiet, sheet = "META-Variable") {
     if (!quiet) message(" - Writing ", sheet)
     tmp <- unique(subset(x, select = c("user", "study", "home", "room", "variable")))
-    tmp <- with(tmp, interaction(user, study, home, room, variable, sep = "-", drop = TRUE))
-    x <- data.frame(ID                     = tmp,
-                    PollutantName          = "<Pollutant Name with Details>",
-                    PollutantUnit          = "<Measurement Unit>",
-                    PollutantInfo          = "<Additional Information>",
+    ID  <- with(tmp, interaction(user, study, home, room, variable, sep = "-", drop = TRUE))
+    x <- data.frame(ID                     = ID,
+                    VariableName           = tmp$variable,
+                    VariableUnit           = "<Measurement Unit>",
+                    VariableInfo           = "<Additional Information>",
                     MeasurementDevice      = "<Measurement Device Info>")
 
     writeData(wb, sheet = sheet, x = x, colNames = FALSE, startRow = 2, startCol = 1)
@@ -217,7 +217,7 @@ write_annex_metaPollutant <- function(wb, x, quiet, sheet = "META-Pollutant") {
 
 #' @importFrom openxlsx writeData
 #' @author Reto Stauffer
-write_annex_metaPeriod <- function(wb, x, quiet, sheet = "META-Period") {
+write_annex_metaSeason <- function(wb, x, quiet, sheet = "META-Season") {
     if (!quiet) message(" - Writing ", sheet)
     tmp <- unique(subset(x, select = c("user", "study", "home", "room", "variable")))
     tmp <- with(tmp, interaction(user, study, home, room, variable, sep = "-", drop = TRUE))

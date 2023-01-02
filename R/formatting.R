@@ -12,7 +12,7 @@
 #' @param room abbreviation for the name of the respective room
 #'
 #' @details  The function adds columns referring to the specific season and
-#' time of day (tod) for each time stamp. Pollutants will be on the left side,
+#' time of day (tod) for each time stamp. Variables will be on the left side,
 #' the date terms on the right including season and tod as well as other
 #' mandatory variables (home, room, etc.). If additional variables were given,
 #' these can also be found in the output.
@@ -24,7 +24,7 @@
 #' problems.
 #'
 #' The output contains at least seven columns in addition to the columns for
-#' the respective pollutants.
+#' the respective variables.
 #'
 #' @return Returns a data frame that has a specific format according to the
 #' formula provided

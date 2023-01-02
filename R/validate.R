@@ -39,7 +39,7 @@ annex_validate <- function(file, user, quiet = FALSE, ...) {
 
     # Checking for required data sheets
     required_sheets <- c("STAT", "META-Study", "META-Home", "META-Room",
-                         "META-Pollutant", "META-Period", "META-Time", "Definitions")
+                         "META-Variables", "META-Season", "META-Time", "Definitions")
     file_sheets     <- getSheetNames(file)
     missing_sheets  <- required_sheets[!required_sheets %in% file_sheets]
     if (length(missing_sheets) > 0)
@@ -170,7 +170,7 @@ annex_validate_sheet_STAT <- function(file, user, quiet, ...) {
 
     # Check if 'room' is valid
     check_for_allowed_rooms(data$room)
-    check_for_allowed_pollutants(data$variable)
+    check_for_allowed_variables(data$variable)
 
     # If we end up here everything is fine; continue
     return(TRUE)
@@ -296,7 +296,7 @@ annex_validate_sheet_metaRoom <- function(file, quiet, stat_meta, ..., sheet = "
 }
 
 #' @importFrom openxlsx read.xlsx
-annex_validate_sheet_metaPollutant <- function(file, quiet, stat_meta, ..., sheet = "META-Pollutant") {
+annex_validate_sheet_metaVariables <- function(file, quiet, stat_meta, ..., sheet = "META-Variables") {
 
     # Default return; will be changed if needed
     checkflag <- TRUE
@@ -314,7 +314,7 @@ annex_validate_sheet_metaPollutant <- function(file, quiet, stat_meta, ..., shee
 }
 
 #' @importFrom openxlsx read.xlsx
-annex_validate_sheet_metaPeriod <- function(file, quiet, stat_meta, ..., sheet = "META-Period") {
+annex_validate_sheet_metaSeason <- function(file, quiet, stat_meta, ..., sheet = "META-Season") {
 
     # Default return; will be changed if needed
     checkflag <- TRUE

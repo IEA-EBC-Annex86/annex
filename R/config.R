@@ -64,7 +64,7 @@ annex_check_config <- function(x) {
         stop("missing entry for 'column' where variable = 'datetime'")
 
     # Allowed variable names, study, home, and room
-    x$variable <- check_for_allowed_pollutants(x$variable)
+    x$variable <- check_for_allowed_variables(x$variable)
     x$room     <- check_for_allowed_rooms(x$room)
 
     # Duplicated columns?
@@ -99,10 +99,10 @@ annex_check_config <- function(x) {
 
 
 
-#' Checking for Allowed Pollutants
+#' Checking for Allowed Variables
 #'
 #' The XLSX file template.xlsx contains a series of
-#' pre-defined names for the pollutants (sheet 'Definitions').
+#' pre-defined names for the variables (sheet 'Definitions').
 #' This function checks if all user defined variable names
 #' are valid. Not case sensitive; will be adjusted if needed.
 #'
@@ -114,25 +114,25 @@ annex_check_config <- function(x) {
 #' @importFrom openxlsx read.xlsx
 #' @importFrom stats na.omit
 #' @author Reto Stauffer
-check_for_allowed_pollutants <- function(x) {
+check_for_allowed_variables <- function(x) {
     stopifnot(is.character(x), length(x) > 0, !any(is.na(x)))
 
     # Path to XLSX file to be read
     template_xlsx <- system.file("template/template.xlsx", package = "annex")
     tmp <- suppressMessages(read.xlsx(template_xlsx, sheet = "Definitions", sep.names = " "))
     stopifnot("Variable" %in% names(tmp))
-    allowed_pollutants <- na.omit(c("datetime", tmp$Variable))
+    allowed_variables <- na.omit(c("datetime", tmp$Variable))
 
     # Fix casing
-    idx_case <- match(tolower(x), tolower(allowed_pollutants))
-    if (!all(is.na(idx_case))) x[which(!is.na(idx_case))] <- allowed_pollutants[na.omit(idx_case)]
+    idx_case <- match(tolower(x), tolower(allowed_variables))
+    if (!all(is.na(idx_case))) x[which(!is.na(idx_case))] <- allowed_variables[na.omit(idx_case)]
 
     # Show error message of not-allowed variable names
-    idx <- which(!x %in% allowed_pollutants)
+    idx <- which(!x %in% allowed_variables)
     if (length(idx) > 0)
         stop("variable names ", paste(sprintf("'%s'", x[idx]), collapse = ", "),
              " not allowed. Allowed are: ",
-             paste(sprintf("'%s'", allowed_pollutants), collapse = ", "), ".")
+             paste(sprintf("'%s'", allowed_variables), collapse = ", "), ".")
 
     # Return
     return(x)
