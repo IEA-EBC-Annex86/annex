@@ -39,7 +39,7 @@ annex_validate <- function(file, user, quiet = FALSE, ...) {
 
     # Checking for required data sheets
     required_sheets <- c("STAT", "META-Study", "META-Home", "META-Room",
-                         "META-Variables", "META-Season", "META-Time", "Definitions")
+                         "META-Variable", "META-Season", "META-Time", "Definitions")
     file_sheets     <- getSheetNames(file)
     missing_sheets  <- required_sheets[!required_sheets %in% file_sheets]
     if (length(missing_sheets) > 0)
@@ -296,7 +296,7 @@ annex_validate_sheet_metaRoom <- function(file, quiet, stat_meta, ..., sheet = "
 }
 
 #' @importFrom openxlsx read.xlsx
-annex_validate_sheet_metaVariables <- function(file, quiet, stat_meta, ..., sheet = "META-Variables") {
+annex_validate_sheet_metaVariable <- function(file, quiet, stat_meta, ..., sheet = "META-Variable") {
 
     # Default return; will be changed if needed
     checkflag <- TRUE
