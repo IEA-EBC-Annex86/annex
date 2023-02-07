@@ -74,7 +74,7 @@ annex_write_stats(stats, file = "final_UIBK.xlsx", user = 1234)
 
 #### Where to get a user ID?
 
-Will be defined during Annex 86 meetings or contact [Gabriel](gabriel.rojas@uibk.ac.at).
+Will be defined during Annex 86 meetings or contact [Gabriel](mailto:gabriel.rojas@uibk.ac.at).
 
 ## Update meta information {#meta}
 
