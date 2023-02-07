@@ -118,17 +118,14 @@ check_for_allowed_variables <- function(x) {
     stopifnot(is.character(x), length(x) > 0, !any(is.na(x)))
 
     # Path to XLSX file to be read
-    template_xlsx <- system.file("template/template.xlsx", package = "annex")
-    tmp <- suppressMessages(read.xlsx(template_xlsx, sheet = "Definitions", sep.names = " "))
-    stopifnot("Variable" %in% names(tmp))
-    allowed_variables <- na.omit(c("datetime", tmp$Variable))
+    allowed_variables <- annex_variable_definition()$name
 
     # Fix casing
     idx_case <- match(tolower(x), tolower(allowed_variables))
     if (!all(is.na(idx_case))) x[which(!is.na(idx_case))] <- allowed_variables[na.omit(idx_case)]
 
     # Show error message of not-allowed variable names
-    idx <- which(!x %in% allowed_variables)
+    idx <- which(!x == "datetime" & !x %in% allowed_variables)
     if (length(idx) > 0)
         stop("variable names ", paste(sprintf("'%s'", x[idx]), collapse = ", "),
              " not allowed. Allowed are: ",
@@ -155,25 +152,107 @@ check_for_allowed_variables <- function(x) {
 #' @author Reto Stauffer
 check_for_allowed_rooms <- function(x) {
     stopifnot(is.character(x), length(x) > 0)
-
-    # Path to XLSX file to be read
-    template_xlsx <- system.file("template/template.xlsx", package = "annex")
-    tmp <- suppressMessages(read.xlsx(template_xlsx, sheet = "Definitions", sep.names = " "))
-    stopifnot("Measurement location" %in% names(tmp))
-    allowed_rooms <- na.omit(tmp[["Measurement location"]])
+    allowed_rooms <- annex_room_definition()$name
 
     # Fix casing
     idx_case <- match(tolower(x), tolower(allowed_rooms))
     if (!all(is.na(idx_case))) x[which(!is.na(idx_case))] <- allowed_rooms[na.omit(idx_case)]
 
     # Show error message of not-allowed variable names
-    idx <- which(!is.na(x) & !x %in% allowed_rooms)
+    pattern <- sprintf("^(%s)[0-9]{0,2}$", paste(allowed_rooms, collapse = "|"))
+    idx <- which(!is.na(x) & !grepl(pattern, x))
     if (length(idx) > 0)
         stop("room names ", paste(sprintf("'%s'", x[idx]), collapse = ", "),
              " not allowed. Allowed are: ",
-             paste(sprintf("'%s'", allowed_rooms), collapse = ", "), ".")
+             paste(sprintf("'%s'", allowed_rooms), collapse = ", "),
+             " followed by up to two digits",
+             sprintf("(e.g., '%1$s', '%1$s1', '%1$s2' or '%1$s35')", allowed_rooms[[1]]))
+
 
     # Return
     return(x)
 
 }
+
+
+
+#' Variable information
+#'
+#' The template not only contains the definition of the allowed variables,
+#' it also states whether or not additional information is required (or
+#' optional) and an upper and lower bound to be considered 'valid'.
+#' Used for quality flags.
+#'
+#' @details If \code{as_list = TRUE} a list of lists is returned, else
+#' a \code{data.frame}.
+#'
+#' **List:** The name of the list corresponds to the name of the variable,
+#' whereas each entry contains a list with a logical flag if additional
+#' information in the META sheet is \code{required} as well as a numeric
+#' \code{lower} and \code{upper} bound which defines in which range
+#' an observation is considered to be valid. Can be \code{NA} if not
+#' specified (both or one of them).
+#'
+#' If \code{as_list = FALSE} (default) the same information is returned
+#' as a \code{data.frame} containing the same information.
+#'
+#' @return Returns either a \code{data.frame} or \code{list} of \code{lists}
+#' which contains the allowed (defined) variables.
+#'
+#' @seealso check_for_allowed_variables
+#'
+#' @author Reto Stauffer
+#' @export
+annex_variable_definition <- function(as_list = FALSE) {
+    # Path to XLSX file to be read
+    template_xlsx <- system.file("template/template.xlsx", package = "annex")
+    tmp <- suppressMessages(read.xlsx(template_xlsx, sheet = "Definitions", sep.names = " "))
+    required <- c("Variable" = "name",
+                  "Pollution: Additional information required" = "required",
+                  "Lower bound" = "lower",
+                  "Upper bound" = "upper")
+    stopifnot(names(required) %in% names(tmp))
+
+    # Extracting information needed
+    res <- subset(tmp, select = names(required))
+    names(res) <- unname(required)
+    res <- transform(subset(res, !is.na(name)),
+                     required = as.logical(required),
+                     lower = as.numeric(lower),
+                     upper = as.numeric(upper))
+    if (as_list) {
+        res <- setNames(lapply(seq_len(NROW(res)),
+                               function(i) as.list(subset(res[i, ], select = -name))),
+                        res$name)
+    }
+    return(res)
+}
+
+
+#' Room information
+#'
+#' The template contains a series of base abbrevations allowed to define
+#' a room alongside the 'long name'. This function returns the definition
+#' as a \code{data.frame}.
+#'
+#' @return \code{data.frame} with base room abbrevation plus long name.
+#'
+#' @seealso check_for_allowed_rooms
+#'
+#' @author Reto Stauffer
+#' @export
+annex_room_definition <- function() {
+    # Path to XLSX file to be read
+    template_xlsx <- system.file("template/template.xlsx", package = "annex")
+    tmp <- suppressMessages(read.xlsx(template_xlsx, sheet = "Definitions", sep.names = " "))
+    required <- c("Measurement location"             = "name",
+                  "Measurement location description" = "long_name")
+    stopifnot(names(required) %in% names(tmp))
+
+    # Extracting information needed
+    res <- subset(tmp, select = names(required))
+    names(res) <- unname(required)
+    res <- subset(res, !is.na(name))
+    return(res)
+}
+

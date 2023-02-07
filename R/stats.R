@@ -60,6 +60,42 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
         mean(x, na.rm = na.rm)^2 * ((1 - mean(x, na.rm = na.rm)) / var(x, na.rm = na.rm) - 1 / mean(x, na.rm = na.rm))
     }
 
+    # Adding quality flag
+    add_quality_flag <- function(x, variables) {
+        vinfo <- annex_variable_definition(as_list = TRUE)
+        for (v in variables) {
+            info <- vinfo[[v]]
+            if (is.null(tmp)) stop(sprintf("got an invalid variable `%s`", v))
+            # New variable name: quality_<varaible_name> for "quality flag"
+            nv <- sprintf("quality_%s", v)
+            # Else checking range
+            if (!is.na(info$lower) && !is.na(info$upper)) {
+                x[[nv]] <- x[[v]] >= info$lower & x[[v]] <= info$upper
+            } else if (!is.na(info$lower)) {
+                x[[nv]] <- x[[v]] >= info$lower
+            } else if (!is.na(info$upper)) {
+                x[[nv]] <- x[[v]] <= info$upper
+            } else {
+                x[[nv]] <- !is.na(x[[v]])
+            }
+        }
+        return(x)
+    }
+    object <- add_quality_flag(object, f$var)
+
+    # Adding interval since last observation; done on a variable level
+    add_interval_since_last <- function(x, variables) {
+        for (v in variables) {
+            # New variable name: interval_<varaible_name> for "interval"
+            nv <- sprintf("interval_%s", v)
+            x[[nv]] <- NA_integer_
+            idx <- which(!is.na(x[[v]]))
+            x[idx, nv] <- as.integer(c(NA_integer_, as.numeric(diff(object$datetime[idx]), units = "secs")))
+        }
+        return(x)
+    }
+    object <- add_interval_since_last(object, f$var)
+
     # Reshaping result of aggregate()
     convert <- function(var, data, f, gx = c("season", "tod")) {
         res <- as.data.frame(data[, var])
@@ -78,6 +114,9 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
     # Applies all the functions of the functionlist to an input x
     # Warning: uses scoping (functionlist)
     get_stats <- function(x) do.call(c, lapply(functionlist, function(FUN, x) FUN(x), x = x))
+    get_interval_stats <- function(x) {
+        c("min" = min(x), "max" = max(x))
+    }
 
     # Aggregate the data
     object_split  <- split(object, formula(paste("~ ", paste(f$group, collapse = " + "))), drop = TRUE)
@@ -86,13 +125,30 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
         if (sum(!is.na(x[, f$vars])) == 0) return(NULL)
         # Drop columns without non-missing values
         check_na <- sapply(x[, f$vars], function(x) sum(!is.na(x)))
-        #use_var  <- f$var[f$var %in% names(check_na)[check_na > 0]]
-        use_var <- f$var
-        af <- sprintf("cbind(%s) ~ %s", paste(use_var, collapse = ", "),
+
+        # Create formula to aggregate and perform aggregation for the observations
+        # fd: formula/aggregation for 'data' (the observations themselves)
+        fd <- sprintf("cbind(%s) ~ %s", paste(f$vars, collapse = ", "),
                       paste(c(f$group, gx), collapse = " + "))
-        # Else perform the aggregation
-        x <- aggregate(formula(af), x, get_stats, na.action = na.pass)
-        return(lapply(use_var, convert, data = x, f = f, gx = gx))
+        res1 <- aggregate(formula(fd), x, get_stats, na.action = na.pass)
+
+        # fq: formula/aggregation for 'quality'
+        fq <- sprintf("cbind(%s) ~ %s",
+                      paste(sprintf("quality_%s", f$vars), collapse = ", "),
+                      paste(c(f$group, gx), collapse = " + "))
+        res2 <- aggregate(formula(fq), x, function(x) mean(x, na.rm = TRUE))
+
+        # fi: formula/aggregation for 'interval'
+        fi <- sprintf("cbind(%s) ~ %s",
+                      paste(sprintf("interval_%s", f$vars), collapse = ", "),
+                      paste(c(f$group, gx), collapse = " + "))
+        res3 <- aggregate(formula(fi), x, get_interval_stats, na.action = na.pass)
+        print(head(res3))
+        stop('xyz')
+        print(head(x))
+        stop('x')
+
+        return(lapply(f$vars, convert, data = x, f = f, gx = gx))
     }
 
     # Splitting data; aggregate data
