@@ -1,5 +1,5 @@
 ---
-title: "Config File"
+title: "Config feature"
 author: "Reto Stauffer"
 output:
   html_document:
@@ -16,5 +16,90 @@ vignette: >
   %\VignettePackage{annex}
 ---
 
-To be written; explain features of the config file which can
-be used with the annex package.
+## Introduction
+
+To make the pre-processing of the data for the further analysis
+more user-friendly and easier to automatize, the `annex` package
+provides a configuration feature.
+
+Technically is just a regular [`data.frame`](https://discdown.org/rprogramming/dataframes.html)
+used as a lookup table to bring the data into the expected format which can come
+from any source (e.g., from a text file, XLSX file, created via script, ...).
+
+## Configuration content and purpose
+
+
+```{r, include = FALSE}
+file <- system.file("data/demo_Bedroom_config.TXT", package = "annex")
+stopifnot(length(file) == 1, nchar(file) > 0, file.exists(file))
+config <- read.table(file,
+                     comment.char = "#", sep = "",
+                     header = TRUE, na.strings = c("NA", "empty"))
+```
+
+The following output shows the first `n = 6` lines from the configuration object
+used in the article [Analysis from textfiles](articles/from_textfiles.html);
+the first six lines of a data.frame with $`r ncol(config)`$ variables (columns).
+
+```{r}
+head(config, n = 6)
+```
+
+This is used to tell the `annex` package which information needs to be processed,
+where to find the important information, and how to translate (rename) the variables
+to meet the `annex` standard format.
+
+#### The five required columns
+
+* `column`: The name of the column in the imported data set (e.g., from an
+  [XLSX file](articles/from_xlsx.html) or [textfile](articles/from_textfiles.html)).
+* `variable`: Defines the _new variable name_; one of the different variables (parameters)
+  expected by the annex package.
+* `study`: Name of the study the data belong to
+* `home`: Name of the home (building) the data belong to
+* `room`: Abbreviation of the type of room the data belong to
+
+While `column`, `study` and `home` can be chosen freely by the user, only a series of
+pre-defined values are available for `variable` and `room` (not case sensitive).
+
+#### The required rows
+
+There is one required row which must exist which is the one which defines
+where the date and time information can be found. This row defines the
+variable `"datetime"` and where it is located in the imported data set
+(in this case a variable called `"X"`).
+
+All other rows specify which column in the imported data set contains
+and which information should be processed. Variables not listed in this
+configuration (but available in the imported data set) will be ignored
+in the processing steps (namely when calling `annex_prepare()`).
+
+
+#### Purpose
+
+The purpose of this object is to prepare an imported data set into
+the object expected by the `annex` package for the analysis before
+saving the data for later use.
+
+It is used to define where the required information is stored and
+used as a lookup table (translation table) to prepare/rename the
+variables, to format the data according to the `annex` standard format
+to be used for the further processing steps.
+
+
+## Read/import configuration
+
+The two articles
+[Analysis from XLSX](articles/from_xlsx.html)
+[Analysis from textfiles](from_textfiles.html)
+show examples how to import (read) such a configuration from an XLSX file
+or a text file. Any file which can be imported into a data.frame via _R_
+can be used.
+
+## Technical note
+
+Note that the configuration is a convenience feature. Technically it can be
+bypassed by preparing the data set outside annex before starting with the 
+analysis.
+
+
