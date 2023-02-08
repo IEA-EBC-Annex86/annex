@@ -183,6 +183,9 @@ check_for_allowed_rooms <- function(x) {
 #' optional) and an upper and lower bound to be considered 'valid'.
 #' Used for quality flags.
 #'
+#' @param as_list logical. If \code{FALSE} (default) a \code{data.frame}
+#'        will be returned, if \code{TRUE} a list (see Details).
+#'
 #' @details If \code{as_list = TRUE} a list of lists is returned, else
 #' a \code{data.frame}.
 #'
@@ -204,6 +207,7 @@ check_for_allowed_rooms <- function(x) {
 #' @author Reto Stauffer
 #' @export
 annex_variable_definition <- function(as_list = FALSE) {
+    as_list <- as.logical(as_list)[1L]
     # Path to XLSX file to be read
     template_xlsx <- system.file("template/template.xlsx", package = "annex")
     tmp <- suppressMessages(read.xlsx(template_xlsx, sheet = "Definitions", sep.names = " "))

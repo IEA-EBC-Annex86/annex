@@ -6,6 +6,10 @@
 \usage{
 annex_variable_definition(as_list = FALSE)
 }
+\arguments{
+\item{as_list}{logical. If \code{FALSE} (default) a \code{data.frame}
+will be returned, if \code{TRUE} a list (see Details).}
+}
 \value{
 Returns either a \code{data.frame} or \code{list} of \code{lists}
 which contains the allowed (defined) variables.
