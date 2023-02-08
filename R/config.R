@@ -176,7 +176,7 @@ check_for_allowed_rooms <- function(x) {
 
 
 
-#' Variable information
+#' Variable definition information
 #'
 #' The template not only contains the definition of the allowed variables,
 #' it also states whether or not additional information is required (or
@@ -229,13 +229,14 @@ annex_variable_definition <- function(as_list = FALSE) {
 }
 
 
-#' Room information
+#' Room definition information
 #'
 #' The template contains a series of base abbrevations allowed to define
 #' a room alongside the 'long name'. This function returns the definition
 #' as a \code{data.frame}.
 #'
-#' @return \code{data.frame} with base room abbrevation plus long name.
+#' @return \code{data.frame} with base room abbrevation, long description,
+#' plus a series of examples of valid room labels.
 #'
 #' @seealso check_for_allowed_rooms
 #'
@@ -253,6 +254,11 @@ annex_room_definition <- function() {
     res <- subset(tmp, select = names(required))
     names(res) <- unname(required)
     res <- subset(res, !is.na(name))
+
+    # Adding a few examples
+    fn <- function(x) paste(c(x, sprintf("%s%d", x, c(1, 2, 25))), collapse = ", ")
+    res$examples_valid_labels <- sapply(res$name, fn)
+
     return(res)
 }
 

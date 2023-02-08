@@ -26,7 +26,8 @@
 #'
 #' @seealso annex_stats_reshape annes_write_stats
 #'
-#' @importFrom dplyr bind_rows
+#' @importFrom dplyr bind_rows Reduce
+#' @importFrom tidyr pivot_longer
 #' @import stats
 #' @author Reto Stauffer
 #' @export
@@ -34,6 +35,29 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
     stopifnot(inherits(object, "annex"))
     format <- match.arg(format, c("wide", "long"))
     f <- annex_parse_formula(attr(object, "formula"))
+
+    # To be able to calculate intevals between measurements we need
+    # to split the data according to f$group, sort them, calculate differences,
+    # and combine the object once again.
+    # Adding interval since last observation; done on a variable level
+    add_interval_since_last <- function(x, f) {
+        # Helper function
+        fn <- function(x) {
+            x <- x[order(x[[f$time]]), ]
+            for (v in f$vars) {
+                # New variable name: interval_<varaible_name> for "interval"
+                nv <- sprintf("interval_%s", v)
+                x[[nv]] <- NA_integer_
+                idx <- which(!is.na(x[[v]]))
+                x[idx, nv] <- as.integer(c(NA_integer_, as.numeric(diff(object$datetime[idx]), units = "secs")))
+            }
+            return(x)
+        }
+        fi <- formula(paste("~ ", paste(f$group, collapse = " + ")))
+        x <- do.call(rbind, lapply(split(object, fi, drop = TRUE), fn))
+        rownames(x) <- NULL
+        return(x)
+    }
 
     # probs is used to get the quantiles. By default probs will
     # be seq(0, 1, by = 0.05) including (0.005, 0.025 and 0.975, 0.995)
@@ -65,7 +89,7 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
         vinfo <- annex_variable_definition(as_list = TRUE)
         for (v in variables) {
             info <- vinfo[[v]]
-            if (is.null(tmp)) stop(sprintf("got an invalid variable `%s`", v))
+            if (is.null(info)) stop(sprintf("got an invalid variable `%s`", v))
             # New variable name: quality_<varaible_name> for "quality flag"
             nv <- sprintf("quality_%s", v)
             # Else checking range
@@ -81,24 +105,11 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
         }
         return(x)
     }
-    object <- add_quality_flag(object, f$var)
-
-    # Adding interval since last observation; done on a variable level
-    add_interval_since_last <- function(x, variables) {
-        for (v in variables) {
-            # New variable name: interval_<varaible_name> for "interval"
-            nv <- sprintf("interval_%s", v)
-            x[[nv]] <- NA_integer_
-            idx <- which(!is.na(x[[v]]))
-            x[idx, nv] <- as.integer(c(NA_integer_, as.numeric(diff(object$datetime[idx]), units = "secs")))
-        }
-        return(x)
-    }
-    object <- add_interval_since_last(object, f$var)
 
     # Reshaping result of aggregate()
-    convert <- function(var, data, f, gx = c("season", "tod")) {
-        res <- as.data.frame(data[, var])
+    convert <- function(var, data, f, gx = c("season", "tod"), prefix = NULL) {
+        res   <- as.data.frame(data[, if (is.null(prefix)) var else paste(prefix, var, sep = "_")])
+        if (!is.null(prefix)) names(res) <- paste(prefix, names(res), sep = "_")
         res <- cbind(transform(data[, c(f$group, gx)], variable = var), res)
         return(res)
     }
@@ -115,10 +126,17 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
     # Warning: uses scoping (functionlist)
     get_stats <- function(x) do.call(c, lapply(functionlist, function(FUN, x) FUN(x), x = x))
     get_interval_stats <- function(x) {
-        c("min" = min(x), "max" = max(x))
+        tmp <- unname(quantile(x, probs = 0:4/4, na.rm = TRUE))
+        c(Min = tmp[1], Q1 = tmp[2], Median = tmp[3],
+          Mean = mean(tmp, na.rm = TRUE), Q3 = tmp[4], Max = tmp[5])
     }
 
-    # Aggregate the data
+    # ---------------------------------------
+    # Modify and aggregate the data
+    # ---------------------------------------
+    object <- add_interval_since_last(object, f)
+    object <- add_quality_flag(object, f$var)
+
     object_split  <- split(object, formula(paste("~ ", paste(f$group, collapse = " + "))), drop = TRUE)
     fn <- function(x, f, gx = c("season", "tod")) {
         # In case everything is NA; return NULL straight away
@@ -131,36 +149,40 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
         fd <- sprintf("cbind(%s) ~ %s", paste(f$vars, collapse = ", "),
                       paste(c(f$group, gx), collapse = " + "))
         res1 <- aggregate(formula(fd), x, get_stats, na.action = na.pass)
+        res1 <- do.call(rbind, lapply(f$vars,
+                                      convert, data = res1, f = f, gx = gx))
 
         # fq: formula/aggregation for 'quality'
         fq <- sprintf("cbind(%s) ~ %s",
                       paste(sprintf("quality_%s", f$vars), collapse = ", "),
                       paste(c(f$group, gx), collapse = " + "))
-        res2 <- aggregate(formula(fq), x, function(x) mean(x, na.rm = TRUE))
+        res2 <- aggregate(formula(fq), x, function(x) 1e2 * round(mean(x, na.rm = TRUE), 4), na.action = na.pass)
+        res2 <- pivot_longer(res2, names_to = "variable", values_to = "quality",
+                             cols = paste("quality", f$vars, sep = "_"))
+        res2$variable <- sub("^quality_", "", res2$variable)
 
         # fi: formula/aggregation for 'interval'
         fi <- sprintf("cbind(%s) ~ %s",
                       paste(sprintf("interval_%s", f$vars), collapse = ", "),
                       paste(c(f$group, gx), collapse = " + "))
         res3 <- aggregate(formula(fi), x, get_interval_stats, na.action = na.pass)
-        print(head(res3))
-        stop('xyz')
-        print(head(x))
-        stop('x')
-
-        return(lapply(f$vars, convert, data = x, f = f, gx = gx))
+        res3 <- do.call(rbind, lapply(f$vars, convert, data = res3, f = f, gx = gx, prefix = "interval"))
+        # Merge and return
+        return(Reduce(merge, list(res2, res3, res1)))
     }
 
     # Splitting data; aggregate data
-    res <- unlist(lapply(object_split, fn, f = f), recursive = FALSE)
+#    res <- unlist(lapply(object_split, fn, f = f), recursive = FALSE)
+    res <- lapply(object_split, fn, f = f)
     res <- if (length(res) == 1) res[[1]] else bind_rows(res)
 
     # Same but grouping only by study|home|room|season (all day long)
     res_all_day    <- fn(object, f, c("season"))
-    res_all_day    <- transform(do.call(rbind, res_all_day), tod  = "all")
+    res_all_day    <- transform(res_all_day, tod  = "all")
+
     # Same but grouping only by study|home|room|tod (all season long)
     res_all_season <- fn(object, f, c("tod"))
-    res_all_season <- transform(do.call(rbind, res_all_season), season = "all")
+    res_all_season <- transform(res_all_season, season = "all")
 
     res <- bind_rows(list(res_all_day, res_all_season, res))
     for (n in c("study", "home", "room", "season", "tod", "variable")) {

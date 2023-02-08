@@ -104,8 +104,7 @@ annex_write_stats <- function(x, file, user, overwrite = FALSE, ..., quiet = FAL
 
     # Ensure all sheets are in the XLSX file (as we don't create them, we manipulate them)
     file_sheets <- getSheetNames(file)
-    required_sheets <- c("STAT", "META-Study", "META-Home", "META-Room",
-                         "META-Variable", "META-Season")
+    required_sheets <- c("STAT", "META-Study", "META-Home", "META-Room", "META-Variable")
     if (!all(required_sheets %in% file_sheets))
         stop("not all required sheets exist in the XLSX file '", file, "'. Missing: ",
              paste(sprintf("'%s'", required_sheets[!required_sheets %in% file_sheets]), collapse = ", "))
@@ -124,7 +123,6 @@ annex_write_stats <- function(x, file, user, overwrite = FALSE, ..., quiet = FAL
     write_annex_metaHome(workbook,      x, quiet)
     write_annex_metaRoom(workbook,      x, quiet)
     write_annex_metaVariable(workbook, x, quiet)
-    write_annex_metaSeason(workbook,    x, quiet)
     write_annex_STAT(workbook,          x, quiet)
 
     # Saving final file

@@ -2,10 +2,30 @@
 # Development todo list
 
 * [ ] Currently I rely on the order of the columns
-* [ ] Remove stats which are always NA
 * [ ] When checking METa (annex_validate_sheet_metaXxxx)
       some columns must be numeric; check for numeric? Not yet implemented
 * [ ] Allow for custom user functions when calling annex_stats?
+
+
+# annex 0.2-1
+
+Release candidate for testing in February 2023 with some major changes
+based on the discussions in the meeting early February.
+
+* Removed "META-Season" sheet from XLSX file.
+* Changed aggregation from seasonal (quarterly) to monthly.
+* Allowing rooms to be numbered for differenciation by adding up to two digits.
+    E.g. BED, BED1, BED2, BED66 (same for all room types).
+* Two new functions `annex_variable_definition()` and `annex_room_definition()` which
+    return information about allowed variables/room labels among other information.
+* Added quality flag to stats; percentage of values within a defined range. These bounds
+    are defined in the "Definitions" sheet in the XLSX file and can be accessed
+    calling `annex_variable_definition()`.
+* Added interval (measurement interval) information to stats; time in seconds to the
+    previous observation recorded in the data set. Calculated on a varaible level; if no
+    value is present (missing value) this will be considered to 'not have been mesured'
+    which leads to longer interval times. Currently reporting five number summary plus
+
 
 # annex 0.2-0
 
