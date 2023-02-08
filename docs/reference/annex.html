@@ -64,7 +64,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">annex</span><span class="op">(</span><span class="va">formula</span>, <span class="va">data</span>, meta <span class="op">=</span> <span class="cn">NULL</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">annex</span><span class="op">(</span><span class="va">formula</span>, <span class="va">data</span>, <span class="va">tz</span>, meta <span class="op">=</span> <span class="cn">NULL</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for annex</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
@@ -94,6 +94,13 @@ see 'Details' for more information.</p></dd>
 
 <dt>data</dt>
 <dd><p><code>data.frame</code> containing the obervations/data.</p></dd>
+
+
+<dt>tz</dt>
+<dd><p>character, time zone definition (e.g., <code>"Europe/Berlin"</code> or
+<code>"UTC"</code>); required.  <code><a href="https://rdrr.io/r/base/timezones.html" class="external-link">OlsonNames()</a></code> returns a list of possible
+candidates; abbrevated timezones (such as <code>"CET"</code> or <code>"UTC"</code>)
+should also work. Important to properly calculate month and time of day.</p></dd>
 
 
 <dt>meta</dt>

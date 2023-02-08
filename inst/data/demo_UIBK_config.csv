@@ -9,9 +9,9 @@ CO2-WZ_W2 [ppm] avg,CO2,demo,W2,LIV
 T-WZ_W3 [°C] avg,T,demo,W3,LIV
 rH-WZ_W3 [% rH] avg,rH,demo,W3,LIV
 CO2-WZ_W3 [ppm] avg,CO2,demo,W3,LIV
-T-SZ_W3 [°C] avg,T,demo,W3,BED
-rH-SZ_W3 [% rH] avg,rH,demo,W3,BED
-CO2-SZ_W3 [ppm] avg,CO2,demo,W3,BED
+T-SZ_W3 [°C] avg,T,demo,W3,BED1
+rH-SZ_W3 [% rH] avg,rH,demo,W3,BED1
+CO2-SZ_W3 [ppm] avg,CO2,demo,W3,BED1
 T-WZ_W4 [°C] avg,T,demo,W4,LIV
 rH-WZ_W4 [% rH] avg,rH,demo,W4,LIV
 CO2-WZ_W4 [ppm] avg,CO2,demo,W4,LIV
@@ -21,9 +21,9 @@ CO2-WZ_W5 [ppm] avg,CO2,demo,W5,LIV
 T-WZ_W6 [°C] avg,T,demo,W6,LIV
 rH-WZ_W6 [% rH] avg,rH,demo,W6,LIV
 CO2-WZ_W6 [ppm] avg,CO2,demo,W6,LIV
-T-SZ_W6 [°C] avg,T,demo,W6,BED
-rH-SZ_W6 [% rH] avg,rH,demo,W6,BED
-CO2-SZ_W6 [ppm] avg,CO2,demo,W6,BED
+T-SZ_W6 [°C] avg,T,demo,W6,BED1
+rH-SZ_W6 [% rH] avg,rH,demo,W6,BED1
+CO2-SZ_W6 [ppm] avg,CO2,demo,W6,BED1
 T-RL_W3 [°C] avg,T,demo,W3,OTH
 T-RL_W6 [°C] avg,T,demo,W6,OTH
 T-WZ_W7 [°C] avg,T,demo,W7,LIV
@@ -35,9 +35,9 @@ CO2-WZ_W8 [ppm] avg,CO2,demo,W8,LIV
 T-WZ_W9 [°C] avg,T,demo,W9,LIV
 rH-WZ_W9 [% rH] avg,rH,demo,W9,LIV
 CO2-WZ_W9 [ppm] avg,CO2,demo,W9,LIV
-T-SZ_W9 [°C] avg,T,demo,W9,BED
-rH-SZ_W9 [% rH] avg,rH,demo,W9,BED
-CO2-SZ_W9 [ppm] avg,CO2,demo,W9,BED
+T-SZ_W9 [°C] avg,T,demo,W9,BED1
+rH-SZ_W9 [% rH] avg,rH,demo,W9,BED1
+CO2-SZ_W9 [ppm] avg,CO2,demo,W9,BED1
 T-WZ_W10 [°C] avg,T,demo,W10,LIV
 rH-WZ_W10 [% rH] avg,rH,demo,W10,LIV
 CO2-WZ_W10 [ppm] avg,CO2,demo,W10,LIV
@@ -47,9 +47,9 @@ CO2-WZ_W11 [ppm] avg,CO2,demo,W11,LIV
 T-WZ_W12 [°C] avg,T,demo,W12,LIV
 rH-WZ_W12 [% rH] avg,rH,demo,W12,LIV
 CO2-WZ_W12 [ppm] avg,CO2,demo,W12,LIV
-T-SZ_W12 [°C] avg,T,demo,W12,BED
-rH-SZ_W12 [% rH] avg,rH,demo,W12,BED
-CO2-SZ_W12 [ppm] avg,CO2,demo,W12,BED
+T-SZ_W12 [°C] avg,T,demo,W12,BED1
+rH-SZ_W12 [% rH] avg,rH,demo,W12,BED1
+CO2-SZ_W12 [ppm] avg,CO2,demo,W12,BED1
 T-RL_W9 [°C] avg,T,demo,W9,OTH
 T_RL_W12 [°C] avg,T,demo,W12,OTH
 T_WZ_W13 [°C] avg,T,demo,W13,LIV
@@ -61,9 +61,9 @@ CO2_WZ_W14 [ppm] avg,CO2,demo,W14,LIV
 T_WZ_W15 [°C] avg,T,demo,W15,LIV
 rH_WZ_W15 [% rH] avg,rH,demo,W15,LIV
 CO2_WZ_W15 [ppm] avg,CO2,demo,W15,LIV
-T_SZ_W15 [°C] avg,T,demo,W15,BED
-rH_SZ_W15 [% rH] avg,rH,demo,W15,BED
-CO2_SZ_W15 [ppm] avg,CO2,demo,W15,BED
+T_SZ_W15 [°C] avg,T,demo,W15,BED1
+rH_SZ_W15 [% rH] avg,rH,demo,W15,BED1
+CO2_SZ_W15 [ppm] avg,CO2,demo,W15,BED1
 T_WZ_W16 [°C] avg,T,demo,W16,LIV
 rH_WZ_W16 [% rH] avg,rH,demo,W16,LIV
 CO2_WZ_W16 [ppm] avg,CO2,demo,W16,LIV
@@ -73,9 +73,9 @@ CO2_WZ_W17 [ppm] avg,CO2,demo,W17,LIV
 T_WZ_W18 [°C] avg,T,demo,W18,LIV
 rH_WZ_W18 [% rH] avg,rH,demo,W18,LIV
 CO2_WZ_W18 [ppm] avg,CO2,demo,W18,LIV
-T_SZ_W18 [°C] avg,T,demo,W18,BED
-rH_SZ_W18 [% rH] avg,rH,demo,W18,BED
-CO2_SZ_W18 [ppm] avg,CO2,demo,W18,BED
+T_SZ_W18 [°C] avg,T,demo,W18,BED1
+rH_SZ_W18 [% rH] avg,rH,demo,W18,BED1
+CO2_SZ_W18 [ppm] avg,CO2,demo,W18,BED1
 T_RL_W15 [°C] avg,T,demo,W15,OTH
 T_RL_W18 [°C] avg,T,demo,W18,OTH
 Pyro [W/m2] avg,Other,demo,unknown,OTH

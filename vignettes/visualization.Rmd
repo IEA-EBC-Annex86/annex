@@ -46,7 +46,8 @@ config <- subset(config, process == TRUE) # Remove all rows process = FALSE
 # Prepare annex object
 library("annex")
 prepared_df <- annex_prepare(raw_df, config, quiet = TRUE)
-annex_df    <- annex(RH + T + CO2 ~ datetime | study + home + room, data = prepared_df)
+annex_df    <- annex(RH + T + CO2 ~ datetime | study + home + room,
+                     data = prepared_df, tz = "Europe/Berlin")
 dim(annex_df)
 class(annex_df)
 ```
@@ -106,8 +107,8 @@ demo plot following afterwards.
 tmp    <- stats[grepl("^p[0-9\\.]+$", stats$stats), ]
 # Extract numeric value for plotting
 tmp$p  <- as.numeric(gsub("p", "", tmp$stats))
-# Unique ID as an interaction of study, home, room, season, and tod
-tmp$ID <- with(tmp, interaction(study, home, room, season, tod))
+# Unique ID as an interaction of study, home, room, month, and tod
+tmp$ID <- with(tmp, interaction(study, home, room, month, tod))
 ```
 
 ```{r viz_ggplot_T, fig = TRUE, fig.width = 10, fig.height = 8}
@@ -118,9 +119,9 @@ ggplot(subset(tmp, variable == "T")) +
     ggtitle("Empirical Cumulative Distribution Function of Temperature by Room Type")
 ```
 
-```{r viz_ggplot_CO2, fig = TRUE, fig.width = 10, fig.height = 8}
+```{r viz_ggplot_CO2, fig = TRUE, fig.width = 10, fig.height = 5}
 ggplot(subset(tmp, variable == "CO2")) +
-    geom_line(aes(x = p, y = value, col = interaction(season, tod, sep = " - "), group = ID)) +
+    geom_line(aes(x = p, y = value, col = interaction(month, tod, sep = " - "), group = ID)) +
     facet_wrap(~ room) +
     ggtitle("Empirical Cumulative Distribution Function of CO2 Concentration by Room Type")
 ```

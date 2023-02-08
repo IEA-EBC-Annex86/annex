@@ -127,7 +127,8 @@ check_for_allowed_variables <- function(x) {
     # Show error message of not-allowed variable names
     idx <- which(!x == "datetime" & !x %in% allowed_variables)
     if (length(idx) > 0)
-        stop("variable names ", paste(sprintf("'%s'", x[idx]), collapse = ", "),
+        stop(sprintf("variable name%s ", ifelse(length(idx) == 1, "", "s")),
+             paste(sprintf("'%s'", x[idx]), collapse = ", "),
              " not allowed. Allowed are: ",
              paste(sprintf("'%s'", allowed_variables), collapse = ", "), ".")
 
@@ -147,7 +148,8 @@ check_for_allowed_variables <- function(x) {
 #' @param x character vector with room names.
 #'
 #' @return Character vector (with possibly adjusted) room
-#' names, or fails.
+#' names, or fails. Not case sensitive for checking, but
+#' will return everything in uppercase (\code{toupper(x)}).
 #'
 #' @author Reto Stauffer
 check_for_allowed_rooms <- function(x) {
@@ -160,9 +162,10 @@ check_for_allowed_rooms <- function(x) {
 
     # Show error message of not-allowed variable names
     pattern <- sprintf("^(%s)[0-9]{0,2}$", paste(allowed_rooms, collapse = "|"))
-    idx <- which(!is.na(x) & !grepl(pattern, x))
+    idx <- which(!is.na(x) & !grepl(pattern, x, ignore.case = TRUE))
     if (length(idx) > 0)
-        stop("room names ", paste(sprintf("'%s'", x[idx]), collapse = ", "),
+        stop(sprintf("room name%s ", ifelse(length(idx) == 1, "", "s")),
+             paste(sprintf("'%s'", x[idx]), collapse = ", "),
              " not allowed. Allowed are: ",
              paste(sprintf("'%s'", allowed_rooms), collapse = ", "),
              " followed by up to two digits",
@@ -170,8 +173,7 @@ check_for_allowed_rooms <- function(x) {
 
 
     # Return
-    return(x)
-
+    return(toupper(x))
 }
 
 

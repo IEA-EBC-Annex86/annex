@@ -152,7 +152,8 @@ the data. The three parts of the formula are:
 * Part three the grouping, typically `study + home + room`
 
 ```{r calling_annex}
-annex_df <- annex(RH + T + CO2 ~ datetime | study + home + room, data = prepared_df)
+annex_df <- annex(RH + T + CO2 ~ datetime | study + home + room,
+                  data = prepared_df, tz = "Europe/Berlin")
 head(annex_df)
 class(annex_df)
 ```

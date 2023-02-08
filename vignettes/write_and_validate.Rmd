@@ -47,7 +47,8 @@ config <- subset(config, process == TRUE) # Remove all rows process = FALSE
 # Prepare annex object
 library("annex")
 prepared_df <- annex_prepare(raw_df, config, quiet = TRUE)
-annex_df    <- annex(RH + T + CO2 ~ datetime | study + home + room, data = prepared_df)
+annex_df    <- annex(RH + T + CO2 ~ datetime | study + home + room,
+                     data = prepared_df, tz = "Europe/Berlin")
 stats       <- annex_stats(annex_df, format = "long")
 head(stats)
 ```
