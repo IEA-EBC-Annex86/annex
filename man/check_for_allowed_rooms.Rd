@@ -11,7 +11,8 @@ check_for_allowed_rooms(x)
 }
 \value{
 Character vector (with possibly adjusted) room
-names, or fails.
+names, or fails. Not case sensitive for checking, but
+will return everything in uppercase (\code{toupper(x)}).
 }
 \description{
 The XLSX file template.xlsx contains a series of

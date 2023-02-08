@@ -38,8 +38,7 @@ annex_validate <- function(file, user, quiet = FALSE, ...) {
     # --------------------------------------------
 
     # Checking for required data sheets
-    required_sheets <- c("STAT", "META-Study", "META-Home", "META-Room",
-                         "META-Variable", "META-Season", "META-Time", "Definitions")
+    required_sheets <- c("STAT", "META-Study", "META-Home", "META-Room", "META-Variable", "Definitions")
     file_sheets     <- getSheetNames(file)
     missing_sheets  <- required_sheets[!required_sheets %in% file_sheets]
     if (length(missing_sheets) > 0)
@@ -62,10 +61,6 @@ annex_validate <- function(file, user, quiet = FALSE, ...) {
     # Checking content of the different sheets using dedicated functions
     for (sheet in required_sheets) {
         if (sheet == "Definitions") next
-        if (sheet %in% c("META-Time")) {
-            warning("Currently no test for sheet ", sheet, " implemented")
-            next
-        }
         FUN  <- get(sprintf("annex_validate_sheet_%s", sub("^META-", "meta", sheet)))
         args <- list(file = file, user = user, stat_meta = stat_meta, quiet = quiet)
         checkflag <- checkflag * do.call(FUN, args)
@@ -129,7 +124,7 @@ annex_validate_sheet_STAT <- function(file, user, quiet, ...) {
     data <- read.xlsx(file, sheet = "STAT")
 
     # checking required columns (correct order; columns A:...)
-    required_cols <- c("user", "study", "home", "room", "season", "tod", "variable")
+    required_cols <- c("user", "study", "home", "room", "month", "tod", "variable")
     tmp <- names(data)[seq_along(required_cols)] == required_cols
     tmp <- sapply(tmp, function(x) isTRUE(x))
     if (!all(tmp)) {
@@ -147,14 +142,19 @@ annex_validate_sheet_STAT <- function(file, user, quiet, ...) {
             stop("missing values (empty cells) in column '", col, "' in sheet 'STAT'")
     }
 
-    # Season and tod (for now) must be 'all' or 'XX-XX'
-    for (col in c("season", "tod")) {
-        tmp   <- unique(data[[col]])
-        check <- grepl("^(all|[0-9]{2}-[0-9]{2})$", tmp)
-        if (!all(check))
-            stop("column '", col, "' in sheet 'STAT' contains illegal values: ",
-                 paste(sprintf("'%s'", tmp[!check]), collapse = ", "))
-    }
+    # 'tod' must be 'all' or 'XX-XX'
+    tmp   <- unique(data$tod)
+    check <- grepl("^(all|[0-9]{2}-[0-9]{2})$", tmp)
+    if (!all(check))
+        stop("column 'tod' in sheet 'STAT' contains illegal values: ",
+             paste(sprintf("'%s'", tmp[!check]), collapse = ", "))
+
+    # 'month' must be 'all' or '1' to '12'
+    tmp   <- unique(data$month)
+    check <- grepl("^(all|[1-9][0-9]?)$", tmp)
+    if (!all(check))
+        stop("column 'month' in sheet 'STAT' contains illegal values: ",
+             paste(sprintf("'%s'", tmp[!check]), collapse = ", "))
 
     # Checking content
     tmp <- as.integer(unique(data$user))
@@ -297,24 +297,6 @@ annex_validate_sheet_metaRoom <- function(file, quiet, stat_meta, ..., sheet = "
 
 #' @importFrom openxlsx read.xlsx
 annex_validate_sheet_metaVariable <- function(file, quiet, stat_meta, ..., sheet = "META-Variable") {
-
-    # Default return; will be changed if needed
-    checkflag <- TRUE
-
-    # Reading the data
-    data     <- read.xlsx(file, sheet, sep.names = " ")
-    data[grepl("^<.*>$", data)] <- NA # Replacing placeholders with NA
-
-    # Checking ID column and missing/empty fields
-    tmp <- annex_validate_sheet_ID_check(data, sheet, stat_meta,
-                                         ID = c("user", "study", "home", "room", "variable"))
-    checkflag <- checkflag * tmp; rm(tmp)
-
-    return(as.logical(checkflag))
-}
-
-#' @importFrom openxlsx read.xlsx
-annex_validate_sheet_metaSeason <- function(file, quiet, stat_meta, ..., sheet = "META-Season") {
 
     # Default return; will be changed if needed
     checkflag <- TRUE
