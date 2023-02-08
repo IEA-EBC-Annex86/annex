@@ -166,7 +166,7 @@ in the future.
 * `is.regular()`
 * `plot()`
 
-## Performing analysis
+### Calculating statistics
 
 Based on the object returned by `annex()` the analysis
 can be performed by calling `annex_stats()`. The function
