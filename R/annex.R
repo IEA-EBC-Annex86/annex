@@ -7,6 +7,10 @@
 #' @param formula the formula to specify how the data set is set up.
 #'        see 'Details' for more information.
 #' @param data \code{data.frame} containing the obervations/data.
+#' @param tz character, time zone definition (e.g., \code{"Europe/Berlin"} or
+#'        \code{"UTC"}); required.  \code{OlsonNames()} returns a list of possible
+#'        candidates; abbrevated timezones (such as \code{"CET"} or \code{"UTC"})
+#'        should also work. Important to properly calculate month and time of day.
 #' @param meta \code{NULL} (default) or a \code{list} with information
 #'        about study, home, and room (see 'Details').
 #' @param verbose logical, defaults to \code{FALSE}. Can be set
@@ -40,9 +44,10 @@
 #' @importFrom Formula is.Formula as.Formula
 #' @author Reto Stauffer
 #' @export
-annex <- function(formula, data, meta = NULL, verbose = FALSE) {
+annex <- function(formula, data, tz, meta = NULL, verbose = FALSE) {
     if (!is.Formula(formula)) formula <- as.Formula(formula)
     if (inherits(data, "tbl_df")) data <- as.data.frame(data)
+    stopifnot(is.character(tz), length(tz) == 1L, nchar(tz) > 0)
     stopifnot(is.data.frame(data), isTRUE(verbose) | isFALSE(verbose))
 
     # -------------------------------------------------
@@ -105,12 +110,12 @@ annex <- function(formula, data, meta = NULL, verbose = FALSE) {
     }
 
     # -------------------------------------------------
-    # Appending season and tod
-    tmp <- annex_add_season_and_tod(data[[f$time]])
+    # Appending month and tod
+    tmp  <- annex_add_month_and_tod(data[[f$time]], tz = tz)
     data <- cbind(data, as.data.frame(tmp))
 
     # Reordering the data
-    data <- subset(data, select = c(f$time, f$group, "season", "tod", f$vars))
+    data <- subset(data, select = c(f$time, f$group, "month", "tod", f$vars))
 
     # -------------------------------------------------
     # Now the object should be ready
@@ -121,28 +126,33 @@ annex <- function(formula, data, meta = NULL, verbose = FALSE) {
 }
 
 
-#' Calculate season and time of day
+#' Calculate month and time of day
 #'
-#' Calculates season and the time of day categories based
-#' on input argument \code{x}.
+#' Calculates month and the time of day categories based
+#' on input argument \code{x} with respect to the time zone
+#' specified by the user.
 #'
 #' @param x object of class \code{POSIXt}.
+#' @param tz time zone (character). Important to properly calculate
+#'        month and time of day.
 #'
-#' @return List with two elements \code{season} (factor) and \code{tod} (factor).
+#' @return List with two elements \code{month} (factor) and \code{tod} (factor).
 #'
 #' @author Reto Stauffer
-#' TODO(R): TIME ZONE HANDLING
-annex_add_season_and_tod <- function(x) {
+annex_add_month_and_tod <- function(x, tz) {
     stopifnot(inherits(x, "POSIXt"))
+    stopifnot(is.character(tz), length(tz) == 1L)
     #categorize time to specific season and time of day (tod)
-    season <- cut(as.integer(format(x, "%m%d")),
-                  breaks = c(-Inf, 329, 620, 922, 1220, Inf),
-                  labels = c("12-02", "03-05", "06-08", "09-11", "12-02"))
+    month  <- factor(as.integer(format(x, "%m", tz = tz)), 0:12, c("all", 1:12))
+    ### Originaly season was used
+    #season <- cut(as.integer(format(x, "%m%d")),
+    #              breaks = c(-Inf, 329, 620, 922, 1220, Inf),
+    #              labels = c("12-02", "03-05", "06-08", "09-11", "12-02"))
 
-    tod    <- cut(as.integer(format(x, "%H")),
+    tod    <- cut(as.integer(format(x, "%H", tz = tz)),
                   breaks = c(-Inf, 6, 22, Inf),
                   labels = c("23-07", "07-23", "23-07"))
-    return(list(season = season, tod = tod))
+    return(list(month = month, tod = tod))
 }
 
 #' Parsing Formula

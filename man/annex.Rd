@@ -10,7 +10,7 @@
 \alias{subset.annex_stats}
 \title{Annex Creator Function}
 \usage{
-annex(formula, data, meta = NULL, verbose = FALSE)
+annex(formula, data, tz, meta = NULL, verbose = FALSE)
 
 \method{head}{annex}(x, ...)
 
@@ -29,6 +29,11 @@ annex(formula, data, meta = NULL, verbose = FALSE)
 see 'Details' for more information.}
 
 \item{data}{\code{data.frame} containing the obervations/data.}
+
+\item{tz}{character, time zone definition (e.g., \code{"Europe/Berlin"} or
+\code{"UTC"}); required.  \code{OlsonNames()} returns a list of possible
+candidates; abbrevated timezones (such as \code{"CET"} or \code{"UTC"})
+should also work. Important to properly calculate month and time of day.}
 
 \item{meta}{\code{NULL} (default) or a \code{list} with information
 about study, home, and room (see 'Details').}

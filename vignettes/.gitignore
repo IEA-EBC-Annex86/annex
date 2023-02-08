@@ -3,4 +3,6 @@
 
 /demo_*.csv
 /demo_*.xlsx
+/demo_*.TXT
+/demo_*.txt
 /*.html

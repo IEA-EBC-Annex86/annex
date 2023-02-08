@@ -25,6 +25,9 @@ based on the discussions in the meeting early February.
     previous observation recorded in the data set. Calculated on a varaible level; if no
     value is present (missing value) this will be considered to 'not have been mesured'
     which leads to longer interval times. Currently reporting five number summary plus
+* Both XLSX sheets 'META-Room' and 'META-Variable' have a column for optional information
+    about the measurement location (e.g., next to window, center of room, and any other
+    important/helpful information) or variable (optional meta data).
 
 
 # annex 0.2-0

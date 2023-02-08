@@ -26,7 +26,7 @@
 #'
 #' @seealso annex_stats_reshape annes_write_stats
 #'
-#' @importFrom dplyr bind_rows Reduce
+#' @importFrom dplyr bind_rows
 #' @importFrom tidyr pivot_longer
 #' @import stats
 #' @author Reto Stauffer
@@ -107,7 +107,7 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
     }
 
     # Reshaping result of aggregate()
-    convert <- function(var, data, f, gx = c("season", "tod"), prefix = NULL) {
+    convert <- function(var, data, f, gx = c("month", "tod"), prefix = NULL) {
         res   <- as.data.frame(data[, if (is.null(prefix)) var else paste(prefix, var, sep = "_")])
         if (!is.null(prefix)) names(res) <- paste(prefix, names(res), sep = "_")
         res <- cbind(transform(data[, c(f$group, gx)], variable = var), res)
@@ -138,7 +138,7 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
     object <- add_quality_flag(object, f$var)
 
     object_split  <- split(object, formula(paste("~ ", paste(f$group, collapse = " + "))), drop = TRUE)
-    fn <- function(x, f, gx = c("season", "tod")) {
+    fn <- function(x, f, gx = c("month", "tod")) {
         # In case everything is NA; return NULL straight away
         if (sum(!is.na(x[, f$vars])) == 0) return(NULL)
         # Drop columns without non-missing values
@@ -176,21 +176,20 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
     res <- lapply(object_split, fn, f = f)
     res <- if (length(res) == 1) res[[1]] else bind_rows(res)
 
-    # Same but grouping only by study|home|room|season (all day long)
-    res_all_day    <- fn(object, f, c("season"))
-    res_all_day    <- transform(res_all_day, tod  = "all")
+    # Same but grouping only by study|home|room|month (all day long)
+    res_all_day  <- fn(object, f, c("month"))
+    res_all_day  <- transform(res_all_day, tod  = "all")
 
-    # Same but grouping only by study|home|room|tod (all season long)
-    res_all_season <- fn(object, f, c("tod"))
-    res_all_season <- transform(res_all_season, season = "all")
+    # Same but grouping only by study|home|room|tod (all year long)
+    res_all_year <- fn(object, f, c("tod"))
+    res_all_year <- transform(res_all_year, month = "all")
 
-    res <- bind_rows(list(res_all_day, res_all_season, res))
-    for (n in c("study", "home", "room", "season", "tod", "variable")) {
-        res[[n]] <- factor(res[[n]])
-    }
+    # Combine results
+    res <- bind_rows(list(res_all_day, res_all_year, res))
 
-    # Sort columns
-    first <- c("study", "home", "room", "season", "tod", "variable")
+    # Factorize and sort
+    first <- c("study", "home", "room", "month", "tod", "variable")
+    for (n in first) res[[n]] <- factor(res[[n]])
     res <- res[, c(first[first %in% names(res)], names(res)[!names(res) %in% first])]
 
     # Structuring return; by default 'wide' format
@@ -233,8 +232,8 @@ annex_stats_reshape <- function(x, format = NULL) {
     is_long <- inherits(x, "annex_stats_long")
     formula <- attr(x, "formula")           # we need it later
     f       <- annex_parse_formula(formula) # deparse
-    # Identify grouping variable (plus season, tod, and variable if existing)
-    idvar   <- c("season", "tod", "variable")
+    # Identify grouping variable (plus month, tod, and variable if existing)
+    idvar   <- c("month", "tod", "variable")
     idvar   <- c(f$group, idvar[idvar %in% names(x)])
 
     # Reshape to wide format

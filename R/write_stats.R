@@ -122,7 +122,7 @@ annex_write_stats <- function(x, file, user, overwrite = FALSE, ..., quiet = FAL
     write_annex_metaStudy(workbook,     x, quiet)
     write_annex_metaHome(workbook,      x, quiet)
     write_annex_metaRoom(workbook,      x, quiet)
-    write_annex_metaVariable(workbook, x, quiet)
+    write_annex_metaVariable(workbook,  x, quiet)
     write_annex_STAT(workbook,          x, quiet)
 
     # Saving final file
@@ -189,7 +189,7 @@ write_annex_metaRoom <- function(wb, x, quiet, sheet = "META-Room") {
     tmp <- unique(subset(x, select = c("user", "study", "home", "room")))
     ID  <- with(tmp, interaction(user, study, home, room, sep = "-", drop = TRUE))
     x <- data.frame(ID                     = ID,
-                    MeasurementLocation    = tmp$room,
+                    MeasurementLocation    = "<Additional room information>",
                     FreshAirSupply         = "<Air Supply Description>",
                     VentilationRate        = "<Rate Room in [l/s]>",
                     VentilationRateMethod  = "<Rate Method>",
@@ -205,7 +205,7 @@ write_annex_metaVariable <- function(wb, x, quiet, sheet = "META-Variable") {
     tmp <- unique(subset(x, select = c("user", "study", "home", "room", "variable")))
     ID  <- with(tmp, interaction(user, study, home, room, variable, sep = "-", drop = TRUE))
     x <- data.frame(ID                     = ID,
-                    VariableName           = tmp$variable,
+                    VariableName           = "<Additional variable information>",
                     VariableUnit           = "<Measurement Unit>",
                     VariableInfo           = "<Additional Information>",
                     MeasurementDevice      = "<Measurement Device Info>")
@@ -256,7 +256,7 @@ annex_check_stats_object <- function(x) {
 
     # The following variables must exist and be either
     # character or factor to count as valid
-    must_exist <- c("study", "home", "room", "season", "tod", "variable")
+    must_exist <- c("study", "home", "room", "month", "tod", "variable")
     for (n in must_exist) {
         if (!n %in% names(x)) stop("missing `", n, "'` in the annex stats object")
         if (!is.character(x[[n]]) && !is.factor(x[[n]]))
