@@ -127,10 +127,11 @@ check_for_allowed_variables <- function(x) {
     # Show error message of not-allowed variable names
     idx <- which(!x == "datetime" & !x %in% allowed_variables)
     if (length(idx) > 0)
-        stop(sprintf("variable name%s ", ifelse(length(idx) == 1, "", "s")),
-             paste(sprintf("'%s'", x[idx]), collapse = ", "),
-             " not allowed. Allowed are: ",
-             paste(sprintf("'%s'", allowed_variables), collapse = ", "), ".")
+        stop(red $ bold(sprintf("Found illegal variable name%s in 'STAT'.\n", ifelse(length(idx) == 1, "", "s")),
+             "  Not allowed: ", paste(sprintf("'%s'", x[idx]), collapse = ", "), "\n",
+             get_row_info(idx), "\n\n",
+             "  Allowed are: ",
+             paste(sprintf("'%s'", allowed_variables), collapse = ", "), ".", sep = ""))
 
     # Return
     return(x)
@@ -164,12 +165,13 @@ check_for_allowed_rooms <- function(x) {
     pattern <- sprintf("^(%s)[0-9]{0,2}$", paste(allowed_rooms, collapse = "|"))
     idx <- which(!is.na(x) & !grepl(pattern, x, ignore.case = TRUE))
     if (length(idx) > 0)
-        stop(sprintf("room name%s ", ifelse(length(idx) == 1, "", "s")),
-             paste(sprintf("'%s'", x[idx]), collapse = ", "),
-             " not allowed. Allowed are: ",
-             paste(sprintf("'%s'", allowed_rooms), collapse = ", "),
-             " followed by up to two digits",
-             sprintf("(e.g., '%1$s', '%1$s1', '%1$s2' or '%1$s35')", allowed_rooms[[1]]))
+        stop(red $ bold(sprintf("Found illegal room name%s in 'STAT'.\n", ifelse(length(idx) == 1, "", "s")),
+             "  Not allowed: ", paste(sprintf("'%s'", x[idx]), collapse = ", "), "\n",
+             get_row_info(idx), "\n\n",
+             "  Allowed are: ",
+             paste(sprintf("'%s'", allowed_rooms), collapse = ", "), "\n",
+             "  followed by up to two digits",
+             sprintf("(e.g., '%1$s', '%1$s1', '%1$s2' or '%1$s35')", allowed_rooms[[1]]), sep = ""))
 
 
     # Return
