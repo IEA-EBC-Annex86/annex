@@ -29,6 +29,11 @@ based on the discussions in the meeting early February.
     about the measurement location (e.g., next to window, center of room, and any other
     important/helpful information) or variable (optional meta data).
 * Additional tinytests for support functions.
+* Added data set containing all ISO3166 alpha-3 (ISO3) country codes used for validationn.
+    Convenience function `annex_countries()` which returns `data("ISO3166")`
+* Validation: Decent update on the validation to show more granular errors and warnings.
+    Additional checks for specific varaibles to ensure the content follows the expected
+    format. Added conditional tests on variables (some require additional information).
 
 
 # annex 0.2-0

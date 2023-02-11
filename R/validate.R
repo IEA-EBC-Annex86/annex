@@ -282,6 +282,18 @@ annex_validate_sheet_metaStudy <- function(file, quiet, stat_meta, ..., sheet = 
     tmp <- annex_validate_sheet_ID_check(data, sheet, stat_meta, c("user", "study"))
     checkflag <- checkflag * tmp; rm(tmp)
 
+    # If ORCID is given, check that the format is as expected.
+    idx     <- which(!is.na(data$ORCID) &
+                     !grepl("^<.*>$", data$ORCID) &
+                     !grepl("^[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}$", data$ORCID))
+    if (length(idx) > 0) {
+        message(yellow("  WARNING: 'ORCID' in '", sheet, "' ",
+                "given in wrong format. Found ",
+                paste(data$ORCID[idx], collapse = ", "),
+                " (", get_row_info(idx, prefix = "row"), ")", sep = ""))
+        checkflag <- checkflag * FALSE
+    }
+
     return(as.logical(checkflag))
 }
 
@@ -300,14 +312,29 @@ annex_validate_sheet_metaHome <- function(file, quiet, stat_meta, ..., sheet = "
                                          ID = c("user", "study", "home"))
     checkflag <- checkflag * tmp; rm(tmp)
 
-    # Are Loctions given in ISO3?
-    iso3 <- na.omit(unique(data[, "Location: Country"]))
-    idx  <- which(!grepl("^[a-zA-Z0-9]]{3}$", iso3))
+    # Are Loctions (if given) in ISO3 standard?
+    colname <- "Location: Country"
+    idx     <- which(!is.na(data[[colname]]) & !data[[colname]] %in% ISO3166$ISO3)
     if (length(idx) > 0) {
-        message(yellow("  WARNING: 'Location: Country' in '", sheet, "' ",
+        message(yellow("  WARNING: '", colname, "' in '", sheet, "' ",
                 "not in ISO3 standard, found: ",
-                paste(iso3[idx], collapse = ", "),
-                " (", get_row_info(idx, prefix = "row"), ")", sep = ""))
+                paste(data[[colname]][idx], collapse = ", "),
+                " (", get_row_info(idx, prefix = "row"), ").\n",
+                "  See `?annex_countries` to get all allowed country abbrevations (ISO3166 alpha-3; ISO3).",
+                sep = ""))
+        checkflag <- checkflag * FALSE
+    }
+
+    # Is the year of construction (if given) a four digit year?
+    colname <- "Year of contruction / major renovation (four digit year)"
+    idx     <- which(!is.na(data[[colname]]) &
+                     !grepl("^<.*>$", data[[colname]]) &
+                     !grepl("^[0-9]{4}$", data[[colname]]))
+    if (length(idx) > 0) {
+        message(yellow("  WARNING: '", colname, "' in '", sheet, "' ",
+                "given in wrong format. Found ",
+                paste(data[[colname]][idx], collapse = ", "),
+                " (", get_row_info(idx, prefix = "row"), ").\n", sep = ""))
         checkflag <- checkflag * FALSE
     }
 
@@ -344,6 +371,20 @@ annex_validate_sheet_metaVariable <- function(file, quiet, stat_meta, ..., sheet
     tmp <- annex_validate_sheet_ID_check(data, sheet, stat_meta,
                                          ID = c("user", "study", "home", "room", "variable"))
     checkflag <- checkflag * tmp; rm(tmp)
+
+    # Depending on the variable "Variable: additional Info" must be provided.
+    vars_req <- annex_variable_definition()
+    vars_req <- subset(vars_req, required)$name
+    vars_req <- c("T", vars_req)
+    colname  <- "Variable additional information"
+    idx <- which((is.na(data[[colname]]) | grepl("^<.*>$", data[[colname]])) &
+                 grepl(sprintf("-(%s)$", paste(vars_req, collapse = "|")), data$ID))
+    if (length(idx) > 0) {
+        message(yellow("  WARNING: '", colname, "' in '", sheet, "' ",
+                "missing (required for this variable). ",
+                get_row_info(idx, prefix = "Row"), sep = ""))
+        checkflag <- checkflag * FALSE
+    }
 
     return(as.logical(checkflag))
 }
@@ -457,7 +498,7 @@ get_required_columns <- function(sheet) {
     # Definition
     def <- list("META-Study" = c("Contact", "ORCID", "Year(s)"),
                 "META-Home"  = c("Location: Country", "Ventilation type"),
-                "META-Variable" = c("Variable additional information", "Variable unit"))
+                "META-Variable" = "Variable unit")
 
     return(if (sheet %in% names(def)) def[[sheet]] else NULL)
 }
