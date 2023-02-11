@@ -375,7 +375,6 @@ annex_validate_sheet_metaVariable <- function(file, quiet, stat_meta, ..., sheet
     # Depending on the variable "Variable: additional Info" must be provided.
     vars_req <- annex_variable_definition()
     vars_req <- subset(vars_req, required)$name
-    vars_req <- c("T", vars_req)
     colname  <- "Variable additional information"
     idx <- which((is.na(data[[colname]]) | grepl("^<.*>$", data[[colname]])) &
                  grepl(sprintf("-(%s)$", paste(vars_req, collapse = "|")), data$ID))

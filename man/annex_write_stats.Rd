@@ -4,7 +4,15 @@
 \alias{annex_write_stats}
 \title{Writing Annex Stats to Disc}
 \usage{
-annex_write_stats(x, file, user, overwrite = FALSE, ..., quiet = FALSE)
+annex_write_stats(
+  x,
+  file,
+  user,
+  mode = "write",
+  ...,
+  ask = TRUE,
+  quiet = FALSE
+)
 }
 \arguments{
 \item{x}{object of class \code{annex_stat} as returned by
@@ -17,17 +25,23 @@ See 'Details'.}
 \item{user}{positive integer, the user identifier given
 by the project team. Will be appended to the data set.}
 
-\item{overwrite}{logical, defaults to \code{FALSE}.
-See 'Details'.}
+\item{mode, }{character, writing mode. Can be one of \code{"write"} (default),
+\code{"append"} (add new data) or \code{"update"} (update existing data).
+See 'Mode' for more information.}
 
 \item{\dots}{not yet used.}
+
+\item{ask}{logical. If \code{TRUE} the user will be asked to confirm that
+the function will modify the existing \code{file} (used when
+\code{mode == "append"} or \code{mode == "update"}). See
+Section 'Writing mode' for more information.}
 
 \item{quiet}{logical. If set \code{TRUE} messages will be printed.}
 }
 \value{
 No return, creates a new XLSX file (see argument \code{file})
 and stores the data, or updates an existing XLSX file (see
-argument \code{overwrite}).
+argument section 'Writing mode').
 }
 \description{
 TODO(R)
@@ -48,6 +62,37 @@ to \code{TRUE} to allow \code{\link[=annex_write_stats]{annex_write_stats()}} to
 the current data in that XLSX file. It tries to preserve all
 custom data (TODO(R): not yet implemented).
 }
+\section{Writing mode}{
+ There are three writing modes. Warning: Depending on
+the mode used, existing data can get lost (i.e., removed). The following
+modes are available:
+
+\strong{write}: Default mode, write data into a fresh XLSX file. It is assumed
+that the output \code{file} does not yet exist. If it exists an error will
+be thrown as it is unkown if the user would like to append new data to
+an existing file or update (overwrite) data in an existing file.
+
+\strong{append}: Append data to an existing XLSX file. This mode expects that
+the \code{file} does already exist and is in the correct format (will check
+sheets and columns against the template). If \code{file} does not exist or
+the content of \code{file} does not follow the format of the template, an
+error will be thrown.
+
+\code{mode = "append"} falls back to \code{mode = "write"} if the output \code{file}
+does not yet exist.
+
+Else the data of \code{x} will be appended to the sheet 'STAT' and additional
+entries in the 'META*' sheets will be created if needed. In case the new object \code{x}
+contains data which are already in \code{STAT} an error will be thrown
+(so the new data to be appended must be unique).
+
+\strong{update}: Update the data of an existing \code{file}. \strong{Warning:} this
+will delete (drop) existing data in the sheet 'STAT' and append new entries
+in the 'META*' sheets (won't delete existing entries). The latter could cause
+additional warnings when validating the file if there are 'META*' entries
+which are no longer needed (as the data have been deleted).
+}
+
 \author{
 Reto Stauffer
 }

@@ -46,9 +46,14 @@ annex_template <- function(file, overwrite = FALSE) {
 #'        See 'Details'.
 #' @param user positive integer, the user identifier given
 #'        by the project team. Will be appended to the data set.
-#' @param overwrite logical, defaults to \code{FALSE}.
-#'        See 'Details'.
+#' @param mode, character, writing mode. Can be one of \code{"write"} (default),
+#'        \code{"append"} (add new data) or \code{"update"} (update existing data).
+#'        See 'Mode' for more information.
 #' @param \dots not yet used.
+#' @param ask logical. If \code{TRUE} the user will be asked to confirm that
+#'        the function will modify the existing \code{file} (used when
+#'        \code{mode == "append"} or \code{mode == "update"}). See
+#'        Section 'Writing mode' for more information.
 #' @param quiet logical. If set \code{TRUE} messages will be printed.
 #'
 #' @details
@@ -67,24 +72,58 @@ annex_template <- function(file, overwrite = FALSE) {
 #' the current data in that XLSX file. It tries to preserve all
 #' custom data (TODO(R): not yet implemented).
 #'
+#' @section Writing mode: There are three writing modes. Warning: Depending on
+#' the mode used, existing data can get lost (i.e., removed). The following
+#' modes are available:
+#'
+#' **write**: Default mode, write data into a fresh XLSX file. It is assumed
+#' that the output \code{file} does not yet exist. If it exists an error will
+#' be thrown as it is unkown if the user would like to append new data to 
+#' an existing file or update (overwrite) data in an existing file.
+#'
+#' **append**: Append data to an existing XLSX file. This mode expects that
+#' the \code{file} does already exist and is in the correct format (will check
+#' sheets and columns against the template). If \code{file} does not exist or
+#' the content of \code{file} does not follow the format of the template, an
+#' error will be thrown.
+#'
+#' \code{mode = "append"} falls back to \code{mode = "write"} if the output \code{file}
+#' does not yet exist.
+#'
+#' Else the data of \code{x} will be appended to the sheet 'STAT' and additional
+#' entries in the 'META*' sheets will be created if needed. In case the new object \code{x}
+#' contains data which are already in \code{STAT} an error will be thrown
+#' (so the new data to be appended must be unique).
+#'
+#' **update**: Update the data of an existing \code{file}. **Warning:** this
+#' will delete (drop) existing data in the sheet 'STAT' and append new entries
+#' in the 'META*' sheets (won't delete existing entries). The latter could cause
+#' additional warnings when validating the file if there are 'META*' entries
+#' which are no longer needed (as the data have been deleted).
+#'
 #' @return No return, creates a new XLSX file (see argument `file`)
 #' and stores the data, or updates an existing XLSX file (see
-#' argument `overwrite`).
+#' argument section 'Writing mode').
 #'
 #' @importFrom openxlsx loadWorkbook writeData saveWorkbook
 #' @importFrom openxlsx getSheetNames
 #' @author Reto Stauffer
 #' @export
-annex_write_stats <- function(x, file, user, overwrite = FALSE, ..., quiet = FALSE) {
+annex_write_stats <- function(x, file, user, mode = "write", ..., ask = TRUE, quiet = FALSE) {
     # Stay sane!
     stopifnot(is.character(file), length(file) == 1)
     stopifnot(is.numeric(user), length(user) == 1, user > 0)
-    stopifnot(isTRUE(overwrite) || isFALSE(overwrite))
     if (!grepl("\\.xlsx$", file, ignore.case = TRUE))
         stop("the `file` must end on `.xlsx` (not case sensitive); ",
              file, " is invalid")
     if (!dir.exists(dirname(file)))
         stop("directory '", dirname(file), "' does not exist; can't create output file")
+
+    # Writing mode and additional options
+    mode <- match.arg(mode, c("write", "append", "update"))
+    if (mode == "append" && !file.exists(file)) mode <- "write" # fallback
+    ask   <- as.logical(ask)[1L];     stopifnot(isTRUE(ask) | isFALSE(ask))
+    quiet <- as.logical(quiet)[1L];   stopifnot(isTRUE(quiet) | isFALSE(quiet))
 
     # Check if the input object is what we expect;
     # Also used as sanity check for the annex_write_stats function.
@@ -95,11 +134,22 @@ annex_write_stats <- function(x, file, user, overwrite = FALSE, ..., quiet = FAL
     # cells with #NUMBER! or #ZAHL! or whatever in the spreadsheet later on.
     x[is.na(x)] <- NA
 
-    # Create or overwrite file
-    if (!file.exists(file) || (file.exists(file) && overwrite)) {
-        annex_template(file, overwrite = overwrite)
+    # Error: mode == "write" while the file exists 
+    if (mode == "write" && file.exists(file)) {
+        stop(red $ bold("ERROR: 'mode = \"write\"' has been chosen but the output file ",
+                        "\"", file, "\" does already exist. Check argument 'mode' ",
+                        "in `?annex_write_stats` for more information.", sep = ""))
+    #  Else (mode == "write") create a copy of the template
+    } else if (mode == "write") {
+        if (!quiet) message("Get a copy of the template")
+        annex_template(file, overwrite = FALSE)
     } else {
-        stop("TODO(R): Mode to overwrite existing data not yet implemented")
+        # If the output file does not exist: WARN
+        if (!file.exists(file)) {
+            stop(red $ bold("ERROR: 'mode = \"", mode, "\" has been selected which expects that ",
+                            "the file \"", file, "\" already exists ",
+                            "but the file can not be found.", sep = ""))
+        }
     }
 
     # Ensure all sheets are in the XLSX file (as we don't create them, we manipulate them)
@@ -108,6 +158,26 @@ annex_write_stats <- function(x, file, user, overwrite = FALSE, ..., quiet = FAL
     if (!all(required_sheets %in% file_sheets))
         stop("not all required sheets exist in the XLSX file '", file, "'. Missing: ",
              paste(sprintf("'%s'", required_sheets[!required_sheets %in% file_sheets]), collapse = ", "))
+
+    # If not mode == "write" we check that the columns in the different
+    # sheets match the ones from the template.
+    if (!mode == "write") {
+        template <- system.file("template/template.xlsx", package = "annex")
+        stopifnot("problems to find the template (internal package problem)" = file.exists(template))
+        for (sheet in required_sheets) {
+            if (sheet %in% "STAT") next
+            # compare ...
+            cols_template <- names(read_xlsx(template, sheet = sheet, n_max = 1))
+            cols_file     <- names(read_xlsx(file,     sheet = sheet, n_max = 1))
+            if (!identical(cols_template, cols_file))
+                stop(red $ bold("ERROR: Columns in sheet '", sheet, "' in file ",
+                                "\"", file, "\" do not match the columns in the template.\n",
+                                "Cannot update/append data.\n",
+                                "Got:       ", paste(cols_file, collapse = ", "), "\n",
+                                "Expected:  ", paste(cols_file, collapse = ", "),
+                                sep = ""))
+        }
+    }
 
     # Manipulating the data set
     x <- cbind(data.frame(user = sprintf("%04d", user)), x)
@@ -119,29 +189,46 @@ annex_write_stats <- function(x, file, user, overwrite = FALSE, ..., quiet = FAL
     }
     workbook <- loadWorkbook(file)
 
-    write_annex_metaStudy(workbook,     x, quiet)
-    write_annex_metaHome(workbook,      x, quiet)
-    write_annex_metaRoom(workbook,      x, quiet)
-    write_annex_metaVariable(workbook,  x, quiet)
-    write_annex_STAT(workbook,          x, quiet)
+    write_annex_metaStudy(workbook,     x, quiet, update = !mode == "write")
+    write_annex_metaHome(workbook,      x, quiet, update = !mode == "write")
+    write_annex_metaRoom(workbook,      x, quiet, update = !mode == "write")
+    write_annex_metaVariable(workbook,  x, quiet, update = !mode == "write")
+    write_annex_STAT(workbook,          x, quiet, update = !mode == "write")
 
     # Saving final file
     if (!quiet) message(" - Saving file")
     saveWorkbook(workbook, file, overwrite = TRUE)
-
 }
 
-#' @importFrom openxlsx writeData
+#' @importFrom openxlsx writeData readWorkbook
 #' @author Reto Stauffer
-write_annex_STAT <- function(wb, x, quiet, sheet = "STAT") {
+write_annex_STAT <- function(wb, x, quiet, sheet = "STAT", update) {
     if (!quiet) message(" - Writing ", sheet)
     writeData(wb, sheet = sheet, x = x, colNames = TRUE)
 }
 
+upsert_annex_sheet <- function(wb, x, quiet, sheet, update) {
+    # In case update = TRUE (append/update mode) we need to import the existing
+    # existing sheet and append the new information in \code{x} if needed.
+    if (update) {
+        oldx <- readWorkbook(wb, sheet)
+        stopifnot(nrow(x) == nrow(oldx))
+        # Drop rows in x if the ID already exists in oldx
+        x  <- subset(x, !ID %in% oldx$ID)
+        nx <- NROW(x) # Keep rows added for message below
+        x  <- rbind(oldx, x)
+        if (!quiet && nx) message(" - Adding ", nx, " rows into '", sheet, "'", sep = "")
+    } else {
+        if (!quiet) message(" - Write ", NROW(x), " rows into '", sheet, "'", sep = "")
+    }
+    writeData(wb, sheet = sheet, x = x, colNames = FALSE, startRow = 2, startCol = 1)
+}
+
 #' @importFrom openxlsx writeData
 #' @author Reto Stauffer
-write_annex_metaStudy <- function(wb, x, quiet, sheet = "META-Study") {
+write_annex_metaStudy <- function(wb, x, quiet, sheet = "META-Study", update) {
     if (!quiet) message(" - Writing ", sheet)
+
     tmp <- unique(subset(x, select = c("user", "study")))
     tmp <- with(tmp, interaction(user, study, sep = "-", drop = TRUE))
     x   <- data.frame(ID           = tmp,
@@ -150,13 +237,12 @@ write_annex_metaStudy <- function(wb, x, quiet, sheet = "META-Study") {
                       Years        = "<4 Digit Year>",
                       Publications = "<doi:....>",
                       Links        = "<https://...>")
-
-    writeData(wb, sheet = sheet, x = x, colNames = FALSE, startRow = 2, startCol = 1)
+    upsert_annex_sheet(wb, x, quiet, sheet, update)
 }
 
 #' @importFrom openxlsx writeData
 #' @author Reto Stauffer
-write_annex_metaHome <- function(wb, x, quiet, sheet = "META-Home") {
+write_annex_metaHome <- function(wb, x, quiet, sheet = "META-Home", update) {
     if (!quiet) message(" - Writing ", sheet)
     tmp <- unique(subset(x, select = c("user", "study", "home")))
     tmp <- with(tmp, interaction(user, study, home, sep = "-", drop = TRUE))
@@ -179,12 +265,12 @@ write_annex_metaHome <- function(wb, x, quiet, sheet = "META-Home") {
                       EnergyStandard          = "<Energy Standard>",
                       YearOfConstruction      = "<4 Digit Year>")
 
-    writeData(wb, sheet = sheet, x = x, colNames = FALSE, startRow = 2, startCol = 1)
+    upsert_annex_sheet(wb, x, quiet, sheet, update)
 }
 
 #' @importFrom openxlsx writeData
 #' @author Reto Stauffer
-write_annex_metaRoom <- function(wb, x, quiet, sheet = "META-Room") {
+write_annex_metaRoom <- function(wb, x, quiet, sheet = "META-Room", update) {
     if (!quiet) message(" - Writing ", sheet)
     tmp <- unique(subset(x, select = c("user", "study", "home", "room")))
     ID  <- with(tmp, interaction(user, study, home, room, sep = "-", drop = TRUE))
@@ -200,7 +286,7 @@ write_annex_metaRoom <- function(wb, x, quiet, sheet = "META-Room") {
 
 #' @importFrom openxlsx writeData
 #' @author Reto Stauffer
-write_annex_metaVariable <- function(wb, x, quiet, sheet = "META-Variable") {
+write_annex_metaVariable <- function(wb, x, quiet, sheet = "META-Variable", update) {
     if (!quiet) message(" - Writing ", sheet)
     tmp <- unique(subset(x, select = c("user", "study", "home", "room", "variable")))
     ID  <- with(tmp, interaction(user, study, home, room, variable, sep = "-", drop = TRUE))
@@ -210,21 +296,21 @@ write_annex_metaVariable <- function(wb, x, quiet, sheet = "META-Variable") {
                     VariableInfo           = "<Additional Information>",
                     MeasurementDevice      = "<Measurement Device Info>")
 
-    writeData(wb, sheet = sheet, x = x, colNames = FALSE, startRow = 2, startCol = 1)
+    upsert_annex_sheet(wb, x, quiet, sheet, update)
 }
 
-#' @importFrom openxlsx writeData
-#' @author Reto Stauffer
-write_annex_metaSeason <- function(wb, x, quiet, sheet = "META-Season") {
-    if (!quiet) message(" - Writing ", sheet)
-    tmp <- unique(subset(x, select = c("user", "study", "home", "room", "variable")))
-    tmp <- with(tmp, interaction(user, study, home, room, variable, sep = "-", drop = TRUE))
-    x <- data.frame(ID                     = tmp,
-                    Definition             = "<Definition>",
-                    Comments               = "<Comments>")
-
-    writeData(wb, sheet = sheet, x = x, colNames = FALSE, startRow = 2, startCol = 1)
-}
+###' @importFrom openxlsx writeData
+###' @author Reto Stauffer
+##write_annex_metaSeason <- function(wb, x, quiet, sheet = "META-Season") {
+##    if (!quiet) message(" - Writing ", sheet)
+##    tmp <- unique(subset(x, select = c("user", "study", "home", "room", "variable")))
+##    tmp <- with(tmp, interaction(user, study, home, room, variable, sep = "-", drop = TRUE))
+##    x <- data.frame(ID                     = tmp,
+##                    Definition             = "<Definition>",
+##                    Comments               = "<Comments>")
+##
+##    upsert_annex_sheet(wb, x, quiet, sheet, update)
+##}
 
 #' Checking Annex Stats to XML
 #'
