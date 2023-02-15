@@ -7,20 +7,31 @@
 * [ ] Allow for custom user functions when calling annex_stats?
 
 
-# annex 0.2-1
+# annex 0.2-2
 
 Release candidate for testing in February 2023 with some major changes
 based on the discussions in the meeting early February.
 
+* The config object now must contain a "unit" variable. Some of the allowed
+   variables (see `annex_variable_definition()`) have a set of pre-defined
+   units which must be used. `annex_prepare()` internally converts all the
+   data to the 'annex standard units'. E.g., the user can provide temperature
+   data in Kelvin or Farenheit, `annex_prepare()` will always convert them to
+   degrees Celsius.
 * Removed "META-Season" sheet from XLSX file.
-* Changed aggregation from seasonal (quarterly) to monthly.
+* Changed aggregation. Originally the aggregation has been done on a quarterly
+    level including all years. The new version aggregates by year + month.
 * Allowing rooms to be numbered for differenciation by adding up to two digits.
     E.g. BED, BED1, BED2, BED66 (same for all room types).
-* Two new functions `annex_variable_definition()` and `annex_room_definition()` which
-    return information about allowed variables/room labels among other information.
-* Added quality flag to stats; percentage of values within a defined range. These bounds
-    are defined in the "Definitions" sheet in the XLSX file and can be accessed
-    calling `annex_variable_definition()`.
+* New functions `annex_variable_definition()` and `annex_room_definition()`
+    which return information about allowed variables/room labels amongst other
+    information.
+* Added data set containing all ISO3166 alpha-3 (ISO3) country codes used for validationn.
+    Convenience function `annex_countries()` which returns `data("ISO3166")`
+* Added quality flag to stats; percentage of observations falling below a
+   certain threshold or exceed a threshold. These bounds are defined in the
+   "Definitions" sheet in the XLSX file and can be accessed calling
+   `annex_variable_definition()`.
 * Added interval (measurement interval) information to stats; time in seconds to the
     previous observation recorded in the data set. Calculated on a varaible level; if no
     value is present (missing value) this will be considered to 'not have been mesured'
@@ -29,8 +40,6 @@ based on the discussions in the meeting early February.
     about the measurement location (e.g., next to window, center of room, and any other
     important/helpful information) or variable (optional meta data).
 * Additional tinytests for support functions.
-* Added data set containing all ISO3166 alpha-3 (ISO3) country codes used for validationn.
-    Convenience function `annex_countries()` which returns `data("ISO3166")`
 * Validation: Decent update on the validation to show more granular errors and warnings.
     Additional checks for specific varaibles to ensure the content follows the expected
     format. Added conditional tests on variables (some require additional information).

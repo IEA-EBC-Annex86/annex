@@ -48,6 +48,15 @@ annex_prepare <- function(x, config, quiet = FALSE) {
     # (1) Find all unique variables
     vars <- unique(subset(config, variable != "datetime", select = variable, drop = TRUE))
 
+    # Convert units if needed
+    for (n in names(x)) {
+        cnf <- as.list(subset(config, column == n))
+        if (!is.na(cnf$unit)) {
+            x[, n] <- do.call(sprintf("convert_unit_%s", cnf$variable),
+                              list(x = x[, n], from = cnf$unit))
+        }
+    }
+
     # (2) Rename column names in x
     split_data <- function(current_ID) {
         # Variables to be processed; extract data from x
@@ -89,3 +98,5 @@ annex_prepare <- function(x, config, quiet = FALSE) {
     return(tmp)
 
 }
+
+

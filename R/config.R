@@ -41,7 +41,7 @@ annex_check_config <- function(x) {
     stopifnot(NROW(x) > 0)
 
     # Required columns
-    required_cols <- c("column", "variable", "study", "home", "room")
+    required_cols <- c("column", "variable", "unit", "study", "home", "room")
     if (!all(required_cols %in% names(x)))
         stop("not all required columns (", paste(required_cols, collapse = ", "), ") ",
              "exist in the 'config object'. Missing: ",
@@ -57,7 +57,9 @@ annex_check_config <- function(x) {
         stop("only datetime column specified, no variables present (makes no sense)")
 
     # Missing values
-    check_na <- sapply(subset(x[, required_cols], variable != "datetime"), function(x) sum(is.na(x)))
+    tmp <- subset(x[, required_cols[!grepl("^unit$", required_cols)]], variable != "datetime")
+    #check_na <- sapply(subset(x[, required_cols], variable != "datetime"), function(x) sum(is.na(x)))
+    check_na <- sapply(tmp, function(x) sum(is.na(x)))
     if (any(check_na > 0))
         stop("missing values in ", paste(names(check_na)[check_na > 0], collapse = ", ")," not allowed")
     if (is.na(subset(config, variable == "datetime", select = c(column), drop = TRUE)))
@@ -80,6 +82,47 @@ annex_check_config <- function(x) {
         print(tmp[idx, ])
         stop("combination (variable, study, home, room) must be unique")
     }
+
+    # Checking units provided by the user; if the variable definition contains
+    # allowed_units the user _must_ specify a valid unit, else the user is not
+    # allowed to specify anything (must be empty).
+    split_allowed <- function(x) {
+        if (is.na(x)) {
+            res <- NA
+        } else {
+            res <- unname(sapply(strsplit(x, ",")[[1]], trimws))
+            res <- if (sum(nchar(x) > 0) == 0) NA else res[nchar(res) > 0]
+        }
+        return(res)
+    }
+
+    vars <- annex_variable_definition()
+    for (i in seq_len(NROW(x))) {
+        if (x$variable[i] == "datetime") next
+        allowed <- split_allowed(subset(vars, name == x$variable[i], select = allowed_units, drop = TRUE))
+        # Unit given but there are no allowed units
+        if (all(is.na(allowed)) && !is.na(x$unit[i])) {
+            stop("column \"", x$column[i], "\" variable \"", x$variable[i], "\" ",
+                 "has a unit defined (\"", x$unit[i], "\"; obs. ", i,
+                 ") but no units are allowed for \"",
+                 x$variable[i], "\" (see `annex_variable_definition()`).", sep = "")
+        } else if (any(!is.na(allowed)) && is.na(x$unit[i])) {
+            stop("column \"", x$column[i], "\" variable \"", x$variable[i], "\" ",
+                 "has no unit defined (obs. ", i, ").\n",
+                 "  Must be one of: ",
+                 paste(allowed, collapse = ", "),
+                 " (see `annex_variable_definition()`).", sep = "")
+        } else if (any(!is.na(allowed)) && !is.na(x$unit[i])) {
+            check   <- grepl(sprintf("^%s$", x$unit[i]), allowed, ignore.case = TRUE)
+            if (!any(check))
+                stop("column \"", x$column[i], "\" variable \"", x$variable[i], "\" ",
+                     "contains invalid unit (", x$unit[i], "). Must be one of: ",
+                     paste(allowed, collapse = ", "),
+                     " (see `annex_variable_definition()`).", sep = "")
+            x$unit[i] <- allowed[check]
+        }
+    }
+
 
     # Colons (:) forbidden in study, home, or room as this would break
     # our unique interaction later on.
@@ -184,8 +227,10 @@ check_for_allowed_rooms <- function(x) {
 #'
 #' The template not only contains the definition of the allowed variables,
 #' it also states whether or not additional information is required (or
-#' optional) and an upper and lower bound to be considered 'valid'.
-#' Used for quality flags.
+#' optional), an upper and lower bound to be considered 'valid' plus
+#' (is specified) a series of allowed units.
+#' Used to prepare the data and convert to annex standard units, quality checks,
+#' as well as validation.
 #'
 #' @param as_list logical. If \code{FALSE} (default) a \code{data.frame}
 #'        will be returned, if \code{TRUE} a list (see Details).
@@ -198,7 +243,9 @@ check_for_allowed_rooms <- function(x) {
 #' information in the META sheet is \code{required} as well as a numeric
 #' \code{lower} and \code{upper} bound which defines in which range
 #' an observation is considered to be valid. Can be \code{NA} if not
-#' specified (both or one of them).
+#' specified (both or one of them). \code{allowed_units} contains \code{NA}
+#' (unspecified) or a character wich one or multiple comma separated units
+#' specifications.
 #'
 #' If \code{as_list = FALSE} (default) the same information is returned
 #' as a \code{data.frame} containing the same information.
@@ -216,9 +263,10 @@ annex_variable_definition <- function(as_list = FALSE) {
     template_xlsx <- system.file("template/template.xlsx", package = "annex")
     tmp <- suppressMessages(read.xlsx(template_xlsx, sheet = "Definitions", sep.names = " "))
     required <- c("Variable" = "name",
-                  "Pollution: Additional information required" = "required",
+                  "Additional information required" = "required",
                   "Lower bound" = "lower",
-                  "Upper bound" = "upper")
+                  "Upper bound" = "upper",
+                  "Allowed units" = "allowed_units")
     stopifnot(names(required) %in% names(tmp))
 
     # Extracting information needed

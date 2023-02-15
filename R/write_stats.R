@@ -233,8 +233,8 @@ write_annex_metaStudy <- function(wb, x, quiet, sheet = "META-Study", update) {
     tmp <- with(tmp, interaction(user, study, sep = "-", drop = TRUE))
     x   <- data.frame(ID           = tmp,
                       Contact      = "<Contact Name>",
-                      ORCID        = "<ORCID>",
-                      Years        = "<4 Digit Year>",
+                      Institution  = "<Institution>",
+                      YearFirstPub = "<4 Digit Year>",
                       Publications = "<doi:....>",
                       Links        = "<https://...>")
     upsert_annex_sheet(wb, x, quiet, sheet, update)
@@ -275,7 +275,9 @@ write_annex_metaRoom <- function(wb, x, quiet, sheet = "META-Room", update) {
     tmp <- unique(subset(x, select = c("user", "study", "home", "room")))
     ID  <- with(tmp, interaction(user, study, home, room, sep = "-", drop = TRUE))
     x <- data.frame(ID                     = ID,
-                    MeasurementLocation    = "<Additional room information>",
+                    RoomInformation        = "<Additional room information>",
+                    OccupancyType          = "<type>",
+                    OccupancyNumber        = "<number>",
                     FreshAirSupply         = "<Air Supply Description>",
                     VentilationRate        = "<Rate Room in [l/s]>",
                     VentilationRateMethod  = "<Rate Method>",
@@ -299,18 +301,6 @@ write_annex_metaVariable <- function(wb, x, quiet, sheet = "META-Variable", upda
     upsert_annex_sheet(wb, x, quiet, sheet, update)
 }
 
-###' @importFrom openxlsx writeData
-###' @author Reto Stauffer
-##write_annex_metaSeason <- function(wb, x, quiet, sheet = "META-Season") {
-##    if (!quiet) message(" - Writing ", sheet)
-##    tmp <- unique(subset(x, select = c("user", "study", "home", "room", "variable")))
-##    tmp <- with(tmp, interaction(user, study, home, room, variable, sep = "-", drop = TRUE))
-##    x <- data.frame(ID                     = tmp,
-##                    Definition             = "<Definition>",
-##                    Comments               = "<Comments>")
-##
-##    upsert_annex_sheet(wb, x, quiet, sheet, update)
-##}
 
 #' Checking Annex Stats to XML
 #'
@@ -336,13 +326,12 @@ write_annex_metaVariable <- function(wb, x, quiet, sheet = "META-Variable", upda
 #' not match the expected file format.
 #'
 #' @author Reto Stauffer
-#'
 annex_check_stats_object <- function(x) {
     stopifnot(inherits(x, "annex_stats"), is.data.frame(x), NROW(x) > 0)
 
     # The following variables must exist and be either
     # character or factor to count as valid
-    must_exist <- c("study", "home", "room", "month", "tod", "variable")
+    must_exist <- c("study", "home", "room", "year", "month", "tod", "variable")
     for (n in must_exist) {
         if (!n %in% names(x)) stop("missing `", n, "'` in the annex stats object")
         if (!is.character(x[[n]]) && !is.factor(x[[n]]))

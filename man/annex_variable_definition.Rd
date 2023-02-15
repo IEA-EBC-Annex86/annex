@@ -17,8 +17,10 @@ which contains the allowed (defined) variables.
 \description{
 The template not only contains the definition of the allowed variables,
 it also states whether or not additional information is required (or
-optional) and an upper and lower bound to be considered 'valid'.
-Used for quality flags.
+optional), an upper and lower bound to be considered 'valid' plus
+(is specified) a series of allowed units.
+Used to prepare the data and convert to annex standard units, quality checks,
+as well as validation.
 }
 \details{
 If \code{as_list = TRUE} a list of lists is returned, else
@@ -29,7 +31,9 @@ whereas each entry contains a list with a logical flag if additional
 information in the META sheet is \code{required} as well as a numeric
 \code{lower} and \code{upper} bound which defines in which range
 an observation is considered to be valid. Can be \code{NA} if not
-specified (both or one of them).
+specified (both or one of them). \code{allowed_units} contains \code{NA}
+(unspecified) or a character wich one or multiple comma separated units
+specifications.
 
 If \code{as_list = FALSE} (default) the same information is returned
 as a \code{data.frame} containing the same information.

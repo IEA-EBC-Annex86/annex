@@ -111,11 +111,11 @@ annex <- function(formula, data, tz, meta = NULL, verbose = FALSE) {
 
     # -------------------------------------------------
     # Appending month and tod
-    tmp  <- annex_add_month_and_tod(data[[f$time]], tz = tz)
+    tmp  <- annex_add_year_month_and_tod(data[[f$time]], tz = tz)
     data <- cbind(data, as.data.frame(tmp))
 
     # Reordering the data
-    data <- subset(data, select = c(f$time, f$group, "month", "tod", f$vars))
+    data <- subset(data, select = c(f$time, f$group, "year", "month", "tod", f$vars))
 
     # -------------------------------------------------
     # Now the object should be ready
@@ -126,9 +126,9 @@ annex <- function(formula, data, tz, meta = NULL, verbose = FALSE) {
 }
 
 
-#' Calculate month and time of day
+#' Calculate year, month and time of day
 #'
-#' Calculates month and the time of day categories based
+#' Calculates year, month and the time of day categories based
 #' on input argument \code{x} with respect to the time zone
 #' specified by the user.
 #'
@@ -136,23 +136,20 @@ annex <- function(formula, data, tz, meta = NULL, verbose = FALSE) {
 #' @param tz time zone (character). Important to properly calculate
 #'        month and time of day.
 #'
-#' @return List with two elements \code{month} (factor) and \code{tod} (factor).
+#' @return List with three elements \code{year} (integer), \code{month} (factor) and
+#' \code{tod} (factor).
 #'
 #' @author Reto Stauffer
-annex_add_month_and_tod <- function(x, tz) {
+annex_add_year_month_and_tod <- function(x, tz) {
     stopifnot(inherits(x, "POSIXt"))
     stopifnot(is.character(tz), length(tz) == 1L)
     #categorize time to specific season and time of day (tod)
     month  <- factor(as.integer(format(x, "%m", tz = tz)), 0:12, c("all", 1:12))
-    ### Originaly season was used
-    #season <- cut(as.integer(format(x, "%m%d")),
-    #              breaks = c(-Inf, 329, 620, 922, 1220, Inf),
-    #              labels = c("12-02", "03-05", "06-08", "09-11", "12-02"))
-
+    year   <- as.factor(as.integer(format(x, "%Y", tz = tz)))
     tod    <- cut(as.integer(format(x, "%H", tz = tz)),
                   breaks = c(-Inf, 6, 22, Inf),
                   labels = c("23-07", "07-23", "23-07"))
-    return(list(month = month, tod = tod))
+    return(list(year = year, month = month, tod = tod))
 }
 
 #' Parsing Formula

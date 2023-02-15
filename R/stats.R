@@ -68,7 +68,7 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
             stop("argument `probs` must be numeric [0, 1] without missing values")
         probs <- unique(sort(round(probs, 3)))
     } else {
-        probs <- sort(c(c(0.005, 0.995, 0.025, 0.975), seq(0, 1, by = 0.05)))
+        probs <- sort(c(c(0.005, 0.995, 0.025, 0.975), seq(0, 1, by = 0.01)))
     }
 
     # Functions to apply to calculate the stats
@@ -85,29 +85,22 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
     }
 
     # Adding quality flag
-    add_quality_flag <- function(x, variables) {
+    add_quality_flags <- function(x, variables) {
         vinfo <- annex_variable_definition(as_list = TRUE)
         for (v in variables) {
             info <- vinfo[[v]]
             if (is.null(info)) stop(sprintf("got an invalid variable `%s`", v))
-            # New variable name: quality_<varaible_name> for "quality flag"
-            nv <- sprintf("quality_%s", v)
-            # Else checking range
-            if (!is.na(info$lower) && !is.na(info$upper)) {
-                x[[nv]] <- x[[v]] >= info$lower & x[[v]] <= info$upper
-            } else if (!is.na(info$lower)) {
-                x[[nv]] <- x[[v]] >= info$lower
-            } else if (!is.na(info$upper)) {
-                x[[nv]] <- x[[v]] <= info$upper
-            } else {
-                x[[nv]] <- !is.na(x[[v]])
-            }
+            # New variable name: quality_(lower|upper)_<varaible_name> for "quality flag"
+            nvl <- sprintf("quality_lower_%s", v)
+            x[[nvl]] <- if (is.na(info$lower)) NA else x[[v]] < info$lower
+            nvu <- sprintf("quality_upper_%s", v)
+            x[[nvu]] <- if (is.na(info$upper)) NA else x[[v]] > info$upper
         }
         return(x)
     }
 
     # Reshaping result of aggregate()
-    convert <- function(var, data, f, gx = c("month", "tod"), prefix = NULL) {
+    convert <- function(var, data, f, gx = c("year", "month", "tod"), prefix = NULL) {
         res   <- as.data.frame(data[, if (is.null(prefix)) var else paste(prefix, var, sep = "_")])
         if (!is.null(prefix)) names(res) <- paste(prefix, names(res), sep = "_")
         res <- cbind(transform(data[, c(f$group, gx)], variable = var), res)
@@ -116,9 +109,9 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
 
     # List of functions to be applied; must all return a named vector
     functionlist <- list(
+        function(x) c(N      = length(x), NAs = sum(is.na(x))),
         function(x) c(Mean   = round(mean(x, na.rm = TRUE), digits = 4)),
         function(x) c(Sd     = round(sd(x, na.rm = TRUE), digits = 4)),
-        function(x) c(N      = length(x), NAs = sum(is.na(x))),
         function(x) get_quantiles(x)
         )
 
@@ -135,12 +128,13 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
     # Modify and aggregate the data
     # ---------------------------------------
     object <- add_interval_since_last(object, f)
-    object <- add_quality_flag(object, f$var)
+    object <- add_quality_flags(object, f$var)
 
     object_split  <- split(object, formula(paste("~ ", paste(f$group, collapse = " + "))), drop = TRUE)
-    fn <- function(x, f, gx = c("month", "tod")) {
+    fn <- function(x, f, gx = c("year", "month", "tod")) {
         # In case everything is NA; return NULL straight away
         if (sum(!is.na(x[, f$vars])) == 0) return(NULL)
+
         # Drop columns without non-missing values
         check_na <- sapply(x[, f$vars], function(x) sum(!is.na(x)))
 
@@ -153,13 +147,17 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
                                       convert, data = res1, f = f, gx = gx))
 
         # fq: formula/aggregation for 'quality'
-        fq <- sprintf("cbind(%s) ~ %s",
-                      paste(sprintf("quality_%s", f$vars), collapse = ", "),
-                      paste(c(f$group, gx), collapse = " + "))
-        res2 <- aggregate(formula(fq), x, function(x) 1e2 * round(mean(x, na.rm = TRUE), 4), na.action = na.pass)
-        res2 <- pivot_longer(res2, names_to = "variable", values_to = "quality",
-                             cols = paste("quality", f$vars, sep = "_"))
-        res2$variable <- sub("^quality_", "", res2$variable)
+        res2 <- list()
+        for (n in c("lower", "upper")) {
+            qcols <- sprintf(paste("quality", n, "%s", sep = "_"), f$var)
+            fq    <- sprintf("cbind(%s) ~ %s", paste(qcols, collapse = ", "),
+                             paste(c(f$group, gx), collapse = " + "))
+            res2[[n]]  <- aggregate(formula(fq), x, function(x) 1e2 * round(mean(x, na.rm = TRUE), 4), na.action = na.pass)
+            res2[[n]]  <- pivot_longer(res2[[n]], names_to = "variable",
+                                  values_to = paste("quality", n, sep = "_"), cols = qcols)
+            res2[[n]]$variable <- sub(sprintf("^quality_%s_", n), "", res2[[n]]$variable)
+        }
+        res2 <- do.call("merge", unname(res2))
 
         # fi: formula/aggregation for 'interval'
         fi <- sprintf("cbind(%s) ~ %s",
@@ -167,28 +165,28 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
                       paste(c(f$group, gx), collapse = " + "))
         res3 <- aggregate(formula(fi), x, get_interval_stats, na.action = na.pass)
         res3 <- do.call(rbind, lapply(f$vars, convert, data = res3, f = f, gx = gx, prefix = "interval"))
+
         # Merge and return
         return(Reduce(merge, list(res2, res3, res1)))
     }
 
     # Splitting data; aggregate data
-#    res <- unlist(lapply(object_split, fn, f = f), recursive = FALSE)
     res <- lapply(object_split, fn, f = f)
     res <- if (length(res) == 1) res[[1]] else bind_rows(res)
 
-    # Same but grouping only by study|home|room|month (all day long)
-    res_all_day  <- fn(object, f, c("month"))
+    # Same but grouping only by study|home|room|year|month (all day long)
+    res_all_day  <- fn(object, f, c("year", "month"))
     res_all_day  <- transform(res_all_day, tod  = "all")
 
-    # Same but grouping only by study|home|room|tod (all year long)
-    res_all_year <- fn(object, f, c("tod"))
+    # Same but grouping only by study|home|room|year|tod (all year long)
+    res_all_year <- fn(object, f, c("year", "tod"))
     res_all_year <- transform(res_all_year, month = "all")
 
     # Combine results
     res <- bind_rows(list(res_all_day, res_all_year, res))
 
     # Factorize and sort
-    first <- c("study", "home", "room", "month", "tod", "variable")
+    first <- c("study", "home", "room", "year", "month", "tod", "variable")
     for (n in first) res[[n]] <- factor(res[[n]])
     res <- res[, c(first[first %in% names(res)], names(res)[!names(res) %in% first])]
 
@@ -233,7 +231,7 @@ annex_stats_reshape <- function(x, format = NULL) {
     formula <- attr(x, "formula")           # we need it later
     f       <- annex_parse_formula(formula) # deparse
     # Identify grouping variable (plus month, tod, and variable if existing)
-    idvar   <- c("month", "tod", "variable")
+    idvar   <- c("year", "month", "tod", "variable")
     idvar   <- c(f$group, idvar[idvar %in% names(x)])
 
     # Reshape to wide format

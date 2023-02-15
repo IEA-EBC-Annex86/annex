@@ -282,18 +282,6 @@ annex_validate_sheet_metaStudy <- function(file, quiet, stat_meta, ..., sheet = 
     tmp <- annex_validate_sheet_ID_check(data, sheet, stat_meta, c("user", "study"))
     checkflag <- checkflag * tmp; rm(tmp)
 
-    # If ORCID is given, check that the format is as expected.
-    idx     <- which(!is.na(data$ORCID) &
-                     !grepl("^<.*>$", data$ORCID) &
-                     !grepl("^[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{4}$", data$ORCID))
-    if (length(idx) > 0) {
-        message(yellow("  WARNING: 'ORCID' in '", sheet, "' ",
-                "given in wrong format. Found ",
-                paste(data$ORCID[idx], collapse = ", "),
-                " (", get_row_info(idx, prefix = "row"), ")", sep = ""))
-        checkflag <- checkflag * FALSE
-    }
-
     return(as.logical(checkflag))
 }
 
@@ -495,7 +483,7 @@ get_required_columns <- function(sheet) {
     stopifnot(is.character(sheet), length(sheet) == 1L)
 
     # Definition
-    def <- list("META-Study" = c("Contact", "ORCID", "Year(s)"),
+    def <- list("META-Study" = c("Contact", "Institution"),
                 "META-Home"  = c("Location: Country", "Ventilation type"),
                 "META-Variable" = "Variable unit")
 
