@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">annex</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -100,11 +100,39 @@ format can be handy fur custom applications (e.g., plotting, ...).</p>
 <p>Argument <code>probs</code> will be forwarded to the <code><a href="https://rdrr.io/r/stats/quantile.html" class="external-link">stats::quantile()</a></code> function.
 If <code>probs = NULL</code> (default) the empirical quantiles will be calculated
 from <code>0</code> (the minimum) up to <code>1</code> (the maximum) in an interval of
-<code>0.05</code> (five percent steps), including quantiles <code>0.005</code>,
+<code>0.01</code> (one percent steps), including quantiles <code>0.005</code>,
 <code>0.025</code>, <code>0.975</code> and <code>0.995</code>. Can be specified differently
 by the user if needed, however, this no longer yields the standard statistics
 and the validation will report a problem.</p>
-<p>TODO(R): Include this check in the STAT validation function.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="statistics">Statistics<a class="anchor" aria-label="anchor" href="#statistics"></a></h2>
+    
+
+
+<p><strong>Grouping:</strong> Statistics are calculated on different subsets (or groups),
+typically <code>study</code>, <code>home</code>, <code>room</code>, <code>year</code>, <code>month</code>,
+<code>tod</code> (time of day).  However, this set can vary depending on the users
+function call to <code>annex</code> (see argument <code>formula</code>).</p>
+<p><code>annex_stats</code> calculates a series of data/quality flags as well as statistical
+measures.</p>
+<p><strong>Quality:</strong> <code>quality_lower</code> and <code>quality_upper</code> contain the fraction of
+observations (in percent) falling below the lower and upper defined threshold
+(see <code>annex_variable_definition</code>).
+<code>quality_start</code> and <code>quality_end</code> contain the day (date only)
+where the first non-missing observation was given for the current group; used to
+estimate <code>Nestim</code> (see below).</p>
+<p><strong>Interval:</strong> Time increments of all non-missing observations are calculated in seconds.
+The <code>interval_</code> columns show the five digit summary plus the arithmetic mean of these
+intervals. <code>interval_Median</code> is used to calculate estimate <code>Nestim</code> (see below).</p>
+<p><strong>Nestim:</strong> Number of estimated observations (see section below)
+<strong>N:</strong> Number of non-missing observations
+<strong>NAs:</strong> Number of missing observations (<code>NA</code> in the data set)
+<strong>Mean:</strong> $$\bar{x} = \frac{1}{N} \sum_{i = 1}^N x_i$$ (arithmetic mean)
+<strong>Sd:</strong> $$\text{sd}(x) = \sqrt{\frac{1}{N - 1} \sum_{i = 1}^N \big( (x_i - \bar{x})^2\big)}$$
+<strong>p:</strong> Probabilites for different quantiles. <code>p00</code> represents the overall minimum,
+<code>p50</code> the median, <code>p100</code> the overall maximum of all non-missing values. Uses
+the empirical quantile function with <code>type = 7</code> (default; see <code>quantile</code>).</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

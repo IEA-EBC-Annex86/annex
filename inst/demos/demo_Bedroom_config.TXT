@@ -1,0 +1,14 @@
+# ----------------------------------------------------------------------
+# Bedroom demo config
+# Simple tabular text file containing the required information
+# to process the file 'demo_Bedroom.txt' with the annex package.
+# ----------------------------------------------------------------------
+"column"            "variable"      "study"        "unit"     "home"         "room"
+"X"                 "datetime"      empty          empty      empty          empty
+"co2"               "CO2"           "DEMO_STUD"    empty      "Casa_Blanca"  "Bed1"
+"humidity"          "rH"            "DEMO_STUD"    "%"        "Casa_Blanca"  "Bed1"
+"light"             "Light"         "DEMO_STUD"    empty      "Casa_Blanca"  "Bed1"
+"pressure"          "Pressure"      "DEMO_STUD"    "hPa"      "Casa_Blanca"  "Bed1"
+"temp"              "T"             "DEMO_STUD"    "C"        "Casa_Blanca"  "BED1"
+"voc"               "VOC"           "DEMO_STUD"    empty      "Casa_Blanca"  "BED1"
+"radonShortTermAvg" "Radon"         "DEMO_STUD"    empty      "Casa_Blanca"  "BED1"

@@ -28,7 +28,7 @@ annex_template <- function(file, overwrite = FALSE) {
     if (file.exists(file) && !overwrite)
         stop("file \"", file, "\" already exists (`overwrite = FALSE`)")
     # Else trying to make a copy of the template
-    template <- system.file("template/template.xlsx", package = "annex")
+    template <- system.file("template/template.xlsx", package = "annex", mustWork = TRUE)
     # Catch return unused for now
     res      <- tryCatch(file.copy(template, file),
                          error = function(x) stop("cannot create \"", file, "\""))
@@ -128,6 +128,7 @@ annex_write_stats <- function(x, file, user, mode = "write", ..., ask = TRUE, qu
     # Check if the input object is what we expect;
     # Also used as sanity check for the annex_write_stats function.
     x <- annex_stats_reshape(x, format = "wide")
+    print(class(x))
     annex_check_stats_object(x)
 
     # Replacing NaN (not a number) with a simple NA to avoid having
@@ -162,11 +163,11 @@ annex_write_stats <- function(x, file, user, mode = "write", ..., ask = TRUE, qu
     # If not mode == "write" we check that the columns in the different
     # sheets match the ones from the template.
     if (!mode == "write") {
-        template <- system.file("template/template.xlsx", package = "annex")
-        stopifnot("problems to find the template (internal package problem)" = file.exists(template))
+        template <- system.file("template/template.xlsx", package = "annex", mustWork = TRUE)
         for (sheet in required_sheets) {
             if (sheet %in% "STAT") next
             # compare ...
+            warning("TODO(R): Calling readxl here - fix!")
             cols_template <- names(read_xlsx(template, sheet = sheet, n_max = 1))
             cols_file     <- names(read_xlsx(file,     sheet = sheet, n_max = 1))
             if (!identical(cols_template, cols_file))

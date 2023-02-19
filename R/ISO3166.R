@@ -27,6 +27,7 @@ NULL
 #' @export
 #' @author Reto Stauffer
 annex_countries <- function() {
-    data("ISO3166")
+    file <- system.file("data/ISO3166.rda", package = "annex", mustWork = TRUE)
+    load(file)
     return(ISO3166)
 }

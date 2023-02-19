@@ -37,16 +37,22 @@
     <loc>https://some.example-url.com/news/index.html</loc>
   </url>
   <url>
+    <loc>https://some.example-url.com/reference/ISO3166.html</loc>
+  </url>
+  <url>
     <loc>https://some.example-url.com/reference/annex.html</loc>
   </url>
   <url>
-    <loc>https://some.example-url.com/reference/annex_add_month_and_tod.html</loc>
+    <loc>https://some.example-url.com/reference/annex_add_year_month_and_tod.html</loc>
   </url>
   <url>
     <loc>https://some.example-url.com/reference/annex_check_config.html</loc>
   </url>
   <url>
     <loc>https://some.example-url.com/reference/annex_check_stats_object.html</loc>
+  </url>
+  <url>
+    <loc>https://some.example-url.com/reference/annex_countries.html</loc>
   </url>
   <url>
     <loc>https://some.example-url.com/reference/annex_parse_formula.html</loc>
@@ -95,6 +101,15 @@
   </url>
   <url>
     <loc>https://some.example-url.com/reference/formatting.html</loc>
+  </url>
+  <url>
+    <loc>https://some.example-url.com/reference/get_ID_info.html</loc>
+  </url>
+  <url>
+    <loc>https://some.example-url.com/reference/get_required_columns.html</loc>
+  </url>
+  <url>
+    <loc>https://some.example-url.com/reference/get_row_info.html</loc>
   </url>
   <url>
     <loc>https://some.example-url.com/reference/index.html</loc>

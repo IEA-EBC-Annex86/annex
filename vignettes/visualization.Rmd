@@ -21,7 +21,7 @@ suppressPackageStartupMessages(library('zoo'))
 suppressPackageStartupMessages(library('Formula'))
 
 # Make a copy when building the article
-file <- system.file("data/demo_UIBK.xlsx", package = "annex")
+file <- system.file("demos/demo_UIBK.xlsx", package = "annex")
 file.copy(file, "demo_UIBK.xlsx")
 ```
 

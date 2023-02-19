@@ -81,7 +81,7 @@ annex_validate <- function(file, user, quiet = FALSE, ...) {
 annex_validate_sheet_columns <- function(file, sheets, quiet = FALSE) {
 
     # Template XLSX to compare the user file against
-    template_xlsx <- system.file("template/template.xlsx", package = "annex")
+    template_xlsx <- system.file("template/template.xlsx", package = "annex", mustWork = TRUE)
     # Default return; will be changed if needed
     checkflag <- TRUE
 
@@ -130,9 +130,10 @@ annex_validate_sheet_STAT <- function(file, user, quiet, ...) {
     data <- read.xlsx(file, sheet = "STAT")
 
     # checking required columns (correct order; columns A:...)
-    required_cols <- c("user", "study", "home", "room", "month", "tod", "variable",
-                       "quality", "interval_Min", "interval_Q1", "interval_Median",
-                       "interval_Mean", "interval_Q3", "interval_Max")
+    required_cols <- c("user", "study", "home", "room", "year", "month", "tod", "variable",
+                       "quality_lower", "quality_upper", "quality_start", "quality_end",
+                       "interval_Min", "interval_Q1", "interval_Median", "interval_Mean", "interval_Q3", "interval_Max",
+                       "Nestim", "N", "NAs")
     tmp <- names(data)[seq_along(required_cols)] == required_cols
     tmp <- sapply(tmp, function(x) isTRUE(x))
     if (!all(tmp)) {
@@ -192,6 +193,33 @@ annex_validate_sheet_STAT <- function(file, user, quiet, ...) {
     # Check if 'room' is valid
     check_for_allowed_rooms(data$room)
     check_for_allowed_variables(data$variable)
+
+    # Test if the expected quantiles are all available
+    # and that the data is valid. 'pfound' are the numeric
+    # values extracted from the column names found; pexp
+    # are the columns we are expecting.
+    pcols  <- names(data)[grep("^p[0-9\\.]+$", names(data))]
+    pfound <- as.numeric(gsub("^p", "", pcols))
+    pexp   <- sort(c(0.005, 0.025, 0.975, 0.995, seq(0, 1, by = 0.01)))
+    tmp    <- abs(round(pexp, digits = 2) - pexp) < sqrt(.Machine$double.eps)
+    pexp   <- ifelse(tmp, sprintf("p%02.0f", 100 * pexp), sprintf("p%04.1f", 100 * pexp))
+    # Missing columns
+    if (!all(pexp %in% pcols)) {
+        pmissing <- pexp[!pexp %in% pcols]
+        stop(red $ bold(sprintf("missing expected quantile%s ", if (length(pmissing) > 1) "s" else ""),
+                        paste(pmissing, collapse = ", "), sep = ""))
+    # Incorrect order
+    } else if (!all(diff(pfound) > 0)) {
+        stop(red $ bold("columns with quantiles not in a strictly increasing order"))
+    # Data must be increasing as well
+    } else {
+        tmp <- data[, pcols]
+        check <- apply(data[, pcols], 1, function(x) any(sign(diff(x)) == -1, na.rm = TRUE))
+        if (any(check)) {
+            stop(red $ bold("probabilities not monotonically increasing. Check ", 
+                            get_row_info(check, prefix = "row"), sep = ""))
+        }
+    }
 
     # If we end up here everything is fine; continue
     return(TRUE)
@@ -302,7 +330,7 @@ annex_validate_sheet_metaHome <- function(file, quiet, stat_meta, ..., sheet = "
 
     # Are Loctions (if given) in ISO3 standard?
     colname <- "Location: Country"
-    idx     <- which(!is.na(data[[colname]]) & !data[[colname]] %in% ISO3166$ISO3)
+    idx     <- which(!is.na(data[[colname]]) & !data[[colname]] %in% annex_countries()$ISO3)
     if (length(idx) > 0) {
         message(yellow("  WARNING: '", colname, "' in '", sheet, "' ",
                 "not in ISO3 standard, found: ",
@@ -379,7 +407,7 @@ annex_validate_sheet_metaVariable <- function(file, quiet, stat_meta, ..., sheet
 
 #' @importFrom openxlsx read.xlsx
 annex_validate_sheet_Definitions <- function(file, sheet = "Definitions") {
-    template_xlsx <- system.file("template/template.xlsx", package = "annex")
+    template_xlsx <- system.file("template/template.xlsx", package = "annex", mustWork = TRUE)
     templ <- read.xlsx(template_xlsx, sheet = sheet)
     user  <- read.xlsx(file, sheet = sheet)
     idx   <- templ == user

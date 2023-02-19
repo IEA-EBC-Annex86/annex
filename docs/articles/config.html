@@ -34,7 +34,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">annex</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -104,16 +104,16 @@
 <div class="section level2">
 <h2 id="configuration-content-and-purpose">Configuration content and purpose<a class="anchor" aria-label="anchor" href="#configuration-content-and-purpose"></a>
 </h2>
-<p>The following output shows the first <code>n = 6</code> lines from the configuration object used in the article <a href="articles/from_textfiles.html">Analysis from textfiles</a>; the first six lines of a data.frame with <span class="math inline">\(5\)</span> variables (columns).</p>
+<p>The following output shows the first <code>n = 6</code> lines from the configuration object used in the article <a href="articles/from_textfiles.html">Analysis from textfiles</a>; the first six lines of a data.frame with <span class="math inline">\(6\)</span> variables (columns).</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">config</span>, n <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##     column variable     study        home room</span></span>
-<span><span class="co">## 1        X datetime      &lt;NA&gt;        &lt;NA&gt; &lt;NA&gt;</span></span>
-<span><span class="co">## 2      co2      CO2 DEMO_STUD Casa_Blanca Bed1</span></span>
-<span><span class="co">## 3 humidity       rH DEMO_STUD Casa_Blanca Bed1</span></span>
-<span><span class="co">## 4    light    Light DEMO_STUD Casa_Blanca Bed1</span></span>
-<span><span class="co">## 5 pressure Pressure DEMO_STUD Casa_Blanca Bed1</span></span>
-<span><span class="co">## 6     temp        T DEMO_STUD Casa_Blanca BED1</span></span></code></pre>
+<pre><code><span><span class="co">##     column variable     study unit        home room</span></span>
+<span><span class="co">## 1        X datetime      &lt;NA&gt; &lt;NA&gt;        &lt;NA&gt; &lt;NA&gt;</span></span>
+<span><span class="co">## 2      co2      CO2 DEMO_STUD &lt;NA&gt; Casa_Blanca Bed1</span></span>
+<span><span class="co">## 3 humidity       rH DEMO_STUD    % Casa_Blanca Bed1</span></span>
+<span><span class="co">## 4    light    Light DEMO_STUD &lt;NA&gt; Casa_Blanca Bed1</span></span>
+<span><span class="co">## 5 pressure Pressure DEMO_STUD  hPa Casa_Blanca Bed1</span></span>
+<span><span class="co">## 6     temp        T DEMO_STUD    C Casa_Blanca BED1</span></span></code></pre>
 <p>This is used to tell the <code>annex</code> package which information needs to be processed, where to find the important information, and how to translate (rename) the variables to meet the <code>annex</code> standard format.</p>
 <div class="section level4">
 <h4 id="the-five-required-columns">The five required columns<a class="anchor" aria-label="anchor" href="#the-five-required-columns"></a>

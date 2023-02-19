@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">annex</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,16 +58,20 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.2-1" id="annex-02-1">annex 0.2-1<a class="anchor" aria-label="anchor" href="#annex-02-1"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.2-2" id="annex-02-2">annex 0.2-2<a class="anchor" aria-label="anchor" href="#annex-02-2"></a></h2>
 <p>Release candidate for testing in February 2023 with some major changes based on the discussions in the meeting early February.</p>
-<ul><li>Removed “META-Season” sheet from XLSX file.</li>
-<li>Changed aggregation from seasonal (quarterly) to monthly.</li>
+<ul><li>The config object now must contain a “unit” variable. Some of the allowed variables (see <code><a href="../reference/annex_variable_definition.html">annex_variable_definition()</a></code>) have a set of pre-defined units which must be used. <code><a href="../reference/annex_prepare.html">annex_prepare()</a></code> internally converts all the data to the ‘annex standard units’. E.g., the user can provide temperature data in Kelvin or Farenheit, <code><a href="../reference/annex_prepare.html">annex_prepare()</a></code> will always convert them to degrees Celsius.</li>
+<li>Removed “META-Season” sheet from XLSX file.</li>
+<li>Changed aggregation. Originally the aggregation has been done on a quarterly level including all years. The new version aggregates by year + month.</li>
 <li>Allowing rooms to be numbered for differenciation by adding up to two digits. E.g. BED, BED1, BED2, BED66 (same for all room types).</li>
-<li>Two new functions <code><a href="../reference/annex_variable_definition.html">annex_variable_definition()</a></code> and <code><a href="../reference/annex_room_definition.html">annex_room_definition()</a></code> which return information about allowed variables/room labels among other information.</li>
-<li>Added quality flag to stats; percentage of values within a defined range. These bounds are defined in the “Definitions” sheet in the XLSX file and can be accessed calling <code><a href="../reference/annex_variable_definition.html">annex_variable_definition()</a></code>.</li>
+<li>New functions <code><a href="../reference/annex_variable_definition.html">annex_variable_definition()</a></code> and <code><a href="../reference/annex_room_definition.html">annex_room_definition()</a></code> which return information about allowed variables/room labels amongst other information.</li>
+<li>Added data set containing all ISO3166 alpha-3 (ISO3) country codes used for validationn. Convenience function <code><a href="../reference/annex_countries.html">annex_countries()</a></code> which returns <code>data("ISO3166")</code>
+</li>
+<li>Added quality flag to stats; percentage of observations falling below a certain threshold or exceed a threshold. These bounds are defined in the “Definitions” sheet in the XLSX file and can be accessed calling <code><a href="../reference/annex_variable_definition.html">annex_variable_definition()</a></code>.</li>
 <li>Added interval (measurement interval) information to stats; time in seconds to the previous observation recorded in the data set. Calculated on a varaible level; if no value is present (missing value) this will be considered to ‘not have been mesured’ which leads to longer interval times. Currently reporting five number summary plus</li>
 <li>Both XLSX sheets ‘META-Room’ and ‘META-Variable’ have a column for optional information about the measurement location (e.g., next to window, center of room, and any other important/helpful information) or variable (optional meta data).</li>
 <li>Additional tinytests for support functions.</li>
+<li>Validation: Decent update on the validation to show more granular errors and warnings. Additional checks for specific varaibles to ensure the content follows the expected format. Added conditional tests on variables (some require additional information).</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2-0" id="annex-02-0">annex 0.2-0<a class="anchor" aria-label="anchor" href="#annex-02-0"></a></h2>

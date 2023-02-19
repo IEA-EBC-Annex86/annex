@@ -20,9 +20,9 @@ vignette: >
 suppressPackageStartupMessages(library('zoo'))
 suppressPackageStartupMessages(library('Formula'))
 # Make a copy when building the article
-file <- system.file("data/demo_Bedroom_config.TXT", package = "annex")
+file <- system.file("demos/demo_Bedroom_config.TXT", package = "annex", mustWork = TRUE)
 file.copy(file, "demo_Bedroom_config.TXT")
-file <- system.file("data/demo_Bedroom.txt", package = "annex")
+file <- system.file("demos/demo_Bedroom.txt", package = "annex", mustWork = TRUE)
 file.copy(file, "demo_Bedroom.txt")
 ```
 

@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">annex</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,7 +64,15 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">annex_write_stats</span><span class="op">(</span><span class="va">x</span>, <span class="va">file</span>, <span class="va">user</span>, overwrite <span class="op">=</span> <span class="cn">FALSE</span>, <span class="va">...</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">annex_write_stats</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">file</span>,</span>
+<span>  <span class="va">user</span>,</span>
+<span>  mode <span class="op">=</span> <span class="st">"write"</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  ask <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -85,13 +93,21 @@ See 'Details'.</p></dd>
 by the project team. Will be appended to the data set.</p></dd>
 
 
-<dt>overwrite</dt>
-<dd><p>logical, defaults to <code>FALSE</code>.
-See 'Details'.</p></dd>
+<dt>mode, </dt>
+<dd><p>character, writing mode. Can be one of <code>"write"</code> (default),
+<code>"append"</code> (add new data) or <code>"update"</code> (update existing data).
+See 'Mode' for more information.</p></dd>
 
 
 <dt>...</dt>
 <dd><p>not yet used.</p></dd>
+
+
+<dt>ask</dt>
+<dd><p>logical. If <code>TRUE</code> the user will be asked to confirm that
+the function will modify the existing <code>file</code> (used when
+<code>mode == "append"</code> or <code>mode == "update"</code>). See
+Section 'Writing mode' for more information.</p></dd>
 
 
 <dt>quiet</dt>
@@ -104,7 +120,7 @@ See 'Details'.</p></dd>
 
 <p>No return, creates a new XLSX file (see argument <code>file</code>)
 and stores the data, or updates an existing XLSX file (see
-argument <code>overwrite</code>).</p>
+argument section 'Writing mode').</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -120,6 +136,32 @@ exists, the function will be terminated. However, it can be set
 to <code>TRUE</code> to allow <code>annex_write_stats()</code> to manipulate/overwrite
 the current data in that XLSX file. It tries to preserve all
 custom data (TODO(R): not yet implemented).</p>
+    </div>
+    <div class="section level2">
+    <h2 id="writing-mode">Writing mode<a class="anchor" aria-label="anchor" href="#writing-mode"></a></h2>
+    <p>There are three writing modes. Warning: Depending on
+the mode used, existing data can get lost (i.e., removed). The following
+modes are available:</p>
+<p><strong>write</strong>: Default mode, write data into a fresh XLSX file. It is assumed
+that the output <code>file</code> does not yet exist. If it exists an error will
+be thrown as it is unkown if the user would like to append new data to
+an existing file or update (overwrite) data in an existing file.</p>
+<p><strong>append</strong>: Append data to an existing XLSX file. This mode expects that
+the <code>file</code> does already exist and is in the correct format (will check
+sheets and columns against the template). If <code>file</code> does not exist or
+the content of <code>file</code> does not follow the format of the template, an
+error will be thrown.</p>
+<p><code>mode = "append"</code> falls back to <code>mode = "write"</code> if the output <code>file</code>
+does not yet exist.</p>
+<p>Else the data of <code>x</code> will be appended to the sheet 'STAT' and additional
+entries in the 'META*' sheets will be created if needed. In case the new object <code>x</code>
+contains data which are already in <code>STAT</code> an error will be thrown
+(so the new data to be appended must be unique).</p>
+<p><strong>update</strong>: Update the data of an existing <code>file</code>. <strong>Warning:</strong> this
+will delete (drop) existing data in the sheet 'STAT' and append new entries
+in the 'META*' sheets (won't delete existing entries). The latter could cause
+additional warnings when validating the file if there are 'META*' entries
+which are no longer needed (as the data have been deleted).</p>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>

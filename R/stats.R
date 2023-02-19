@@ -15,13 +15,45 @@
 #' Argument \code{probs} will be forwarded to the [stats::quantile()] function.
 #' If \code{probs = NULL} (default) the empirical quantiles will be calculated
 #' from \code{0} (the minimum) up to \code{1} (the maximum) in an interval of
-#' \code{0.05} (five percent steps), including quantiles \code{0.005},
+#' \code{0.01} (one percent steps), including quantiles \code{0.005},
 #' \code{0.025}, \code{0.975} and \code{0.995}. Can be specified differently
 #' by the user if needed, however, this no longer yields the standard statistics
 #' and the validation will report a problem.
 #'
-#' TODO(R): Include this check in the STAT validation function.
+#' @section Statistics:
 #'
+#' **Grouping:** Statistics are calculated on different subsets (or groups),
+#' typically \code{study}, \code{home}, \code{room}, \code{year}, \code{month},
+#' \code{tod} (time of day).  However, this set can vary depending on the users
+#' function call to \code{annex} (see argument \code{formula}).
+#'
+#' \code{annex_stats} calculates a series of data/quality flags as well as statistical
+#' measures.
+#'
+#' **Quality:** \code{quality_lower} and \code{quality_upper} contain the fraction of
+#' observations (in percent) falling below the lower and upper defined threshold
+#' (see \code{annex_variable_definition}).
+#' \code{quality_start} and \code{quality_end} contain the day (date only)
+#' where the first non-missing observation was given for the current group; used to
+#' estimate \code{Nestim} (see below).
+#'
+#' **Interval:** Time increments of all non-missing observations are calculated in seconds.
+#' The \code{interval_} columns show the five digit summary plus the arithmetic mean of these
+#' intervals. \code{interval_Median} is used to calculate estimate \code{Nestim} (see below).
+#'
+#' **Nestim:** Number of estimated observations (see section below)
+#' **N:** Number of non-missing observations
+#' **NAs:** Number of missing observations (\code{NA} in the data set)
+#' **Mean:** \deqn{\bar{x} = \frac{1}{N} \sum_{i = 1}^N x_i}{x_bar = mean(x)} (arithmetic mean)
+#' **Sd:** \deqn{\text{sd}(x) = \sqrt{\frac{1}{N - 1} \sum_{i = 1}^N \big( (x_i - \bar{x})^2\big)}}{sd(x)}
+#' **p:** Probabilites for different quantiles. \code{p00} represents the overall minimum,
+#' \code{p50} the median, \code{p100} the overall maximum of all non-missing values. Uses
+#' the empirical quantile function with \code{type = 7} (default; see \code{quantile}).
+#'
+#' @section Estimated number of observations
+#'
+#' TODO(R): Explain
+#' 
 #' @return Returns an object of class \code{c("annex_stats", "data_frame")}.
 #'
 #' @seealso annex_stats_reshape annes_write_stats
@@ -35,6 +67,8 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
     stopifnot(inherits(object, "annex"))
     format <- match.arg(format, c("wide", "long"))
     f <- annex_parse_formula(attr(object, "formula"))
+
+    data_tz <- attr(object[[f$time]], "tz")
 
     # To be able to calculate intevals between measurements we need
     # to split the data according to f$group, sort them, calculate differences,
@@ -210,14 +244,14 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
                 # Store the data
                 idx <- which(qual_ic == ic & qual$variable == v)
                 stopifnot(length(idx) == 1, !is.na(idx))
-                qual$quality_start <- as.Date(min(date_range))
-                qual$quality_end   <- as.Date(max(date_range))
+                qual$quality_start[idx] <- as.Date(min(date_range), tz = data_tz)
+                qual$quality_end[idx]   <- as.Date(max(date_range), tz = data_tz)
             }
         }
 
 
         # ---------------------------------------
-        # Calculate observation interval
+        # Calculating/guessing observation intervals/frequency
         # ---------------------------------------
         # fi: formula/aggregation for 'interval'
         finter <- sprintf("cbind(%s) ~ %s",
@@ -243,10 +277,13 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
             # No 'tod' (all day long) but on a monthly basis.
             tmp$Nestim <- ndays * 86400 / tmp$interval_Median
         } else {
-            stop("Don't know how to handle this one\n")
-            print(head(tmp))
-            stop()
+            stop("Don't know how to handle this one [annex package needs to be extended]\n")
         }
+
+        # Enforce date
+        tmp <- transform(tmp,
+                         quality_start = as.Date(quality_start, origin = "1970-01-01"),
+                         quality_end = as.Date(quality_end, origin = "1970-01-01"))
 
         return(Reduce(merge, list(tmp, stats)))
     }
@@ -318,10 +355,18 @@ annex_stats_reshape <- function(x, format = NULL) {
     # Reshape to wide format
     if (is_long && (is.null(format) || format == "wide")) {
         x        <- pivot_wider(x, names_from = "stats", values_from = "value")
-        x        <- structure(x, class = c("annex_stats", "annex_stats_wide", "data.frame"),
-                              formula = formula)
+        # Convert quality_start and quality_end back to 'Date'
+        x <- transform(x,
+                       quality_start = as.Date(quality_start, origin = "1970-01-01"),
+                       quality_end   = as.Date(quality_end,   origin = "1970-01-01"))
+        x <- structure(x, class = c("annex_stats", "annex_stats_wide", "data.frame"),
+                       formula = formula)
     # Reshape to long format
     } else if (!is_long && (is.null(format) || format == "long")) {
+        # Need to convert 'Date' to numeric
+        x <- transform(x,
+                       quality_start = as.numeric(quality_start),
+                       quality_end   = as.numeric(quality_end))
         varying  <- names(x)[!names(x) %in% idvar]
         x        <- pivot_longer(x, cols = varying, names_to = "stats")
         x        <- structure(x, class = c("annex_stats", "annex_stats_long", "data.frame"),

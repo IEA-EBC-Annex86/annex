@@ -30,7 +30,7 @@ from any source (e.g., from a text file, XLSX file, created via script, ...).
 
 
 ```{r, include = FALSE}
-file <- system.file("data/demo_Bedroom_config.TXT", package = "annex")
+file <- system.file("demos/demo_Bedroom_config.TXT", package = "annex")
 stopifnot(length(file) == 1, nchar(file) > 0, file.exists(file))
 config <- read.table(file,
                      comment.char = "#", sep = "",

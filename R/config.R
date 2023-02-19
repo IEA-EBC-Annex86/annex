@@ -62,7 +62,7 @@ annex_check_config <- function(x) {
     check_na <- sapply(tmp, function(x) sum(is.na(x)))
     if (any(check_na > 0))
         stop("missing values in ", paste(names(check_na)[check_na > 0], collapse = ", ")," not allowed")
-    if (is.na(subset(config, variable == "datetime", select = c(column), drop = TRUE)))
+    if (is.na(subset(x, variable == "datetime", select = c(column), drop = TRUE)))
         stop("missing entry for 'column' where variable = 'datetime'")
 
     # Allowed variable names, study, home, and room
@@ -130,7 +130,7 @@ annex_check_config <- function(x) {
         tmp <- subset(x, variable != "datetime", select = v, drop = TRUE)
         idx <- which(!grepl("^[a-z][a-z0-9_]{0,}$", tmp, ignore.case = TRUE))
         if (length(idx) > 0)
-            stop("values in variable ", v, " must only contain letters (lower or upper case), ",
+            stop("values in variable `", v, "` must only contain letters (lower or upper case), ",
                  "numbers, and underscores. Must start with a letter. The following are not allowed: ",
                  paste(tmp[idx], collapse = ", "))
 
@@ -260,7 +260,7 @@ check_for_allowed_rooms <- function(x) {
 annex_variable_definition <- function(as_list = FALSE) {
     as_list <- as.logical(as_list)[1L]
     # Path to XLSX file to be read
-    template_xlsx <- system.file("template/template.xlsx", package = "annex")
+    template_xlsx <- system.file("template/template.xlsx", package = "annex", mustWork = TRUE)
     tmp <- suppressMessages(read.xlsx(template_xlsx, sheet = "Definitions", sep.names = " "))
     required <- c("Variable" = "name",
                   "Additional information required" = "required",
@@ -300,7 +300,7 @@ annex_variable_definition <- function(as_list = FALSE) {
 #' @export
 annex_room_definition <- function() {
     # Path to XLSX file to be read
-    template_xlsx <- system.file("template/template.xlsx", package = "annex")
+    template_xlsx <- system.file("template/template.xlsx", package = "annex", mustWork = TRUE)
     tmp <- suppressMessages(read.xlsx(template_xlsx, sheet = "Definitions", sep.names = " "))
     required <- c("Measurement location"             = "name",
                   "Measurement location description" = "long_name")
