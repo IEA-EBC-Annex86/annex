@@ -191,7 +191,7 @@ can be convenient when processed manually.
 After performing the data preparation and calculating the statistics,
 the following steps can be performed:
 
-* [Visualizing the data(optional)](visualization.html)
+* [Visualizing the data (optional)](visualization.html)
 * [Write annex stats to final file](write_and_validate.html#write)
 * [Update meta data in final file](write_and_validate.html#meta)
 * [Validate final file](write_and_validate.html#validate)

@@ -2,7 +2,10 @@
 # Checking function 'annex_check_config'
 # -------------------------------------------------------
 
-if (interactive()) library("tinytest")
+if (interactive()) {
+    library("tinytest")
+    library("annex")
+}
 
 
 # -------------------------------------------------------
@@ -30,10 +33,10 @@ expect_error(annex:::check_for_allowed_rooms(factor("BED")),
 expect_error(annex:::check_for_allowed_rooms(character()),
              info = "Input is not of length > 0")
 expect_error(annex:::check_for_allowed_rooms(c(to_test, "foobar")),
-             pattern = "room name 'foobar' not allowed",
+             pattern = "Not allowed: 'foobar'",
              info = "Last value of input is not an allowed type")
 expect_error(annex:::check_for_allowed_rooms(c("foo", "bar")),
-             pattern = "room names 'foo', 'bar' not allowed",
+             pattern = "Not allowed: 'foo', 'bar'",
              info = "Input is none of the allowed room labels")
 expect_silent(x <- annex:::check_for_allowed_rooms(to_test))
 expect_identical(toupper(to_test), annex:::check_for_allowed_rooms(to_test),
@@ -53,10 +56,10 @@ expect_silent(x3 <- annex_variable_definition(as_list = TRUE))  # return list
 expect_identical(x1, x2, info = "Testing default behaviour")
 expect_inherits(x1, "data.frame",
             info = "Testing return value")
-expect_identical(names(x1), c("name", "required", "lower", "upper"),
+expect_identical(names(x1), c("name", "required", "lower", "upper", "allowed_units"),
             info = "Testing if return contains expected variables")
 expected_classes <- c("name" = "character", "required" = "logical",
-                      "lower" = "numeric", "upper" = "numeric")
+                      "lower" = "numeric", "upper" = "numeric", "allowed_units" = "character")
 for (i in seq_along(expected_classes))
     expect_inherits(x1[[names(expected_classes)[i]]], expected_classes[i],
                     info = "Testing variable classes")
@@ -85,10 +88,10 @@ expect_error(annex:::check_for_allowed_variables(factor("CO2")),
 expect_error(annex:::check_for_allowed_variables(character()),
              info = "Input is not of length > 0")
 expect_error(annex:::check_for_allowed_variables(c(to_test, "foobar")),
-             pattern = "variable name 'foobar' not allowed",
+             pattern = "Not allowed: 'foobar'",
              info = "Last value of input is not an allowed type")
 expect_error(annex:::check_for_allowed_variables(c("foo", "bar")),
-             pattern = "variable names 'foo', 'bar' not allowed",
+             pattern = "Not allowed: 'foo', 'bar'",
              info = "Input is none of the allowed variable labels")
 expect_silent(x <- annex:::check_for_allowed_variables(to_test))
 expect_identical(c("CO2", "PM1", "Radon", "Light"),
@@ -106,8 +109,8 @@ expect_identical(c("CO2", "PM1", "Radon", "Light"),
 # -------------------------------------------------------
 
 # Reading the config file with standard tools!
-expect_silent(f_config <- system.file("data/demo_UIBK_config.csv", package = "annex"))
-expect_silent(f_data   <- system.file("data/demo_UIBK.xlsx", package = "annex"))
+expect_silent(f_config <- system.file("demos/demo_UIBK_config.csv", package = "annex"))
+expect_silent(f_data   <- system.file("demos/demo_UIBK.xlsx", package = "annex"))
 
 expect_true(file.exists(f_config))
 expect_true(file.exists(f_data))
