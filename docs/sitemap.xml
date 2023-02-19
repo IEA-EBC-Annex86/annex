@@ -25,6 +25,9 @@
     <loc>https://some.example-url.com/articles/method.html</loc>
   </url>
   <url>
+    <loc>https://some.example-url.com/articles/prepare_xtra.html</loc>
+  </url>
+  <url>
     <loc>https://some.example-url.com/articles/unitconversion.html</loc>
   </url>
   <url>

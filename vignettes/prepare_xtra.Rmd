@@ -1,0 +1,231 @@
+---
+title: "Prepare xtra"
+author: "Reto Stauffer"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+bibliography: annex.bib
+link-citations: true
+vignette: >
+  %\VignetteIndexEntry{annex: Annex86 Data Analysis Package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteDepends{Formula}
+  %\VignetteKeywords{Annex86}
+  %\VignettePackage{annex}
+---
+
+```{r setup, include = FALSE}
+suppressPackageStartupMessages(library('zoo'))
+suppressPackageStartupMessages(library('Formula'))
+# Make a copy when building the article
+file <- system.file("demos/demo_US.xlsx", package = "annex", mustWork = TRUE)
+file.copy(file, "demo_US.xlsx")
+```
+
+TODO(R): Had no better idea for the name of this article and the placement on
+the documentation just now.
+
+## Introduction
+
+This article once again shows how to import and prepare a data set to calculate
+the `annex` statistics, focusing on the following two aspects:
+
+* **Time zone:** How to deal with time zones
+* **Unit conversion:** Automatically convert units of the observations.
+
+For this demonstration a file called
+`r xfun::embed_file("demo_US.xlsx", text = "demo_US.xlsx")` is used
+which already contains two sheets, one which contains simulated observations,
+and one containing the configuration (meta info) which allows to translate the
+data in the 'observations sheet' into the object required by `annex()`.
+
+Please also have a look at the two articles [Prepare data from XLSX](from_xlsx.html)
+and [Prepare data from textfiles](from_textfiles.html) for more examples.
+
+## Scenario
+
+Imagine you got observations from a logger which was recording the date and time
+in the "US/Central" (CST) time and contains data from four different sensors:
+
+* Kitchen room temperature (indoor); **Fahrenheit**
+* Kitchen relative humidity (indoor); **no unit** (`0.0` to `1.0`)
+* An exhaust temperature (heating system); **degrees Celsius**
+* Ambient air pressure; **mmHg** (millimetre of mercury)
+
+## Reading the data
+
+Step one is to import the data; using the [`readxl`](https://cran.r-project.org/package=readxl)
+package once again:
+
+```{r}
+library("readxl")
+excel_sheets("demo_US.xlsx") # Checking sheet names
+# Reading observations
+raw_df <- read_excel("demo_US.xlsx", sheet = "airquality_data")
+raw_df <- as.data.frame(raw_df) # Convert to simple data.frame
+# Reading configuration
+config <- read_excel("demo_US.xlsx", sheet = "meta_config")
+config <- as.data.frame(config) # Convert to simple data.frame
+```
+
+A quick look at the first $3$ observations (rows) of the object `raw_df` shows
+that we got a variable `loggertime` which seems to contain the date and time of 
+the observation in the US format (`mm/dd/yyyy HH:MM:SS`) which we know represents
+date and time in the "US/Central" time. However, when looking at the class of
+the variable `raw_df$loggertime` we can see that it is of class character (`chr`; text)
+wherefore we need to properly convert it before making use of it.
+
+```{r}
+head(raw_df, n = 3)
+class(raw_df$loggertime)
+```
+
+### Convert `loggertime`
+
+To convert the date and time information into a proper datetime object (an object
+of class `POSIXct`) including the proper time zone, we can call `as.POSIXct()`.
+
+**Arguments:**
+
+* `x`: The character vector `raw_df$loggertime` as we have it right now in our object.
+* `format`: The format of the date and time information (see `?strftime` to get a list of all available options).
+* `tz`: Time zone definition. Can be in the long format (e.g., `"US/Central"`) or short (e.g., `"CST"`).
+  Call `OlsonNames()` to get a list of time zones (long format).
+
+```{r}
+# Convert and overwrite existing column
+raw_df$loggertime <- as.POSIXct(x = raw_df$loggertime,
+                                format = "%m/%d/%Y %H:%M:%S",
+                                tz = "US/Central")
+# Checking the variable
+head(raw_df$loggertime)
+attr(raw_df$loggertime, "tz")   # Shows time zone abbreviation
+```
+
+This step is important to ensure `annex()` later on knows how to interpret the
+date and time information for the aggregation. Note that the time zone of the
+raw data and the time zone when calculating the statistics _can be different_.
+
+### The config object
+
+Next, let us have a look at the `config` object.
+
+```{r}
+config
+```
+
+As described in detail in [Config file/objects](config.html) this object contains
+information on how to interpret the raw data set. As shown, the unit column defines
+that one temperature is recorded in Fahrenheit (`unit = "F"`), the relative humidity
+without unit (`unit = "-"`), and the air pressure in millimeter of mercury (`unit = 'mmHg'`)
+in the raw data.
+
+This becomes important later when calling `annex_prepare()`.
+
+
+### Data overview
+
+To better understand what happens let us have a quick look at the data.
+
+```{r}
+summary(raw_df)
+```
+
+`summary()` returns a five number summary plus the arithmetic mean of each
+of the variables in our `raw_df` object. As shown, the observations for the
+kitchen temperature (second variable) has a mean of `r round(mean(raw_df[, 2]), 2)`
+which corresponds to about 20 degrees Celsius. The average relative humidity is
+`r round(mean(raw_df[, 3]), 3)` which corresponds to about `r round(mean(raw_df[, 3]) * 100)`
+percent.
+
+
+### Prepare the data
+
+We can now use `raw_df` in combination with our `config` object or prepare the data
+for the next step. In this step, the units will automatically be converted (for those
+variables the conversion is defined).
+
+```{r}
+library("annex")
+prepared_df <- annex_prepare(raw_df, config)
+head(prepared_df)
+summary(prepared_df)
+```
+
+The function also reshapes the data, however, one can see that the temperature
+data (contains temperature data from the exhaust as well as the kitchen) now all
+is in degrees Celsius; the relative humidity has been automatically converted to percent.
+
+
+## Calculating statistics
+
+Once the data set is prepared, `annex()` can be called to prepare the data set
+for the final calculations. _Note_: So far, the date and time information is still
+in the time zone of the logger. When calling `annex()` we can specify in which time
+zone the statistics should be calculated.
+
+**Correct solution:** According to our scenario we know that our study area is located
+in the "US/Central" time zone. This is what we need to tell `annex()` to correctly
+do the conversion.
+
+```{r}
+annex_df <- annex(T + RH + Pressure ~ datetime | study + home + room,
+                  data = prepared_df, tz = "US/Central")
+head(annex_df)
+```
+
+As shown, the first three observations (before 7 am local time) fall into the
+period `tod = "23-07"` while the next ones fall into the period `tod = "07-23"`.
+
+
+**Example:** Just for demonstration, let us assume that our logger has recorded
+the data in the "US/Central" time zone, however, our study area is actually located
+in Zuerich, Switzerland (Central Europe), wherefore we would like to calculate the statistics
+relative to the local time zone of Zuerich.
+
+```{r}
+zuerich_df <- annex(T + RH + Pressure ~ datetime | study + home + room,
+                  data = prepared_df, tz = "Europe/Zuerich")
+```
+
+As there is a time difference of ...
+
+
+```{r}
+# Time difference
+test <- "2028-12-28 06:00"
+as.POSIXct(test, tz = "US/Central") - as.POSIXct(test, tz = "Europe/Zuerich")
+```
+
+... between these two time zones at that specific date, the data will now
+be prepared differently. Compare the first few entries of `zuerich_df` to the
+output of `annex_df` shown above.
+
+```{r}
+head(zuerich_df)
+```
+
+## Next steps
+
+After performing the data preparation,
+the following steps can be performed:
+
+* [Calculating statistics (analysis)](calculate_stats.html)
+* [Visualizing the data (optional)](visualization.html)
+* [Write annex stats to final file](write_and_validate.html#write)
+* [Update meta data in final file](write_and_validate.html#meta)
+* [Validate final file](write_and_validate.html#validate)
+
+
+
+```{r, include = FALSE}
+if (file.exists("demo_US.xlsx")) file.remove("demo_US.xlsx")
+```
+
+
+
+
+
+

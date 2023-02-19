@@ -28,6 +28,8 @@ navbar:
         href: articles/from_xlsx.html
       - text: "Prepare data from textfiles"
         href: articles/from_textfiles.html
+      - text: "Prepare xtra (time zones + units)"
+        href: articles/prepare_xtra.html
       - text: "Calculate statistics"
         href: articles/calculate_stats.html
       - text: "Visualization"

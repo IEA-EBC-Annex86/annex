@@ -110,6 +110,7 @@ the XLSX file and the `config` object with the information about
 the renaming (and which columns to be used), the data set for
 further processing can be created.
 
+
 ```{r calling_annex_prepare}
 prepared_df <- annex_prepare(raw_df, config, quiet = TRUE)
 head(prepared_df)
