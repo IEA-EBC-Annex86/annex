@@ -1,5 +1,5 @@
 ---
-title: "Analysis from textfiles"
+title: "Prepare data from textfiles"
 author: "Reto Stauffer"
 output:
   html_document:
@@ -132,65 +132,12 @@ The checks of missing/additional definitions in `config` are intended to inform
 the user about possible misspecifications and will not result in an error.
 
 
-# Performing the analysis
-
-Once the data set is prepared properly (note that `annex_prepare()`
-is a convenience function, can also be done manually) the final object
-can be prepared.
-
-### Prepare `annex` object
-
-`annex()` is the creator function which creates an object of class
-`annex` (S3) providing a series of methods and functions to conduct the
-final analysis.
-
-The function expects a formula as input which describes how to process
-the data. The three parts of the formula are:
-
-* `<measurements to be processed> ~ <datetime> | <grouping variables>`
-* The first part defines which variables (measurements) should be processed
-* Part two is always `~ datetime`; the date and time information for the statistics
-* Part three the grouping, typically `study + home + room`
-
-```{r}
-annex_df <- annex(Radon + T + VOC ~ datetime| study + home + room,
-                  data = prepared_df, tz = "Europe/Berlin")
-head(annex_df)
-class(annex_df)
-```
-
-A series of S3 methods exist for `annex` objects which might be extended
-in the future.
-
-* `summary()`
-* `head()`/`tail()`
-* `is.regular()`
-* `plot()`
-
-## Performing analysis
-
-Based on the object returned by `annex()` the analysis
-can be performed by calling `annex_stats()`. The function
-aggregates the data based on the formula provided above,
-calculates a series of statistical properties, and returns
-an object of class `annex_stats`.
-
-```{r}
-head(annex_df)
-stats <- annex_stats(annex_df, format = "long")
-head(stats)
-```
-
-By default, the argument format is set to `"wide"` which will return the
-statistics in a wide format. Does not matter for the further analysis but
-can be convenient when processed manually.
-
-
 ## Next steps
 
-After performing the data preparation and calculating the statistics,
+After performing the data preparation,
 the following steps can be performed:
 
+* [Calculating statistics (analysis)](calculate_stats.html)
 * [Visualizing the data (optional)](visualization.html)
 * [Write annex stats to final file](write_and_validate.html#write)
 * [Update meta data in final file](write_and_validate.html#meta)

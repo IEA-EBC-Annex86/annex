@@ -1,0 +1,107 @@
+---
+title: "Lookup functions/definitions"
+author: "Reto Stauffer"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+bibliography: annex.bib
+link-citations: true
+vignette: >
+  %\VignetteIndexEntry{annex: Annex86 Data Analysis Package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteDepends{Formula}
+  %\VignetteKeywords{Annex86}
+  %\VignettePackage{annex}
+---
+
+```{r setup, include = FALSE}
+suppressPackageStartupMessages(library("DT"))
+```
+
+
+## Introduction
+
+The package is using a series of 'lookup tables' and data sets to validate
+the correctness the data.
+
+This includes testing if the [config object](articles/config.html) are in the
+correct format or to [validate the XLSX file](articles/write_and_validate.html).
+In case problems are found, the error messages, warnings, and notes should include
+hints on what has been going wrong.
+
+A series of small helper functions exist which allow the user to get the definitions
+used internally for these kind of tests.
+
+## Variable definition
+
+`annex_variable_definition()` returns a `data.frame` (or list) containing
+the names of all allowed variables as well as some additional information.
+
+```{r var_def}
+require("annex")
+var_def <- annex_variable_definition()
+head(var_def, n = 3)
+```
+
+* `name`: Name of the variable (as used in column `variable` in the [config object](articles/config.html))
+* `required`: Whether or not additional variable information is required (used by `annex_validate()`)
+* `lower`: Lower bound; observations below this threshold will be considered of bad quality. Used to calculate `quality_lower` by `annex_stats()`. `NA` if no bound defined.
+* `upper`: Upper bound; observations above this threshold will be considered of bad quality. Used to calculate `quality_upper` by `annex_stats()`. `NA` if no bound defined.
+* `allowed_units`: Comma separated list of allowed `unit`s as needed in the [config object](articles/config.html) or `NA` if not defined. If set, the first entry is the 'annex standard unit'
+    (see also [Unit conversion](articles/unitconversion.html)).
+
+The table below shows this table in a web-table form:
+
+```{r var_def_table, echo = FALSE}
+datatable(var_def, options = list(paging = TRUE, dom = "t"))
+```
+
+## Room definition
+
+`annex_room_definition()` returns a `data.frame` containing
+the names of all allowed room definitions. For each allowed room type
+there is a base name (e.g., `"BED"`; Bedroom) which can be extended by adding
+up to two numeric digits. This allows to define multiple bedrooms if needed
+(see `examples_valid_labels` included below).
+These are the labels as used in the [config object](articles/config.html).
+
+```{r room_def}
+require("annex")
+room_def <- annex_room_definition()
+head(room_def, n = 3)
+```
+
+* `name`: Base name/base abbreviation of all available room types.
+* `long_name`: Human readable description.
+* `examples_valid_labels`: Examples of allowed names to label multiple rooms of the same
+    type within one home.
+
+The table below shows the full list in a web-table form:
+
+```{r room_def_table, echo = FALSE}
+datatable(room_def, options = list(paging = FALSE, dom = "t"))
+```
+
+## ISO3 country code
+
+In the output XLSX file (sheet "META-home") the user needs to specify
+the country (location) of each 'home' using the ISO3 (ISO3166 alpha-3) country codes.
+A list of all available country codes is shipped with the `annex` package and can
+be accessed using `annex_countries()`. This information is used when validating
+the output XLSX (see [Write and validate](articles/write_and_validate.xlsx)).
+
+```{r iso3_def}
+require("annex")
+iso3_def <- annex_countries()
+head(iso3_def, n = 3)
+```
+
+The table below shows all `r nrow(iso3_def)` defined countries; searchable table.
+
+```{r iso3_def_table, echo = FALSE}
+datatable(iso3_def)
+```
+
+

@@ -34,7 +34,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">annex</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-4</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -47,10 +47,12 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/config.html">Config files/objects</a>
-    <a class="dropdown-item" href="../articles/from_xlsx.html">Analysis from XLSX</a>
-    <a class="dropdown-item" href="../articles/from_textfiles.html">Analysis from textfiles</a>
+    <a class="dropdown-item" href="../articles/from_xlsx.html">Prepare data from XLSX</a>
+    <a class="dropdown-item" href="../articles/from_textfiles.html">Prepare data from textfiles</a>
+    <a class="dropdown-item" href="../articles/calculate_stats.html">Calculate statistics</a>
     <a class="dropdown-item" href="../articles/visualization.html">Visualization</a>
     <a class="dropdown-item" href="../articles/write_and_validate.html">Write and validate output</a>
+    <a class="dropdown-item" href="../articles/lookupfunctions.html">Lookup functions/definitions</a>
   </div>
 </li>
 <li class="nav-item">
@@ -104,7 +106,7 @@
 <div class="section level2">
 <h2 id="configuration-content-and-purpose">Configuration content and purpose<a class="anchor" aria-label="anchor" href="#configuration-content-and-purpose"></a>
 </h2>
-<p>The following output shows the first <code>n = 6</code> lines from the configuration object used in the article <a href="articles/from_textfiles.html">Analysis from textfiles</a>; the first six lines of a data.frame with <span class="math inline">\(6\)</span> variables (columns).</p>
+<p>The following output shows the first <code>n = 6</code> lines from the configuration object used in the article <a href="articles/from_textfiles.html">Prepare data from textfiles</a>; the first six lines of a data.frame with <span class="math inline">\(6\)</span> variables (columns).</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">config</span>, n <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##     column variable     study unit        home room</span></span>
@@ -116,21 +118,23 @@
 <span><span class="co">## 6     temp        T DEMO_STUD    C Casa_Blanca BED1</span></span></code></pre>
 <p>This is used to tell the <code>annex</code> package which information needs to be processed, where to find the important information, and how to translate (rename) the variables to meet the <code>annex</code> standard format.</p>
 <div class="section level4">
-<h4 id="the-five-required-columns">The five required columns<a class="anchor" aria-label="anchor" href="#the-five-required-columns"></a>
+<h4 id="the-six-required-columns">The six required columns<a class="anchor" aria-label="anchor" href="#the-six-required-columns"></a>
 </h4>
 <ul>
 <li>
-<code>column</code>: The name of the column in the imported data set (e.g., from an <a href="articles/from_xlsx.html">XLSX file</a> or <a href="articles/from_textfiles.html">textfile</a>).</li>
+<code>column</code>: The name of the column in the imported data set (e.g., from an <a href="articles/from_xlsx.html">XLSX file</a> or <a href="articles/from_textfiles.html">text file</a>).</li>
 <li>
-<code>variable</code>: Defines the <em>new variable name</em>; one of the different variables (parameters) expected by the annex package.</li>
+<code>variable</code>: Defines the <em>new variable name</em>; one of the different variables (parameters) expected by the annex package (see <a href="articles/lookupfunctions.html#variable-definition">Variable definition</a>).</li>
 <li>
-<code>study</code>: Name of the study the data belong to</li>
+<code>study</code>: Name of the study the data belong to.</li>
 <li>
-<code>home</code>: Name of the home (building) the data belong to</li>
+<code>home</code>: Name of the home (building) the data belong to.</li>
 <li>
-<code>room</code>: Abbreviation of the type of room the data belong to</li>
+<code>room</code>: Abbreviation of the type of room the data belong to (see <a href="articles/lookupfunctions.html#room-definition">Room definition</a>).</li>
+<li>
+<code>unit</code>: Units of the input data (raw data); <code><a href="../reference/annex_prepare.html">annex_prepare()</a></code> will automatically convert to ’annex standard units (see <a href="articles/lookupfunctions.html#variable-definition">Variable definition</a>).</li>
 </ul>
-<p>While <code>column</code>, <code>study</code> and <code>home</code> can be chosen freely by the user, only a series of pre-defined values are available for <code>variable</code> and <code>room</code> (not case sensitive).</p>
+<p>While <code>column</code>, <code>study</code> and <code>home</code> can be chosen freely by the user, only a series of pre-defined values are available for <code>variable</code> (plus <code>unit</code>) and <code>room</code> (not case sensitive). See <a href="articles/lookupfunctions.html">Lookup functions</a> to get a full list of the defined values.</p>
 </div>
 <div class="section level4">
 <h4 id="the-required-rows">The required rows<a class="anchor" aria-label="anchor" href="#the-required-rows"></a>
@@ -148,7 +152,7 @@
 <div class="section level2">
 <h2 id="readimport-configuration">Read/import configuration<a class="anchor" aria-label="anchor" href="#readimport-configuration"></a>
 </h2>
-<p>The two articles <a href="articles/from_xlsx.html">Analysis from XLSX</a> <a href="from_textfiles.html">Analysis from textfiles</a> show examples how to import (read) such a configuration from an XLSX file or a text file. Any file which can be imported into a data.frame via <em>R</em> can be used.</p>
+<p>The two articles <a href="articles/from_xlsx.html">Prepare data from XLSX</a> <a href="from_textfiles.html">Prepare data from textfiles</a> show examples how to import (read) such a configuration from an XLSX file or a text file. Any file which can be imported into a data.frame via <em>R</em> can be used.</p>
 </div>
 <div class="section level2">
 <h2 id="technical-note">Technical note<a class="anchor" aria-label="anchor" href="#technical-note"></a>

@@ -24,14 +24,18 @@ navbar:
       menu:
       - text: "Config files/objects"
         href: articles/config.html
-      - text: "Analysis from XLSX"
+      - text: "Prepare data from XLSX"
         href: articles/from_xlsx.html
-      - text: "Analysis from textfiles"
+      - text: "Prepare data from textfiles"
         href: articles/from_textfiles.html
+      - text: "Calculate statistics"
+        href: articles/calculate_stats.html
       - text: "Visualization"
         href: articles/visualization.html
       - text: "Write and validate output"
         href: articles/write_and_validate.html
+      - text: "Lookup functions/definitions"
+        href: articles/lookupfunctions.html
 #    - text: "Articles"
 #      menu:
 #        - text: "Method"

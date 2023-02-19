@@ -1,0 +1,130 @@
+---
+title: "Calculate statistics"
+author: "Reto Stauffer"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+bibliography: annex.bib
+link-citations: true
+vignette: >
+  %\VignetteIndexEntry{annex: Annex86 Data Analysis Package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteDepends{Formula}
+  %\VignetteKeywords{Annex86}
+  %\VignettePackage{annex}
+---
+
+```{r setup, include = FALSE}
+suppressPackageStartupMessages(library('zoo'))
+suppressPackageStartupMessages(library('Formula'))
+
+# Make a copy when building the article
+file <- system.file("demos/demo_UIBK.xlsx", package = "annex", mustWork = TRUE)
+file.copy(file, "demo_UIBK.xlsx", overwrite = TRUE)
+```
+
+# Introduction
+
+Once the data is prepared, the analysis can be performed. This article
+continues the example used in the article [Prepare data from XLSX](articles/from_xlsx.html)
+but works the very same way with the other examples included in the documentation, e.g.,
+[Prepare data from textfiles](articles/from_textfiles.html).
+
+Please have a look at [this](articles/from_xlsx.html) article for more information
+on what the following lines of code do and/or to get the `"demo_UIBK.xlsx"` file
+to follow this article.
+
+```{r import_config_and_data}
+library("readxl")
+# Importing data and config object (meta information)
+raw_df <- read_excel("demo_UIBK.xlsx", sheet = "measurements")
+config <- read_excel("demo_UIBK.xlsx", sheet = "annex_configuration")
+config <- subset(config, process == TRUE) # Custom subsetting
+
+# Prepare data for annex()
+library("annex")
+prepared_df <- annex_prepare(raw_df, config, quiet = TRUE)
+head(prepared_df, n = 3)
+```
+
+# Performing the analysis
+
+Once the data set is prepared properly (note that `annex_prepare()`
+is a convenience function, can also be done manually) the final object
+can be prepared.
+
+### Prepare `annex` object
+
+`annex()` is the creator function which creates an object of class
+`annex` (S3) providing a series of methods and functions to conduct the
+final analysis. More information on object orientation system S3 can be found
+e.g. [here](https://discdown.org/rprogramming/classes-and-methods.html#object-orientation)
+
+The function expects a formula as input which describes how to process
+the data. The three parts of the formula are:
+
+* `<measurements to be processed> ~ <datetime> | <grouping variables>`
+* The first part defines which variables (measurements) should be processed
+* Part two is always `~ datetime`; the date and time information for the statistics
+* Part three the grouping, typically `study + home + room`
+
+```{r calling_annex}
+annex_df <- annex(RH + T + CO2 ~ datetime | study + home + room,
+                  data = prepared_df, tz = "Europe/Berlin")
+head(annex_df)
+class(annex_df)
+```
+
+A series of S3 methods exist for `annex` objects which might be extended
+in the future.
+
+* `summary()`
+* `head()`/`tail()`
+* `is.regular()`
+* `plot()`
+
+### Calculating statistics
+
+Based on the object returned by `annex()` the analysis
+can be performed by calling `annex_stats()`. The function
+aggregates the data based on the formula provided above,
+calculates a series of statistical properties, and returns
+an object of class `annex_stats`.
+
+```{r calling_annex_stats}
+head(annex_df)
+stats <- annex_stats(annex_df, format = "long")
+head(stats)
+```
+
+By default, the argument format is set to `"wide"` which will return the
+statistics in a wide format, i.e. all calculated values as columns while
+`format = "long"` will create one line for every calculated value.
+The chosen format (long or wide) does not matter for the further analysis but a particular
+format may be convenient when processed manually.
+
+## Next steps
+
+After calculating the statistics, the following steps can be performed:
+
+* [Visualizing the data (optional)](visualization.html)
+* [Write annex stats to final file](write_and_validate.html#write)
+* [Update meta data in final file](write_and_validate.html#meta)
+* [Validate final file](write_and_validate.html#validate)
+
+
+```{r, include = FALSE}
+files <- c("demo_UIBK_config.csv", "demo_UIBK.xlsx", "final_UIBK.xlsx")
+for (f in files) {
+    if (file.exists(f)) file.remove(f)
+}
+```
+
+
+
+
+
+
+

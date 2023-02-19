@@ -29,9 +29,9 @@ file.copy(file, "demo_UIBK.xlsx")
 
 The package comes with some simple default plots for `annex` objects
 (as returned by `annex()`). The following demonstration is based on the
-example as shown in the article [From XLSX](from_xlsx.html), using the
+example as shown in the article [Prepare data from XLSX](from_xlsx.html), using the
 file `r xfun::embed_file("demo_UIBK.xlsx", text = "demo_UIBK.xlsx")`
-(please read [From XLSX](from_xlsx.html) for details).
+(please read [Prepare data from XLSX](from_xlsx.html) for details).
 
 ```{r prepare_dataset}
 library("readxl")

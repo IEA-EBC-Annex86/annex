@@ -1,6 +1,6 @@
 Package: annex
 Title: IEA EBC Annex86 Data Analysis Package
-Version: 0.2-3
+Version: 0.2-4
 Date: 2023-02-19
 Authors@R: 
     c(person(given = "Reto", family = "Stauffer", role = c("cre", "aut"),

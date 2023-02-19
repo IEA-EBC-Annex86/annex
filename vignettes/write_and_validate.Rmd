@@ -1,5 +1,5 @@
 ---
-title: "Write output"
+title: "Write and validate output"
 author: "Reto Stauffer"
 output:
   html_document:
@@ -32,7 +32,7 @@ statistics) into the final pre-filled XLSX file and how to validate
 the file format. The example is based on the demo data set
 `r xfun::embed_file("demo_UIBK.xlsx", text = "demo_UIBK.xlsx")` again,
 for details about the following code chunk please read the article
-[From XLSX](from_xlsx.html).
+[Prepare data from XLSX](from_xlsx.html).
 
 ```{r prepare_dataset}
 library("readxl")

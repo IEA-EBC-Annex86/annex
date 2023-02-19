@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">annex</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-4</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -22,10 +22,12 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/config.html">Config files/objects</a>
-    <a class="dropdown-item" href="../articles/from_xlsx.html">Analysis from XLSX</a>
-    <a class="dropdown-item" href="../articles/from_textfiles.html">Analysis from textfiles</a>
+    <a class="dropdown-item" href="../articles/from_xlsx.html">Prepare data from XLSX</a>
+    <a class="dropdown-item" href="../articles/from_textfiles.html">Prepare data from textfiles</a>
+    <a class="dropdown-item" href="../articles/calculate_stats.html">Calculate statistics</a>
     <a class="dropdown-item" href="../articles/visualization.html">Visualization</a>
     <a class="dropdown-item" href="../articles/write_and_validate.html">Write and validate output</a>
+    <a class="dropdown-item" href="../articles/lookupfunctions.html">Lookup functions/definitions</a>
   </div>
 </li>
 <li class="nav-item">
@@ -58,9 +60,10 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.2-2" id="annex-02-2">annex 0.2-2<a class="anchor" aria-label="anchor" href="#annex-02-2"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.2-4" id="annex-02-4">annex 0.2-4<a class="anchor" aria-label="anchor" href="#annex-02-4"></a></h2>
 <p>Release candidate for testing in February 2023 with some major changes based on the discussions in the meeting early February.</p>
-<ul><li>The config object now must contain a “unit” variable. Some of the allowed variables (see <code><a href="../reference/annex_variable_definition.html">annex_variable_definition()</a></code>) have a set of pre-defined units which must be used. <code><a href="../reference/annex_prepare.html">annex_prepare()</a></code> internally converts all the data to the ‘annex standard units’. E.g., the user can provide temperature data in Kelvin or Farenheit, <code><a href="../reference/annex_prepare.html">annex_prepare()</a></code> will always convert them to degrees Celsius.</li>
+<ul><li>The config object now must contain a “unit” variable. Some of the allowed variables (see <code><a href="../reference/annex_variable_definition.html">annex_variable_definition()</a></code>) have a set of pre-defined units which must be used. <code><a href="../reference/annex_prepare.html">annex_prepare()</a></code> internally converts all the data to the ‘annex standard units’. E.g., the user can provide temperature data in Kelvin or Farenheit, <code><a href="../reference/annex_prepare.html">annex_prepare()</a></code> will always convert them to degrees Celsius. This is currently implemented for “T” (temperature; deg C), “RH” (relative humidity; percent) and “Pressure” (hPa).</li>
+<li>Auto-fill “META-Variable” for those variables where the annex package enforces the unit (e.g., “T” always in degrees Celsius; “RH” always in percent).</li>
 <li>Removed “META-Season” sheet from XLSX file.</li>
 <li>Changed aggregation. Originally the aggregation has been done on a quarterly level including all years. The new version aggregates by year + month.</li>
 <li>Allowing rooms to be numbered for differenciation by adding up to two digits. E.g. BED, BED1, BED2, BED66 (same for all room types).</li>
@@ -68,6 +71,7 @@
 <li>Added data set containing all ISO3166 alpha-3 (ISO3) country codes used for validationn. Convenience function <code><a href="../reference/annex_countries.html">annex_countries()</a></code> which returns <code>data("ISO3166")</code>
 </li>
 <li>Added quality flag to stats; percentage of observations falling below a certain threshold or exceed a threshold. These bounds are defined in the “Definitions” sheet in the XLSX file and can be accessed calling <code><a href="../reference/annex_variable_definition.html">annex_variable_definition()</a></code>.</li>
+<li>Additional output when validating the XLSX file; improved readability.</li>
 <li>Added interval (measurement interval) information to stats; time in seconds to the previous observation recorded in the data set. Calculated on a varaible level; if no value is present (missing value) this will be considered to ‘not have been mesured’ which leads to longer interval times. Currently reporting five number summary plus</li>
 <li>Both XLSX sheets ‘META-Room’ and ‘META-Variable’ have a column for optional information about the measurement location (e.g., next to window, center of room, and any other important/helpful information) or variable (optional meta data).</li>
 <li>Additional tinytests for support functions.</li>
