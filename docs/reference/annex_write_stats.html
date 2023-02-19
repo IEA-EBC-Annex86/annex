@@ -70,7 +70,7 @@
 <span>  <span class="va">user</span>,</span>
 <span>  mode <span class="op">=</span> <span class="st">"write"</span>,</span>
 <span>  <span class="va">...</span>,</span>
-<span>  ask <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  ask <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/interactive.html" class="external-link">interactive</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  quiet <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -107,7 +107,8 @@ See 'Mode' for more information.</p></dd>
 <dd><p>logical. If <code>TRUE</code> the user will be asked to confirm that
 the function will modify the existing <code>file</code> (used when
 <code>mode == "append"</code> or <code>mode == "update"</code>). See
-Section 'Writing mode' for more information.</p></dd>
+Section 'Writing mode' for more information. By default <code>ask = TRUE</code>
+if the function is called in an interactive R session.</p></dd>
 
 
 <dt>quiet</dt>

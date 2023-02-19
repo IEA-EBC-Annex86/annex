@@ -67,6 +67,12 @@ intervals. \code{interval_Median} is used to calculate estimate \code{Nestim} (s
 the empirical quantile function with \code{type = 7} (default; see \code{quantile}).
 }
 
+\section{Estimated number of observations}{
+
+
+TODO(R): Explain
+}
+
 \seealso{
 annex_stats_reshape annes_write_stats
 }

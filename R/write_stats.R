@@ -107,7 +107,7 @@ annex_template <- function(file, overwrite = FALSE) {
 #' argument section 'Writing mode').
 #'
 #' @importFrom openxlsx loadWorkbook writeData saveWorkbook
-#' @importFrom openxlsx getSheetNames
+#' @importFrom openxlsx getSheetNames read.xlsx
 #' @author Reto Stauffer
 #' @export
 annex_write_stats <- function(x, file, user, mode = "write", ..., ask = interactive(), quiet = FALSE) {
@@ -119,6 +119,8 @@ annex_write_stats <- function(x, file, user, mode = "write", ..., ask = interact
              file, " is invalid")
     if (!dir.exists(dirname(file)))
         stop("directory '", dirname(file), "' does not exist; can't create output file")
+
+    f <- annex_parse_formula(attr(x, "formula"))
 
     # Writing mode and additional options
     mode <- match.arg(mode, c("write", "append", "update"))
@@ -194,7 +196,7 @@ annex_write_stats <- function(x, file, user, mode = "write", ..., ask = interact
     write_annex_metaHome(workbook,      x, quiet, mode = mode)
     write_annex_metaRoom(workbook,      x, quiet, mode = mode)
     write_annex_metaVariable(workbook,  x, quiet, mode = mode)
-    write_annex_STAT(workbook,          x, quiet, mode = mode)
+    write_annex_STAT(file, f, workbook,    x, quiet, mode = mode)
 
     # Saving final file
     if (!quiet) message(" - Saving file")
@@ -203,9 +205,48 @@ annex_write_stats <- function(x, file, user, mode = "write", ..., ask = interact
 
 #' @importFrom openxlsx writeData readWorkbook
 #' @author Reto Stauffer
-write_annex_STAT <- function(wb, x, quiet, sheet = "STAT", mode) {
+write_annex_STAT <- function(file, formula, wb, x, quiet, sheet = "STAT", mode) {
     if (!quiet) message(" - Writing ", sheet)
-    warning("RETO: requires a different upsert approach")
+
+
+    # Append or update mode
+    if (mode != "write") {
+
+        # Define ID columns
+        idcols <- unique(c(formula$group, c("user", "year", "month", "tod", "variable")))
+        idcols <- idcols[idcols %in% names(x)]
+
+        # Reading existing sheet
+        oldx <- read.xlsx(file, sheet = sheet)
+        if (!all(names(oldx) == names(x)))
+            stop("ERROR: columns of existing sheet do not meet new annex_stats object")
+
+        # Temporary interaction to check for overlap
+        ic_x    <- interaction(x[idcols],    sep = "-", drop = TRUE)
+        ic_oldx <- interaction(oldx[idcols], sep = "-", drop = TRUE)
+        idx     <- ic_x %in% ic_oldx
+
+        # If mode == 'append' but there are overlaps: stop
+        if (mode == "append") {
+            if (any(idx))
+                stop(bold $ red("`mode = \"append\" cannot be used; found ",
+                     sum(idx), " rows in the existing XLSX file (sheet 'STATS') ",
+                     "which overlap with data from the new annex_stats object"), sep = "")
+            # Else combine and write below
+            if (!quiet) message(blue("   Adding ", NROW(x), " rows into '", sheet, "'", sep = ""))
+            x <- rbind(oldx, x)
+        # Else mode is update; check what we can/must update
+        } else {
+            if (!quiet) message("   Rows: ",
+                                green("keeping", green(nrow(oldx) - sum(idx))), ", ",
+                                blue("adding", sum(!idx)), ", ",
+                                red("updating", sum(idx)), sep = "")
+            x <- rbind(oldx[!idx, ], x)
+        }
+    }
+    x <- transform(x,
+                   quality_start = as.Date(quality_start, origin = "1970-01-01"),
+                   quality_end = as.Date(quality_end, origin = "1970-01-01"))
     writeData(wb, sheet = sheet, x = x, colNames = TRUE)
 }
 
@@ -216,7 +257,6 @@ upsert_annex_sheet <- function(wb, x, quiet, sheet, mode) {
         oldx <- readWorkbook(wb, sheet)
         # Drop rows in x if the ID already exists in oldx
         x  <- subset(x, !ID %in% oldx$ID)
-        reto <<- list(x = x, oldx = oldx)
         nx <- NROW(x) # Keep rows added for message below
         if (!quiet && nx == 0) {
             message("   Nothing to be added to '", sheet, "'", sep = "")

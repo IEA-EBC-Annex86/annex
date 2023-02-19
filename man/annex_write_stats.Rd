@@ -10,7 +10,7 @@ annex_write_stats(
   user,
   mode = "write",
   ...,
-  ask = TRUE,
+  ask = interactive(),
   quiet = FALSE
 )
 }
@@ -34,7 +34,8 @@ See 'Mode' for more information.}
 \item{ask}{logical. If \code{TRUE} the user will be asked to confirm that
 the function will modify the existing \code{file} (used when
 \code{mode == "append"} or \code{mode == "update"}). See
-Section 'Writing mode' for more information.}
+Section 'Writing mode' for more information. By default \code{ask = TRUE}
+if the function is called in an interactive R session.}
 
 \item{quiet}{logical. If set \code{TRUE} messages will be printed.}
 }
