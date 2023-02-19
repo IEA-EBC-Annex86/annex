@@ -50,7 +50,7 @@
 #' \code{p50} the median, \code{p100} the overall maximum of all non-missing values. Uses
 #' the empirical quantile function with \code{type = 7} (default; see \code{quantile}).
 #'
-#' @section Estimated number of observations
+#' @section Estimated number of observations:
 #'
 #' TODO(R): Explain
 #' 
