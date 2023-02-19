@@ -129,6 +129,10 @@ annex_validate_sheet_STAT <- function(file, user, quiet, ...) {
     # Reading file
     data <- read.xlsx(file, sheet = "STAT")
 
+    # By default setting checkflag to TRUE; will be set to FALSE
+    # whenever we encounter a problem.
+    checkflag <- TRUE
+
     # checking required columns (correct order; columns A:...)
     required_cols <- c("user", "study", "home", "room", "year", "month", "tod", "variable",
                        "quality_lower", "quality_upper", "quality_start", "quality_end",
@@ -221,8 +225,41 @@ annex_validate_sheet_STAT <- function(file, user, quiet, ...) {
         }
     }
 
+    # Checking quality flags to throw a few WARNINGS
+    idx <- which(with(data, quality_lower > 5 | quality_upper > 5))
+    if (length(idx) > 0) {
+        message(yellow("  WARNING: data quality warnings triggered for the wollowing rows in 'STAT'"))
+        message(yellow("                                  lower bound    upper bound"))
+        for (i in idx) {
+            # Lower bound
+            lo <- data$quality_lower[i] %/% 5 * 5
+            lo <- if (lo == 0) {
+                green("fine (<  5%)")
+            } else if (lo < 10) {
+                yellow(paste("exceeds", sprintf("%2d", lo), "%"))
+            } else {
+                bold $ red(paste("exceeds", sprintf("%2d", lo), "%"))
+            }
+            # upper bound
+            hi <- data$quality_upper[i] %/% 5 * 5
+            hi <- if (hi == 0) {
+                green("fine (<  5%)")
+            } else if (hi < 10) {
+                yellow(paste("exceeds", sprintf("%2d", hi), "%"))
+            } else {
+                bold $ red(paste("exceeds", sprintf("%2d", hi), "%"))
+            }
+            # Generate message
+            message(sprintf("   %-10s %-20s",
+                            get_row_info(i, prefix = "Row"),
+                            paste("(variable ", data$variable[i], ")", sep = "")),
+                    lo, "   ", hi)
+        }
+        checkflag <- checkflag * FALSE
+    }
+
     # If we end up here everything is fine; continue
-    return(TRUE)
+    return(as.logical(checkflag))
 }
 
 # -------------------------------------------------------------------
