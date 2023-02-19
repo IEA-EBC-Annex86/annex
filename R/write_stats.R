@@ -188,6 +188,7 @@ annex_write_stats <- function(x, file, user, mode = "write", ..., ask = TRUE, qu
         message(file)
     }
     workbook <- loadWorkbook(file)
+    options("openxlsx.dateFormat" = "dd-mm-yyyy")
 
     write_annex_metaStudy(workbook,     x, quiet, update = !mode == "write")
     write_annex_metaHome(workbook,      x, quiet, update = !mode == "write")
@@ -338,8 +339,15 @@ annex_check_stats_object <- function(x) {
             stop("`", n, "` must be either character or factor, not ",
                  paste(class(x[[n]]), collapse = ", "))
     }
+    # quality_start and quality_end must be date
+    date_cols <- c("quality_start", "quality_end")
+    for (n in date_cols) {
+        if (!inherits(x[[n]], "Date"))
+            stop("`", n, "` must be of class Date, not ",
+                 paste(class(x[[n]]), collapse = ", "))
+    }
     # Well, all other variables must be numeric then
-    for (n in names(x)[!names(x) %in% must_exist]) {
+    for (n in names(x)[!names(x) %in% must_exist & !names(x) %in% date_cols]) {
         if (!is.numeric(x[[n]]))
             stop("`", n, "` must be numeric not ",
                  paste(class(x[[n]]), collapse = ", "))

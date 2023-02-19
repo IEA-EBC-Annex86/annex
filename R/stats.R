@@ -107,6 +107,27 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
         return(res)
     }
 
+    # Helper functon to convert the 'tod' labels into hours.
+    # Input is expected to be converted to character and must
+    # contain "^[0-9]+-[0-9]+$", e.g., "07-23" (7 to 23 o'clock)
+    # or "23-07" (23 to 7 o'clock). Extracts this information
+    # and returns it as a numeric value in hours. The two examples
+    # would give 16 and 8.
+    tod_to_hours <- function(x) {
+        x <- as.character(x)
+        stopifnot(grepl("^[0-9]+-[0-9]+$", x))
+        tmp <- regmatches(x, gregexpr("[0-9]+", x))
+        stopifnot(is.list(tmp), length(tmp) == length(x))
+        stopifnot(all(sapply(tmp, length) == 2))
+        fn <- function(u) {
+            if (diff(u) < 0) u <- u - c(24, 0)
+            round(diff(u / 12 * pi) / pi * 12, 2)
+        }
+        # Returns time difference in hours 
+        res <- sapply(tmp, function(x) fn(as.numeric(x)))
+
+    }
+
     # List of functions to be applied; must all return a named vector
     functionlist <- list(
         function(x) c(N      = length(x), NAs = sum(is.na(x))),
@@ -130,56 +151,116 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
     object <- add_interval_since_last(object, f)
     object <- add_quality_flags(object, f$var)
 
+    # Splitting the data into the groups given by the user (e.g., ~ study + home + room)
     object_split  <- split(object, formula(paste("~ ", paste(f$group, collapse = " + "))), drop = TRUE)
-    fn <- function(x, f, gx = c("year", "month", "tod")) {
+
+
+    # This function gets part of the original data; already
+    # split into groups. We further split the data according to the
+    # 'gx' argument (temporal groups) to calculate a series of additional
+    # variables such as quality flags.
+    aggfun <- function(x, f, gx = c("year", "month", "tod")) {
         # In case everything is NA; return NULL straight away
         if (sum(!is.na(x[, f$vars])) == 0) return(NULL)
 
-        # Drop columns without non-missing values
-        check_na <- sapply(x[, f$vars], function(x) sum(!is.na(x)))
-
+        # ---------------------------------------
+        # Calculating statistics
+        # ---------------------------------------
         # Create formula to aggregate and perform aggregation for the observations
         # fd: formula/aggregation for 'data' (the observations themselves)
-        fd <- sprintf("cbind(%s) ~ %s", paste(f$vars, collapse = ", "),
-                      paste(c(f$group, gx), collapse = " + "))
-        res1 <- aggregate(formula(fd), x, get_stats, na.action = na.pass)
-        res1 <- do.call(rbind, lapply(f$vars,
-                                      convert, data = res1, f = f, gx = gx))
+        fstats <- sprintf("cbind(%s) ~ %s", paste(f$vars, collapse = ", "),
+                          paste(c(f$group, gx), collapse = " + "))
+        stats  <- aggregate(formula(fstats), x, get_stats, na.action = na.pass)
+        stats  <- do.call(rbind, lapply(f$vars, convert, data = stats, f = f, gx = gx))
 
-        # fq: formula/aggregation for 'quality'
-        res2 <- list()
+        # ---------------------------------------
+        # Calculate quality information
+        # ---------------------------------------
+        qual <- list()
         for (n in c("lower", "upper")) {
             qcols <- sprintf(paste("quality", n, "%s", sep = "_"), f$var)
             fq    <- sprintf("cbind(%s) ~ %s", paste(qcols, collapse = ", "),
                              paste(c(f$group, gx), collapse = " + "))
-            res2[[n]]  <- aggregate(formula(fq), x, function(x) 1e2 * round(mean(x, na.rm = TRUE), 4), na.action = na.pass)
-            res2[[n]]  <- pivot_longer(res2[[n]], names_to = "variable",
+            qual[[n]]  <- aggregate(formula(fq), x, function(x) 1e2 * round(mean(x, na.rm = TRUE), 4), na.action = na.pass)
+            qual[[n]]  <- pivot_longer(qual[[n]], names_to = "variable",
                                   values_to = paste("quality", n, sep = "_"), cols = qcols)
-            res2[[n]]$variable <- sub(sprintf("^quality_%s_", n), "", res2[[n]]$variable)
+            qual[[n]]$variable <- sub(sprintf("^quality_%s_", n), "", qual[[n]]$variable)
         }
-        res2 <- do.call("merge", unname(res2))
+        qual <- do.call("merge", unname(qual))
 
+        # Calculate date of first observation within this group as well as last
+        # observation in the group. Therefore, two new interactions are calculated
+        # (tmp_ic based on 'x' and qual_ic based on 'qual'). These are temporary
+        # vectors used for subsetting/index calculation only.
+        tmp_ic  <- interaction(x[c(f$group, gx)], sep = "-")
+        qual_ic <- interaction(qual[c(f$group, gx)], sep = "-")
+        qual$quality_end <- qual$quality_start <- NA
+
+        # For each interaction: extract the observations and datetime information from
+        # the original object 'x'; drop missing values, and check range of the datetime
+        # variable to get first/last observation within this block. Stores final result
+        # into qual$quality_start and qual$quality_end.
+        for (ic in unique(tmp_ic)) {
+            for (v in f$vars) {
+                minmax <- na.omit(subset(x, tmp_ic == ic, select = c(f$time, v)))
+                if (NROW(minmax) == 0) next  # No non-missing values
+                # Else extract date range
+                date_range <- range(minmax[[f$time]])
+
+                # Store the data
+                idx <- which(qual_ic == ic & qual$variable == v)
+                stopifnot(length(idx) == 1, !is.na(idx))
+                qual$quality_start <- as.Date(min(date_range))
+                qual$quality_end   <- as.Date(max(date_range))
+            }
+        }
+
+
+        # ---------------------------------------
+        # Calculate observation interval
+        # ---------------------------------------
         # fi: formula/aggregation for 'interval'
-        fi <- sprintf("cbind(%s) ~ %s",
+        finter <- sprintf("cbind(%s) ~ %s",
                       paste(sprintf("interval_%s", f$vars), collapse = ", "),
                       paste(c(f$group, gx), collapse = " + "))
-        res3 <- aggregate(formula(fi), x, get_interval_stats, na.action = na.pass)
-        res3 <- do.call(rbind, lapply(f$vars, convert, data = res3, f = f, gx = gx, prefix = "interval"))
+        inter <- aggregate(formula(finter), x, get_interval_stats, na.action = na.pass)
+        inter <- do.call(rbind, lapply(f$vars, convert, data = inter, f = f, gx = gx, prefix = "interval"))
 
-        # Merge and return
-        return(Reduce(merge, list(res2, res3, res1)))
+        # ---------------------------------------
+        # Estimate number of possible observations
+        # ---------------------------------------
+        # Merging quality information, interval information and observation statistics
+        tmp   <- Reduce(merge, list(qual, inter)); rm(list = c("qual", "inter"))
+        ndays <- 1 + as.numeric(tmp$quality_end - tmp$quality_start, units = "days")
+
+        # Account for 'tod'; estimate number of observations possible for that
+        # specific time period.
+        if ("tod" %in% names(tmp)) {
+            tod_hours <- tod_to_hours(tmp$tod)
+            tmp$Nestim <- ndays * tod_hours * 3600 / tmp$interval_Median
+        # Else assume it is 'all day long' (24 hours of possible observations)
+        } else if (all(c("year") %in% names(tmp))) {
+            # No 'tod' (all day long) but on a monthly basis.
+            tmp$Nestim <- ndays * 86400 / tmp$interval_Median
+        } else {
+            stop("Don't know how to handle this one\n")
+            print(head(tmp))
+            stop()
+        }
+
+        return(Reduce(merge, list(tmp, stats)))
     }
 
     # Splitting data; aggregate data
-    res <- lapply(object_split, fn, f = f)
+    res <- lapply(object_split, aggfun, f = f)
     res <- if (length(res) == 1) res[[1]] else bind_rows(res)
 
     # Same but grouping only by study|home|room|year|month (all day long)
-    res_all_day  <- fn(object, f, c("year", "month"))
+    res_all_day  <- aggfun(object, f, c("year", "month"))
     res_all_day  <- transform(res_all_day, tod  = "all")
 
     # Same but grouping only by study|home|room|year|tod (all year long)
-    res_all_year <- fn(object, f, c("year", "tod"))
+    res_all_year <- aggfun(object, f, c("year", "tod"))
     res_all_year <- transform(res_all_year, month = "all")
 
     # Combine results
