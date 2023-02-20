@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="annex">
-<title>Prepare xtra • annex</title>
+<title>Prepare with time zones &amp; units • annex</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -18,7 +18,7 @@
 <script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="Prepare xtra">
+<meta property="og:title" content="Prepare with time zones &amp; units">
 <meta property="og:description" content="annex">
 <meta property="og:image" content="https://some.example-url.com/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -49,7 +49,7 @@
     <a class="dropdown-item" href="../articles/config.html">Config files/objects</a>
     <a class="dropdown-item" href="../articles/from_xlsx.html">Prepare data from XLSX</a>
     <a class="dropdown-item" href="../articles/from_textfiles.html">Prepare data from textfiles</a>
-    <a class="dropdown-item" href="../articles/prepare_xtra.html">Prepare xtra (time zones + units)</a>
+    <a class="dropdown-item" href="../articles/prepare_xtra.html">Prepare with time zones &amp; units</a>
     <a class="dropdown-item" href="../articles/calculate_stats.html">Calculate statistics</a>
     <a class="dropdown-item" href="../articles/visualization.html">Visualization</a>
     <a class="dropdown-item" href="../articles/write_and_validate.html">Write and validate output</a>
@@ -88,7 +88,7 @@
 
 <script src="prepare_xtra_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Prepare xtra</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>Prepare with time zones &amp; units</h1>
                         <h4 data-toc-skip class="author">Reto Stauffer</h4>
             
       
@@ -113,7 +113,7 @@
 <p>Please also have a look at the two articles <a href="from_xlsx.html">Prepare data from XLSX</a> and <a href="from_textfiles.html">Prepare data from textfiles</a> for more examples.</p>
 </div>
 <div class="section level2">
-<h2 id="scenario">Scenario<a class="anchor" aria-label="anchor" href="#scenario"></a>
+<h2 id="scenario-1">Scenario <strong>(1)</strong><a class="anchor" aria-label="anchor" href="#scenario-1"></a>
 </h2>
 <p>Imagine you got observations from a logger which was recording the date and time in the “US/Central” (CST) time and contains data from four different sensors:</p>
 <ul>
@@ -124,10 +124,9 @@
 </li>
 <li>Ambient air pressure; <strong>mmHg</strong> (millimetre of mercury)</li>
 </ul>
-</div>
-<div class="section level2">
-<h2 id="reading-the-data">Reading the data<a class="anchor" aria-label="anchor" href="#reading-the-data"></a>
-</h2>
+<div class="section level3">
+<h3 id="reading-the-data">Reading the data<a class="anchor" aria-label="anchor" href="#reading-the-data"></a>
+</h3>
 <p>Step one is to import the data; using the <a href="https://cran.r-project.org/package=readxl" class="external-link"><code>readxl</code></a> package once again:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://readxl.tidyverse.org" class="external-link">"readxl"</a></span><span class="op">)</span></span>
@@ -154,6 +153,8 @@
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">raw_df</span><span class="op">$</span><span class="va">loggertime</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "character"</span></span></code></pre>
+<p>In addition, this simulated data set contains a periods with missing data as well as some periods where not all but single sensors did not report data which will be shown later.</p>
+</div>
 <div class="section level3">
 <h3 id="convert-loggertime">Convert <code>loggertime</code><a class="anchor" aria-label="anchor" href="#convert-loggertime"></a>
 </h3>
@@ -220,12 +221,18 @@
 <span><span class="co">##  Max.   :60.20              Max.   :701.2  </span></span>
 <span><span class="co">##                             NA's   :376</span></span></code></pre>
 <p><code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code> returns a five number summary plus the arithmetic mean of each of the variables in our <code>raw_df</code> object. As shown, the observations for the kitchen temperature (second variable) has a mean of NA which corresponds to about 20 degrees Celsius. The average relative humidity is NA which corresponds to about NA percent.</p>
+<p>Alternatively we can quickly convert the <code>raw_df</code> into a time series object (now the <code>loggertime</code> has been prepared correctly) to check the data visually which clearly shows the gaps in the data:</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://zoo.R-Forge.R-project.org/" class="external-link">"zoo"</a></span><span class="op">)</span></span>
+<span><span class="va">raw_zoo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/zoo/man/zoo.html" class="external-link">zoo</a></span><span class="op">(</span><span class="va">raw_df</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span>, <span class="va">raw_df</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">raw_zoo</span><span class="op">)</span></span></code></pre></div>
+<p><img src="prepare_xtra_files/figure-html/unnamed-chunk-6-1.png" width="100%"></p>
 </div>
 <div class="section level3">
 <h3 id="prepare-the-data">Prepare the data<a class="anchor" aria-label="anchor" href="#prepare-the-data"></a>
 </h3>
 <p>We can now use <code>raw_df</code> in combination with our <code>config</code> object or prepare the data for the next step. In this step, the units will automatically be converted (for those variables the conversion is defined).</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/IEA-EBC-Annex86/annex/" class="external-link">"annex"</a></span><span class="op">)</span></span>
 <span><span class="va">prepared_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/annex_prepare.html">annex_prepare</a></span><span class="op">(</span><span class="va">raw_df</span>, <span class="va">config</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">prepared_df</span><span class="op">)</span></span></code></pre></div>
@@ -236,7 +243,7 @@
 <span><span class="co">## 4 2028-12-28 07:00:00 demo_US top_flat  AMB 904.6508 NA NA</span></span>
 <span><span class="co">## 5 2028-12-28 07:10:00 demo_US top_flat  AMB 905.8652 NA NA</span></span>
 <span><span class="co">## 6 2028-12-28 07:20:00 demo_US top_flat  AMB 903.9762 NA NA</span></span></code></pre>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">prepared_df</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##     datetime                         study               home          </span></span>
 <span><span class="co">##  Min.   :2028-12-28 06:30:00.00   Length:2151        Length:2151       </span></span>
@@ -256,13 +263,12 @@
 <span><span class="co">##                     NA's   :1810    NA's   :725     NA's   :1467</span></span></code></pre>
 <p>The function also reshapes the data, however, one can see that the temperature data (contains temperature data from the exhaust as well as the kitchen) now all is in degrees Celsius; the relative humidity has been automatically converted to percent.</p>
 </div>
-</div>
-<div class="section level2">
-<h2 id="calculating-statistics">Calculating statistics<a class="anchor" aria-label="anchor" href="#calculating-statistics"></a>
-</h2>
+<div class="section level3">
+<h3 id="calculating-statistics">Calculating statistics<a class="anchor" aria-label="anchor" href="#calculating-statistics"></a>
+</h3>
 <p>Once the data set is prepared, <code><a href="../reference/annex.html">annex()</a></code> can be called to prepare the data set for the final calculations. <em>Note</em>: So far, the date and time information is still in the time zone of the logger. When calling <code><a href="../reference/annex.html">annex()</a></code> we can specify in which time zone the statistics should be calculated.</p>
 <p><strong>Correct solution:</strong> According to our scenario we know that our study area is located in the “US/Central” time zone. This is what we need to tell <code><a href="../reference/annex.html">annex()</a></code> to correctly do the conversion.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">annex_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/annex.html">annex</a></span><span class="op">(</span><span class="cn">T</span> <span class="op">+</span> <span class="va">RH</span> <span class="op">+</span> <span class="va">Pressure</span> <span class="op">~</span> <span class="va">datetime</span> <span class="op">|</span> <span class="va">study</span> <span class="op">+</span> <span class="va">home</span> <span class="op">+</span> <span class="va">room</span>,</span>
 <span>                  data <span class="op">=</span> <span class="va">prepared_df</span>, tz <span class="op">=</span> <span class="st">"US/Central"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">annex_df</span><span class="op">)</span></span></code></pre></div>
@@ -274,26 +280,43 @@
 <span><span class="co">## 5 2028-12-28 07:10:00 demo_US top_flat  AMB 2028    12 07-23 NA NA 905.8652</span></span>
 <span><span class="co">## 6 2028-12-28 07:20:00 demo_US top_flat  AMB 2028    12 07-23 NA NA 903.9762</span></span></code></pre>
 <p>As shown, the first three observations (before 7 am local time) fall into the period <code>tod = "23-07"</code> while the next ones fall into the period <code>tod = "07-23"</code>.</p>
-<p><strong>Example:</strong> Just for demonstration, let us assume that our logger has recorded the data in the “US/Central” time zone, however, our study area is actually located in Zuerich, Switzerland (Central Europe), wherefore we would like to calculate the statistics relative to the local time zone of Zuerich.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">zuerich_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/annex.html">annex</a></span><span class="op">(</span><span class="cn">T</span> <span class="op">+</span> <span class="va">RH</span> <span class="op">+</span> <span class="va">Pressure</span> <span class="op">~</span> <span class="va">datetime</span> <span class="op">|</span> <span class="va">study</span> <span class="op">+</span> <span class="va">home</span> <span class="op">+</span> <span class="va">room</span>,</span>
-<span>                  data <span class="op">=</span> <span class="va">prepared_df</span>, tz <span class="op">=</span> <span class="st">"Europe/Zuerich"</span><span class="op">)</span></span></code></pre></div>
-<p>As there is a time difference of …</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="scenario-2">Scenario <strong>(2)</strong><a class="anchor" aria-label="anchor" href="#scenario-2"></a>
+</h2>
+<p>For illustration, let us imagine the same situation where our study is located in the US/Central time zone, however, imagine the <code>loggertime</code> is reported in UTC.</p>
+<p>Thus, what is needed is to (i) convert the <code>loggertime</code> into UTC, but keep the further analysis steps relative to the US/Central time zone (when calling <code><a href="../reference/annex.html">annex()</a></code>).</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Time difference</span></span>
-<span><span class="va">test</span> <span class="op">&lt;-</span> <span class="st">"2028-12-28 06:00"</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="va">test</span>, tz <span class="op">=</span> <span class="st">"US/Central"</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="va">test</span>, tz <span class="op">=</span> <span class="st">"Europe/Zuerich"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Time difference of 6 hours</span></span></code></pre>
-<p>… between these two time zones at that specific date, the data will now be prepared differently. Compare the first few entries of <code>zuerich_df</code> to the output of <code>annex_df</code> shown above.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">zuerich_df</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Re-reading the original data set; Store it on a new object raw_UTC</span></span>
+<span><span class="va">raw_UTC</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_excel</a></span><span class="op">(</span><span class="st">"demo_US.xlsx"</span>, sheet <span class="op">=</span> <span class="st">"airquality_data"</span><span class="op">)</span></span>
+<span><span class="co"># Convert loggertime; this time with 'tz = "UTC"'</span></span>
+<span><span class="va">raw_UTC</span><span class="op">$</span><span class="va">loggertime</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">raw_UTC</span><span class="op">$</span><span class="va">loggertime</span>,</span>
+<span>                                 format <span class="op">=</span> <span class="st">"%m/%d/%Y %H:%M:%S"</span>,</span>
+<span>                                 tz <span class="op">=</span> <span class="st">"UTC"</span><span class="op">)</span></span>
+<span><span class="co"># Prepare the data relative to US/Central; same 'config' object as before</span></span>
+<span><span class="va">prepared_UTC</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/annex_prepare.html">annex_prepare</a></span><span class="op">(</span><span class="va">raw_UTC</span>, <span class="va">config</span><span class="op">)</span></span>
+<span><span class="va">annex_UTC</span>    <span class="op">&lt;-</span> <span class="fu"><a href="../reference/annex.html">annex</a></span><span class="op">(</span><span class="cn">T</span> <span class="op">+</span> <span class="va">RH</span> <span class="op">+</span> <span class="va">Pressure</span> <span class="op">~</span> <span class="va">datetime</span> <span class="op">|</span> <span class="va">study</span> <span class="op">+</span> <span class="va">home</span> <span class="op">+</span> <span class="va">room</span>,</span>
+<span>                      data <span class="op">=</span> <span class="va">prepared_UTC</span>, tz <span class="op">=</span> <span class="st">"US/Central"</span><span class="op">)</span></span></code></pre></div>
+<p>When comparing the first six observations (rows) of our object <code>annex_df</code> (all handled in US/Central time) and <code>annex_UTC</code> (raw data in UTC, processing in US/Central) one can see the difference in the <code>tod</code> variable (also affects <code>year</code> and <code>month</code>) …</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">annex_df</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##              datetime   study     home room year month   tod  T RH Pressure</span></span>
-<span><span class="co">## 1 2028-12-28 06:30:00 demo_US top_flat  AMB 2028    12 07-23 NA NA 900.5433</span></span>
-<span><span class="co">## 2 2028-12-28 06:40:00 demo_US top_flat  AMB 2028    12 07-23 NA NA 901.9993</span></span>
-<span><span class="co">## 3 2028-12-28 06:50:00 demo_US top_flat  AMB 2028    12 07-23 NA NA 901.5005</span></span>
+<span><span class="co">## 1 2028-12-28 06:30:00 demo_US top_flat  AMB 2028    12 23-07 NA NA 900.5433</span></span>
+<span><span class="co">## 2 2028-12-28 06:40:00 demo_US top_flat  AMB 2028    12 23-07 NA NA 901.9993</span></span>
+<span><span class="co">## 3 2028-12-28 06:50:00 demo_US top_flat  AMB 2028    12 23-07 NA NA 901.5005</span></span>
 <span><span class="co">## 4 2028-12-28 07:00:00 demo_US top_flat  AMB 2028    12 07-23 NA NA 904.6508</span></span>
 <span><span class="co">## 5 2028-12-28 07:10:00 demo_US top_flat  AMB 2028    12 07-23 NA NA 905.8652</span></span>
 <span><span class="co">## 6 2028-12-28 07:20:00 demo_US top_flat  AMB 2028    12 07-23 NA NA 903.9762</span></span></code></pre>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">annex_UTC</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">##              datetime   study     home room year month   tod  T RH Pressure</span></span>
+<span><span class="co">## 1 2028-12-28 06:30:00 demo_US top_flat  AMB 2028    12 23-07 NA NA 900.5433</span></span>
+<span><span class="co">## 2 2028-12-28 06:40:00 demo_US top_flat  AMB 2028    12 23-07 NA NA 901.9993</span></span>
+<span><span class="co">## 3 2028-12-28 06:50:00 demo_US top_flat  AMB 2028    12 23-07 NA NA 901.5005</span></span>
+<span><span class="co">## 4 2028-12-28 07:00:00 demo_US top_flat  AMB 2028    12 23-07 NA NA 904.6508</span></span>
+<span><span class="co">## 5 2028-12-28 07:10:00 demo_US top_flat  AMB 2028    12 23-07 NA NA 905.8652</span></span>
+<span><span class="co">## 6 2028-12-28 07:20:00 demo_US top_flat  AMB 2028    12 23-07 NA NA 903.9762</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="next-steps">Next steps<a class="anchor" aria-label="anchor" href="#next-steps"></a>

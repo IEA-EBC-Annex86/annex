@@ -1,5 +1,5 @@
 ---
-title: "Prepare xtra"
+title: "Prepare with time zones & units"
 author: "Reto Stauffer"
 output:
   html_document:
@@ -44,7 +44,7 @@ data in the 'observations sheet' into the object required by `annex()`.
 Please also have a look at the two articles [Prepare data from XLSX](from_xlsx.html)
 and [Prepare data from textfiles](from_textfiles.html) for more examples.
 
-## Scenario
+## Scenario **(1)**
 
 Imagine you got observations from a logger which was recording the date and time
 in the "US/Central" (CST) time and contains data from four different sensors:
@@ -54,7 +54,7 @@ in the "US/Central" (CST) time and contains data from four different sensors:
 * An exhaust temperature (heating system); **degrees Celsius**
 * Ambient air pressure; **mmHg** (millimetre of mercury)
 
-## Reading the data
+### Reading the data
 
 Step one is to import the data; using the [`readxl`](https://cran.r-project.org/package=readxl)
 package once again:
@@ -81,6 +81,11 @@ wherefore we need to properly convert it before making use of it.
 head(raw_df, n = 3)
 class(raw_df$loggertime)
 ```
+
+In addition, this simulated data set contains a periods with missing data as well
+as some periods where not all but single sensors did not report data which will
+be shown later.
+
 
 ### Convert `loggertime`
 
@@ -140,6 +145,16 @@ which corresponds to about 20 degrees Celsius. The average relative humidity is
 `r round(mean(raw_df[, 3]), 3)` which corresponds to about `r round(mean(raw_df[, 3]) * 100)`
 percent.
 
+Alternatively we can quickly convert the `raw_df` into a time series object (now the
+`loggertime` has been prepared correctly) to check the data visually which clearly
+shows the gaps in the data:
+
+```{r, fig = TRUE, fig.width = 10, fig.height = 8, out.width = "100%"}
+library("zoo")
+raw_zoo <- zoo(raw_df[, -1], raw_df[, 1])
+plot(raw_zoo)
+```
+
 
 ### Prepare the data
 
@@ -159,7 +174,7 @@ data (contains temperature data from the exhaust as well as the kitchen) now all
 is in degrees Celsius; the relative humidity has been automatically converted to percent.
 
 
-## Calculating statistics
+### Calculating statistics
 
 Once the data set is prepared, `annex()` can be called to prepare the data set
 for the final calculations. _Note_: So far, the date and time information is still
@@ -180,31 +195,35 @@ As shown, the first three observations (before 7 am local time) fall into the
 period `tod = "23-07"` while the next ones fall into the period `tod = "07-23"`.
 
 
-**Example:** Just for demonstration, let us assume that our logger has recorded
-the data in the "US/Central" time zone, however, our study area is actually located
-in Zuerich, Switzerland (Central Europe), wherefore we would like to calculate the statistics
-relative to the local time zone of Zuerich.
+## Scenario **(2)**
+
+For illustration, let us imagine the same situation where our study is located
+in the US/Central time zone, however, imagine the `loggertime` is reported in UTC.
+
+Thus, what is needed is to (i) convert the `loggertime` into UTC, but keep
+the further analysis steps relative to the US/Central time zone (when calling `annex()`).
 
 ```{r}
-zuerich_df <- annex(T + RH + Pressure ~ datetime | study + home + room,
-                  data = prepared_df, tz = "Europe/Zuerich")
+# Re-reading the original data set; Store it on a new object raw_UTC
+raw_UTC <- read_excel("demo_US.xlsx", sheet = "airquality_data")
+# Convert loggertime; this time with 'tz = "UTC"'
+raw_UTC$loggertime <- as.POSIXct(x = raw_UTC$loggertime,
+                                 format = "%m/%d/%Y %H:%M:%S",
+                                 tz = "UTC")
+# Prepare the data relative to US/Central; same 'config' object as before
+prepared_UTC <- annex_prepare(raw_UTC, config)
+annex_UTC    <- annex(T + RH + Pressure ~ datetime | study + home + room,
+                      data = prepared_UTC, tz = "US/Central")
 ```
 
-As there is a time difference of ...
-
-
-```{r}
-# Time difference
-test <- "2028-12-28 06:00"
-as.POSIXct(test, tz = "US/Central") - as.POSIXct(test, tz = "Europe/Zuerich")
-```
-
-... between these two time zones at that specific date, the data will now
-be prepared differently. Compare the first few entries of `zuerich_df` to the
-output of `annex_df` shown above.
+When comparing the first six observations (rows) of our object
+`annex_df` (all handled in US/Central time) and `annex_UTC` (raw data in UTC,
+processing in US/Central) one can see the difference in the `tod` variable
+(also affects `year` and `month`) ...
 
 ```{r}
-head(zuerich_df)
+head(annex_df)
+head(annex_UTC)
 ```
 
 ## Next steps
