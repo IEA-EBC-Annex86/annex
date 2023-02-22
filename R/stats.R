@@ -52,7 +52,20 @@
 #'
 #' @section Estimated number of observations:
 #'
-#' TODO(R): Explain
+#' The value `Nestim` contains an _estimate_ for the number of possible observations
+#' for a specific group. This estimate is based on the first/last date an observation
+#' was available (non-missing) as well as the `year`, `month`, and `tod`. Last but not least
+#' the `interval_Median` is used.
+#'
+#' As an example: Imagine the statistics for temperature observations for one speicifc
+#' year and month (monthly level aggregation) with `tod = "07-23"`. The first non-missing
+#' value has been reported on the first day of the month, the last one on day 10.
+#' Given that `tod = "07-23"` covers 16 hours, this indicates that observations could
+#' be available 16 hours over 10 days = 160 hours in total. Based on the best guess
+#' for `interval_median` this allows to calculate `Nestim`. E.g., if the median interval
+#' is 300 (300 seconds = 5 minutes) this would leas to a possible number of observations
+#' `Nestim = 10 days * 16 hours per day * 3600 seonds per hour / 300 seconds = 1920`.
+#' Keep in mind that this is only an estimate or best guess!
 #' 
 #' @return Returns an object of class \code{c("annex_stats", "data_frame")}.
 #'

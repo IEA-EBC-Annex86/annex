@@ -84,11 +84,48 @@ At this point, the XLSX file
 does contain all the statistics, but missing the meta information.
 
 Where additional information is needed, the XLSX sheet contains
-`<....>` (check any of the META sheets) to be updated.
+placeholders like `<....>` (check any of the META sheets) which need
+to be updated by the user. Some columns/fields require meta information,
+others are optional. If optional and no meta information is available,
+the placeholders (`<....>`) can also be deleted. `annex_validate()` will
+inform the user what needs to be done:
+
+* **WARNING:** Required meta information missing (either empty or placeholder)
+* **NOTE:** If it still contains the placeholder. In this case simply replace
+    the placeholder with the correct meta information or delete it (for optional information).
 
 At any time the file can be validated (see next section) to see
 if everything is according to the requested standard of information
 is still missing or invalid information has been entered.
+
+## Append or update the XLSX file
+
+The function `write_annex_stats()` has an argument `mode` which defaults to `"write"` but
+provides two alternative modes: `"append"` and `"update"`. These two modes allow to
+write additional/updated statistics into an existing XLSX file and will preserve
+already added meta information (see section above).
+
+* **Append:** Append new data to an existing file. The function will throw an 
+    error if the new data overlaps with the existing one.
+* **Update:** Will replace existing data in `STAT` if the new data overlaps
+    with existing data in the XLSX file.
+
+<div class="alert alert-danger" role="alert">
+Note that `mode = "update"` will overwrite existing data which may result
+in loss of data and potentially replaces existing records with new partial
+data depending on the new object provided. Consider making a backup of the
+XLSX file beforehand.
+</div>
+
+<div class="alert alert-danger" role="alert">
+**WARNING:** The two modes `"append"` and `"update"` are in an early
+stage and may have some unexpected outcomes. Feel free to test these modes
+and report any problems/issues.
+
+One known issue is that it will not work properly if the XLSX file has been
+saved using libreoffice/openoffice caused by a `openxlsx` used to write
+the data (see [here](https://github.com/ycphs/openxlsx/pull/409)).
+</div>
 
 
 ## Validate final file {#validate}

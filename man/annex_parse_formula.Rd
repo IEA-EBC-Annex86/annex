@@ -12,9 +12,21 @@ annex_parse_formula(f, verbose = FALSE)
 \item{verbose}{logical, defaults to \code{FALSE}. Can be set
 to \code{TRUE} to increase verbosity.}
 }
+\value{
+Returns a list with three components, namely \code{vars} (the variables to aggregate),
+\code{time} (name of the datetime variable) and \code{group} (grouping variables).
+}
 \description{
 Function used to test and parse a formula used
 in different functions in the annex package.
+}
+\examples{
+require("Formula")
+annex:::annex_parse_formula(Formula(T + RH ~ datetime | study + room + home))
+
+}
+\seealso{
+annex
 }
 \author{
 Reto Stauffer

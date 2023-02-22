@@ -24,9 +24,6 @@ file <- system.file("demos/demo_US.xlsx", package = "annex", mustWork = TRUE)
 file.copy(file, "demo_US.xlsx")
 ```
 
-TODO(R): Had no better idea for the name of this article and the placement on
-the documentation just now.
-
 ## Introduction
 
 This article once again shows how to import and prepare a data set to calculate

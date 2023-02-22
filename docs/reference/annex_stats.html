@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">annex</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-5</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -142,7 +142,19 @@ the empirical quantile function with <code>type = 7</code> (default; see <code>q
     
 
 
-<p>TODO(R): Explain</p>
+<p>The value <code>Nestim</code> contains an <em>estimate</em> for the number of possible observations
+for a specific group. This estimate is based on the first/last date an observation
+was available (non-missing) as well as the <code>year</code>, <code>month</code>, and <code>tod</code>. Last but not least
+the <code>interval_Median</code> is used.</p>
+<p>As an example: Imagine the statistics for temperature observations for one speicifc
+year and month (monthly level aggregation) with <code>tod = "07-23"</code>. The first non-missing
+value has been reported on the first day of the month, the last one on day 10.
+Given that <code>tod = "07-23"</code> covers 16 hours, this indicates that observations could
+be available 16 hours over 10 days = 160 hours in total. Based on the best guess
+for <code>interval_median</code> this allows to calculate <code>Nestim</code>. E.g., if the median interval
+is 300 (300 seconds = 5 minutes) this would leas to a possible number of observations
+<code>Nestim = 10 days * 16 hours per day * 3600 seonds per hour / 300 seconds = 1920</code>.
+Keep in mind that this is only an estimate or best guess!</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

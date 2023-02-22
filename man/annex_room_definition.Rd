@@ -16,7 +16,7 @@ a room alongside the 'long name'. This function returns the definition
 as a \code{data.frame}.
 }
 \seealso{
-check_for_allowed_rooms
+annex_variable_definition, annex_room_definition, annex_country_definition
 }
 \author{
 Reto Stauffer

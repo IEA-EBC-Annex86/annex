@@ -50,11 +50,6 @@ annex_template <- function(file, overwrite = FALSE) {
 #'        \code{"append"} (add new data) or \code{"update"} (update existing data).
 #'        See 'Mode' for more information.
 #' @param \dots not yet used.
-#' @param ask logical. If \code{TRUE} the user will be asked to confirm that
-#'        the function will modify the existing \code{file} (used when
-#'        \code{mode == "append"} or \code{mode == "update"}). See
-#'        Section 'Writing mode' for more information. By default \code{ask = TRUE}
-#'        if the function is called in an interactive R session.
 #' @param quiet logical. If set \code{TRUE} messages will be printed.
 #'
 #' @details
@@ -110,7 +105,7 @@ annex_template <- function(file, overwrite = FALSE) {
 #' @importFrom openxlsx getSheetNames read.xlsx
 #' @author Reto Stauffer
 #' @export
-annex_write_stats <- function(x, file, user, mode = "write", ..., ask = interactive(), quiet = FALSE) {
+annex_write_stats <- function(x, file, user, mode = "write", ..., quiet = FALSE) {
     # Stay sane!
     stopifnot(is.character(file), length(file) == 1)
     stopifnot(is.numeric(user), length(user) == 1, user > 0)
@@ -125,7 +120,6 @@ annex_write_stats <- function(x, file, user, mode = "write", ..., ask = interact
     # Writing mode and additional options
     mode <- match.arg(mode, c("write", "append", "update"))
     if (mode == "append" && !file.exists(file)) mode <- "write" # fallback
-    ask   <- as.logical(ask)[1L];     stopifnot(isTRUE(ask) | isFALSE(ask))
     quiet <- as.logical(quiet)[1L];   stopifnot(isTRUE(quiet) | isFALSE(quiet))
 
     # Check if the input object is what we expect;

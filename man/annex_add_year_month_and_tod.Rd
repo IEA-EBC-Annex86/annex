@@ -21,6 +21,12 @@ Calculates year, month and the time of day categories based
 on input argument \code{x} with respect to the time zone
 specified by the user.
 }
+\examples{
+x <- as.POSIXct("2022-01-01", tz = "UTC") + 0:10 * 3600
+annex:::annex_add_year_month_and_tod(x, tz = "Europe/Berlin")
+annex:::annex_add_year_month_and_tod(x, tz = "US/Central")
+
+}
 \author{
 Reto Stauffer
 }

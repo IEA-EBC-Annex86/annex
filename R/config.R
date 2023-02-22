@@ -17,11 +17,10 @@
 #' @details The function checks if the config object is set up properly
 #' and contains the required information for preparing the annex data.
 #'
-#' Fails if:
+#' Throws errors if:
 #' \itemize{
-#'      \item TODO(R): checks changed
 #'      \item the input is not a \code{data.frame}
-#'      \item variables are missing ('column', 'variable', 'study', 'home', 'room')
+#'      \item variables are missing ('column', 'variable', 'unit', 'study', 'home', 'room')
 #'      \item configuration for \code{variable = "datetime"} is missing
 #'      \item there is no definition for variables (datetime only)
 #'      \item the config contains missing values in the required variables
@@ -58,7 +57,6 @@ annex_check_config <- function(x) {
 
     # Missing values
     tmp <- subset(x[, required_cols[!grepl("^unit$", required_cols)]], variable != "datetime")
-    #check_na <- sapply(subset(x[, required_cols], variable != "datetime"), function(x) sum(is.na(x)))
     check_na <- sapply(tmp, function(x) sum(is.na(x)))
     if (any(check_na > 0))
         stop("missing values in ", paste(names(check_na)[check_na > 0], collapse = ", ")," not allowed")
@@ -154,6 +152,8 @@ annex_check_config <- function(x) {
 #' @return Character vector (with possibly adjusted) variable
 #' names, or fails.
 #'
+#' @seealso annex_variable_definition, annex_room_definition, annex_country_definition
+#'
 #' @importFrom openxlsx read.xlsx
 #' @importFrom stats na.omit
 #' @author Reto Stauffer
@@ -194,6 +194,8 @@ check_for_allowed_variables <- function(x) {
 #' @return Character vector (with possibly adjusted) room
 #' names, or fails. Not case sensitive for checking, but
 #' will return everything in uppercase (\code{toupper(x)}).
+#'
+#' @seealso annex_variable_definition, annex_room_definition, annex_country_definition
 #'
 #' @author Reto Stauffer
 check_for_allowed_rooms <- function(x) {
@@ -253,7 +255,7 @@ check_for_allowed_rooms <- function(x) {
 #' @return Returns either a \code{data.frame} or \code{list} of \code{lists}
 #' which contains the allowed (defined) variables.
 #'
-#' @seealso check_for_allowed_variables
+#' @seealso annex_variable_definition, annex_room_definition, annex_country_definition
 #'
 #' @author Reto Stauffer
 #' @export
@@ -294,7 +296,7 @@ annex_variable_definition <- function(as_list = FALSE) {
 #' @return \code{data.frame} with base room abbrevation, long description,
 #' plus a series of examples of valid room labels.
 #'
-#' @seealso check_for_allowed_rooms
+#' @seealso annex_variable_definition, annex_room_definition, annex_country_definition
 #'
 #' @author Reto Stauffer
 #' @export

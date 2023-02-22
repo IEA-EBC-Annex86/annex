@@ -20,6 +20,9 @@ pre-defined names for the rooms (sheet 'Definitions').
 This function checks if all user defined room names
 are valid. Not case sensitive; will be adjusted if needed.
 }
+\seealso{
+annex_variable_definition, annex_room_definition, annex_country_definition
+}
 \author{
 Reto Stauffer
 }

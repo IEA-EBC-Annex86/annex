@@ -25,11 +25,10 @@ but can also be done by the user manually.
 The function checks if the config object is set up properly
 and contains the required information for preparing the annex data.
 
-Fails if:
+Throws errors if:
 \itemize{
-\item TODO(R): checks changed
 \item the input is not a \code{data.frame}
-\item variables are missing ('column', 'variable', 'study', 'home', 'room')
+\item variables are missing ('column', 'variable', 'unit', 'study', 'home', 'room')
 \item configuration for \code{variable = "datetime"} is missing
 \item there is no definition for variables (datetime only)
 \item the config contains missing values in the required variables

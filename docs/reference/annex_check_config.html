@@ -20,7 +20,7 @@ but can also be done by the user manually."><meta property="og:image" content="h
     
     <a class="navbar-brand me-2" href="../index.html">annex</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-5</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -104,9 +104,8 @@ but can also be done by the user manually.</p>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The function checks if the config object is set up properly
 and contains the required information for preparing the annex data.</p>
-<p>Fails if:</p><ul><li><p>TODO(R): checks changed</p></li>
-<li><p>the input is not a <code>data.frame</code></p></li>
-<li><p>variables are missing ('column', 'variable', 'study', 'home', 'room')</p></li>
+<p>Throws errors if:</p><ul><li><p>the input is not a <code>data.frame</code></p></li>
+<li><p>variables are missing ('column', 'variable', 'unit', 'study', 'home', 'room')</p></li>
 <li><p>configuration for <code>variable = "datetime"</code> is missing</p></li>
 <li><p>there is no definition for variables (datetime only)</p></li>
 <li><p>the config contains missing values in the required variables</p></li>

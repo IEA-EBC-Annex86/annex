@@ -4,15 +4,7 @@
 \alias{annex_write_stats}
 \title{Writing Annex Stats to Disc}
 \usage{
-annex_write_stats(
-  x,
-  file,
-  user,
-  mode = "write",
-  ...,
-  ask = interactive(),
-  quiet = FALSE
-)
+annex_write_stats(x, file, user, mode = "write", ..., quiet = FALSE)
 }
 \arguments{
 \item{x}{object of class \code{annex_stat} as returned by
@@ -30,12 +22,6 @@ by the project team. Will be appended to the data set.}
 See 'Mode' for more information.}
 
 \item{\dots}{not yet used.}
-
-\item{ask}{logical. If \code{TRUE} the user will be asked to confirm that
-the function will modify the existing \code{file} (used when
-\code{mode == "append"} or \code{mode == "update"}). See
-Section 'Writing mode' for more information. By default \code{ask = TRUE}
-if the function is called in an interactive R session.}
 
 \item{quiet}{logical. If set \code{TRUE} messages will be printed.}
 }

@@ -86,6 +86,8 @@ config <- subset(config, process == TRUE) # Remove all rows process = FALSE
 
 As `config` is a pure `data.frame`, any subsetting can be used.
 
+
+
 ### Checking the config object
 
 To check whether or not the `config` object is as expected by the `annex` package,
@@ -131,6 +133,43 @@ head(prepared_df)
 The checks of missing/additional definitions in `config` are intended to inform
 the user about possible misspecifications and will not result in an error.
 
+## Ensure correct date and time (timezone)
+
+<div class="alert alert-info" role="alert">
+**Note:** `read_excel()` (from the
+[`readxl`](https://cran.r-project.org/package=readxl)) package may
+automartically detect and convert date and time information into `POSIXct`
+(date and time object), however, as Excel has no notion of timezones, the information
+returned will always be in UTC!
+</div>
+
+Investigate the class and the time zone attribute attached:
+
+```{r}
+class(prepared_df$datetime)         # Class of our first variable (Zeitraum ab)
+attr(prepared_df$datetime, "tzone") # Time zone used
+```
+
+To enforce a different time zone (assuming the data has been recorded in a time zone
+different than UTC) one need to acoerce the information back into a character without
+time zone information (using `format()`) and back into `POSIXct` which allows to set
+the correct time zone. For demonstration (to show the command) we convert the information
+to 'US/Central' and back to 'UTC'.
+
+```{r}
+head(prepared_df$datetime, n = 2) # First three entries
+# Coerce to 'US/Central'
+prepared_df$datetime <- as.POSIXct(format(prepared_df$datetime), tz = "US/Central")
+head(prepared_df$datetime, n = 2) # First three entries
+attr(prepared_df$datetime, "tzone")
+# Coerce back to 'UTC'
+prepared_df$datetime <- as.POSIXct(format(prepared_df$datetime), tz = "UTC")
+head(prepared_df$datetime, n = 2) # First three entries
+attr(prepared_df$datetime, "tzone")
+```
+
+The time zone conversion can also be done on the `raw_df` object (if needed) but
+needs to be addressed before calling `annex()` (see [Calculating statistics (analysis)](calculate_stats.html)) to ensure that this information is processed properly.
 
 ## Next steps
 

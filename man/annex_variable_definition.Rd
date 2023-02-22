@@ -39,7 +39,7 @@ If \code{as_list = FALSE} (default) the same information is returned
 as a \code{data.frame} containing the same information.
 }
 \seealso{
-check_for_allowed_variables
+annex_variable_definition, annex_room_definition, annex_country_definition
 }
 \author{
 Reto Stauffer

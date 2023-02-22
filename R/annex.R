@@ -2,27 +2,27 @@
 
 #' Annex Creator Function
 #'
-#' Creates an object of class `c("annex", "data.frame")`.
+#' Creates an object of class `c("annex", "data.frame")` required to calculate
+#' the statistics.
 #'
 #' @param formula the formula to specify how the data set is set up.
-#'        see 'Details' for more information.
+#'        See 'Details' for more information.
 #' @param data \code{data.frame} containing the obervations/data.
 #' @param tz character, time zone definition (e.g., \code{"Europe/Berlin"} or
 #'        \code{"UTC"}); required.  \code{OlsonNames()} returns a list of possible
-#'        candidates; abbrevated timezones (such as \code{"CET"} or \code{"UTC"})
-#'        should also work. Important to properly calculate month and time of day.
+#'        time zones. The correct time zone is important to properly calculate month and time of day.
 #' @param meta \code{NULL} (default) or a \code{list} with information
 #'        about study, home, and room (see 'Details').
 #' @param verbose logical, defaults to \code{FALSE}. Can be set
 #'        to \code{TRUE} to increase verbosity.
 #'
 #' @details
-#' In case the data set provided on \code{x} does only contain data
+#' In case the data set provided on \code{data} does only contain data
 #' of one study, home, and room, the fomula has two parts, looking
 #' e.g., as follows:
 #'
 #' \itemize{
-#'    \item \code{co2 + voc ~ datetime}
+#'    \item \code{T + RH ~ datetime}
 #' }
 #'
 #' The left hand side of the formula (left of \code{~}) specifies
@@ -30,17 +30,44 @@
 #' the right hand side is the name of the variable containing the
 #' time information (must be of class \code{POSIXt}). In this case,
 #' the \code{meta} argument is required to provide information about
-#' the study, home, and room. Will be appended as a new variable
-#' \code{ID}.
+#' the study, home, and room.
 #'
 #' If the grouping information is already in the data set,
-#' the analysis can be performed depending on the group information.
+#' the analysis can be performed depending on the group information,
+#' typically:
 #' 
 #' \itemize{
-#'    \item \code{co2 + voc ~ datetime | ID} ... or even ...
-#'    \item \code{co2 + voc ~ datetime | study + home + room}
+#'    \item \code{T + RH ~ datetime | study + home + room}
 #' }
 #'
+#' The latter allows to process observations from different studies, homes, and/or rooms
+#' all in one go.
+#'
+#' @examples
+#' # Create artificial data set for testing; typically this information is read
+#' # from a file or any other data connection.
+#' data <- data.frame(datetime = as.POSIXct("2022-01-01 00:00", tz = "Europe/Berlin") + -10:10 * 3600,
+#'                    T  = round(rnorm(21, mean = 20, sd = 2), 2),
+#'                    RH = round(runif(21, 40, 100), 2))
+#' 
+#' res1 <- annex(T + RH ~ datetime, data = data,
+#'               meta = list(study = "example", home = "ex", room = "BED"),
+#'               tz = "Europe/Berlin")
+#' head(res1, n = 3)
+#' 
+#' # The meta information can also be added to `data` removing the need
+#' # to specify the `meta` argument and allows to mix data from different
+#' # studies and rooms. Appending study, room, and home to `data`:
+#' data <- transform(data,
+#'                   study = "example",
+#'                   home  = "ex",
+#'                   room  = "BED")
+#' head(data)
+#' res2 <- annex(T + RH ~ datetime | study + home + room,
+#'               data = data, tz = "Europe/Berlin")
+#' head(res2, n = 3)
+#'
+#' @seealso annex_prepare, annex_stats
 #' @importFrom Formula is.Formula as.Formula
 #' @author Reto Stauffer
 #' @export
@@ -139,6 +166,11 @@ annex <- function(formula, data, tz, meta = NULL, verbose = FALSE) {
 #' @return List with three elements \code{year} (integer), \code{month} (factor) and
 #' \code{tod} (factor).
 #'
+#' @examples
+#' x <- as.POSIXct("2022-01-01", tz = "UTC") + 0:10 * 3600
+#' annex:::annex_add_year_month_and_tod(x, tz = "Europe/Berlin")
+#' annex:::annex_add_year_month_and_tod(x, tz = "US/Central")
+#'
 #' @author Reto Stauffer
 annex_add_year_month_and_tod <- function(x, tz) {
     stopifnot(inherits(x, "POSIXt"))
@@ -161,6 +193,14 @@ annex_add_year_month_and_tod <- function(x, tz) {
 #' @param verbose logical, defaults to \code{FALSE}. Can be set
 #'        to \code{TRUE} to increase verbosity.
 #'
+#' @return Returns a list with three components, namely `vars` (the variables to aggregate),
+#' `time` (name of the datetime variable) and `group` (grouping variables).
+#'
+#' @examples
+#' require("Formula")
+#' annex:::annex_parse_formula(Formula(T + RH ~ datetime | study + room + home))
+#'
+#' @seealso annex
 #' @importFrom Formula is.Formula Formula
 #'
 #' @author Reto Stauffer

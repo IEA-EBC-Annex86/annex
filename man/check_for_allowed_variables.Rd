@@ -19,6 +19,9 @@ pre-defined names for the variables (sheet 'Definitions').
 This function checks if all user defined variable names
 are valid. Not case sensitive; will be adjusted if needed.
 }
+\seealso{
+annex_variable_definition, annex_room_definition, annex_country_definition
+}
 \author{
 Reto Stauffer
 }
