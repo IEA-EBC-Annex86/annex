@@ -5,10 +5,9 @@
 # ----------------------------------------------------------------------
 "column"            "variable"      "study"        "unit"     "home"         "room"
 "X"                 "datetime"      empty          empty      empty          empty
-"co2"               "CO2"           "DEMO_STUD"    empty      "Casa_Blanca"  "Bed1"
+"co2"               "CO2"           "DEMO_STUD"    "ppm"      "Casa_Blanca"  "Bed1"
 "humidity"          "rH"            "DEMO_STUD"    "%"        "Casa_Blanca"  "Bed1"
-"light"             "Light"         "DEMO_STUD"    empty      "Casa_Blanca"  "Bed1"
 "pressure"          "Pressure"      "DEMO_STUD"    "hPa"      "Casa_Blanca"  "Bed1"
-"temp"              "T"             "DEMO_STUD"    "C"        "Casa_Blanca"  "BED1"
-"voc"               "VOC"           "DEMO_STUD"    empty      "Casa_Blanca"  "BED1"
-"radonShortTermAvg" "Radon"         "DEMO_STUD"    empty      "Casa_Blanca"  "BED1"
+"temp"              "T"             "DEMO_STUD"    "C"        "Casa_Blanca"  "Bed1"
+"voc"               "VOC"           "DEMO_STUD"    "ug/m3"    "Casa_Blanca"  "Bed1"
+"radonShortTermAvg" "Radon"         "DEMO_STUD"    "Bq/m3"    "Casa_Blanca"  "Bed1"
