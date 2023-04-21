@@ -1,6 +1,12 @@
 # Set of functions to convert units for the variables in /inst/template/template.xlsx
 # Reto Stauffer, Gabriel Rojas
 
+# These are hidden functions (not intended to be used by the end user).
+# For each variable which has defined units (or one fixed defined unit)
+# such a conversion unit must exist as it is called when preparing
+# the annex object (`annex_prepare()`) to ensure that the data is
+# in the 'standardized annex unit'.
+
 # CO2: convert to ppm
 convert_unit_CO2 <- function(x, from) {
   stopifnot("input vector must be numeric" = is.numeric(x))
@@ -59,40 +65,6 @@ convert_unit_UFP <- function(x, from) {
   return(x)
 }
 
-# Generic function mg/m3 to ug/m3
-convert_unit_ugm3 <- function(x, from) {
-  stopifnot("input vector must be numeric" = is.numeric(x))
-  stopifnot("argument \"from\" must be character" = is.character(from))
-  stopifnot("argument \"from\" must be length 1" = length(from) == 1)
-  if (!from %in% c("ug/m3", "mg/m3"))
-    stop("Don't know how to convert from \"", from, "\" to ug/m3")
-  return(if (from == "mg/m3") x * 1000 else x)
-}
-  
-# NO2: convert to ug/m3
-convert_unit_NO2 <- function(x, from)
-    convert_unit_ugm3(x, from)
-
-# NOx: convert to ug/m3
-convert_unit_NOx <- function(x, from)
-    convert_unit_ugm3(x, from)
-
-# TVOC: convert to ug/m3
-convert_unit_TVOC <- function(x, from)
-    convert_unit_ugm3(x, from)
-
-# PM1: convert to ug/m3
-convert_unit_PM1 <- function(x, from)
-    convert_unit_ugm3(x, from)
-
-
-# PM25: convert to ug/m3
-convert_unit_PM25 <- function(x, from)
-    convert_unit_ugm3(x, from)
-
-# PM10: convert to ug/m3
-convert_unit_PM10 <- function(x, from)
-    convert_unit_ugm3(x, from)
 
 # O3: convert to ug/m3
 convert_unit_O3 <- function(x, from) {
@@ -134,26 +106,15 @@ convert_unit_Radon <- function(x, from) {
   return(if (from == "pCi/L") x * 37 else x)
 }
 
-# Fungi: convert to CFU/m3
-convert_unit_Fungi <- function(x, from) {
-  stopifnot("input vector must be numeric" = is.numeric(x))
-  stopifnot("argument \"from\" must be character" = is.character(from))
-  stopifnot("argument \"from\" must be length 1" = length(from) == 1)
-  if (!from %in% c("CFU/m3"))
-    stop("Don't know how to convert from \"", from, "\" to CFU/m3")
-  
-  return(x)
-}
+# Pressure: convert to hPa
+convert_unit_Pressure <- function(x, from) {
+    stopifnot("input vector must be numeric" = is.numeric(x))
+    stopifnot("argument \"from\" must be character" = is.character(from))
+    stopifnot("argument \"from\" must be length 1" = length(from) == 1)
+    if (!from %in% c("hPa", "mmHg"))
+        stop("Don't know how to convert from \"", from, "\" to hPa")
 
-# Ions: convert to 1/cm3
-convert_unit_Ions <- function(x, from) {
-  stopifnot("input vector must be numeric" = is.numeric(x))
-  stopifnot("argument \"from\" must be character" = is.character(from))
-  stopifnot("argument \"from\" must be length 1" = length(from) == 1)
-  if (!from %in% c("1/cm3"))
-    stop("Don't know how to convert from \"", from, "\" to 1/cm3")
-  
-  return(x)
+    return(if (from == "mmHg") x / 0.75006156130264 else x)
 }
 
 # Temperature: convert to Celsius
@@ -172,15 +133,78 @@ convert_unit_T <- function(x, from) {
     return(x)
 }
 
-# Pressure: convert to hPa
-convert_unit_Pressure <- function(x, from) {
-    stopifnot("input vector must be numeric" = is.numeric(x))
-    stopifnot("argument \"from\" must be character" = is.character(from))
-    stopifnot("argument \"from\" must be length 1" = length(from) == 1)
-    if (!from %in% c("hPa", "mmHg"))
-        stop("Don't know how to convert from \"", from, "\" to hPa")
 
-    return(if (from == "mmHg") x / 0.75006156130264 else x)
+# --------------------------------------------------------------
+# Some units have one (and only one) unit which can/must be
+# set. This 'convert' function simply checks that the unit
+# is set correctly and returns 'x' as is.
+# Used for Fungi, Ions, SolRad.
+# This function shall never used directly!
+# --------------------------------------------------------------
+convert_unit_keepasis <- function(x, from, mustbe) {
+  stopifnot("input vector must be numeric" = is.numeric(x))
+  stopifnot("argument \"from\" must be character" = is.character(from))
+  stopifnot("argument \"from\" must be length 1" = length(from) == 1)
+  stopifnot(is.character(mustbe), length(mustbe) == 1)
+  if (from != mustbe)
+    stop("Don't know how to convert from \"", from, "\" to ", mustbe)
+  
+  return(x)
 }
 
+# Fungi: convert to CFU/m3
+convert_unit_Fungi <- function(x, from)
+  convert_unit_keepasis(x, from, "CFU/m3")
+
+# Ions: 1/cm3; no conversion
+convert_unit_Ions <- function(x, from)
+  convert_unit_keepasis(x, from, "1/cm3")
+
+# SolRad: W/m2; no conversion
+convert_unit_SolRad <- function(x, from)
+  convert_unit_keepasis(x, from, "W/m2")
+
+# --------------------------------------------------------------
+# A series of variables convert from/to "milligrams per cubic
+# meter" (mg/m3) to "micrograms per cubic meter" (um/m3).
+# This is a generic function taking over this job used
+# for NO2, NOx, TVOC, PM* etc (see below)
+# This function shall never used directly!
+# --------------------------------------------------------------
+convert_unit_ugm3 <- function(x, from) {
+  stopifnot("input vector must be numeric" = is.numeric(x))
+  stopifnot("argument \"from\" must be character" = is.character(from))
+  stopifnot("argument \"from\" must be length 1" = length(from) == 1)
+  if (!from %in% c("ug/m3", "mg/m3"))
+    stop("Don't know how to convert from \"", from, "\" to ug/m3")
+  return(if (from == "mg/m3") x * 1000 else x)
+}
+  
+# NO2: convert to ug/m3
+convert_unit_NO2 <- function(x, from)
+    convert_unit_ugm3(x, from)
+
+# NOx: convert to ug/m3
+convert_unit_NOx <- function(x, from)
+    convert_unit_ugm3(x, from)
+
+# TVOC: convert to ug/m3
+convert_unit_TVOC <- function(x, from)
+    convert_unit_ugm3(x, from)
+
+# VOC: convert to ug/m3
+convert_unit_VOC <- function(x, from)
+    convert_unit_ugm3(x, from)
+
+# PM1: convert to ug/m3
+convert_unit_PM1 <- function(x, from)
+    convert_unit_ugm3(x, from)
+
+# PM25: convert to ug/m3
+convert_unit_PM25 <- function(x, from)
+    convert_unit_ugm3(x, from)
+
+# PM10: convert to ug/m3
+convert_unit_PM10 <- function(x, from)
+    convert_unit_ugm3(x, from)
 

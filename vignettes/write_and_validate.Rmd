@@ -123,8 +123,10 @@ stage and may have some unexpected outcomes. Feel free to test these modes
 and report any problems/issues.
 
 One known issue is that it will not work properly if the XLSX file has been
-saved using libreoffice/openoffice caused by a `openxlsx` used to write
-the data (see [here](https://github.com/ycphs/openxlsx/pull/409)).
+saved using libreoffice/openoffice when using a versino of `openxlsx`
+prior to version `4.2.5.9001`. The latest version (currently only available
+via [`github`](https://github.com/ycphs/openxlsx) as of April 21, 2023)
+resolves this problem. For details see [(closed) issue #9](https://github.com/IEA-EBC-Annex86/annex/issues/9).
 </div>
 
 

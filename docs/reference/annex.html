@@ -12,7 +12,7 @@ the statistics.'><meta property="og:image" content="https://some.example-url.com
     
     <a class="navbar-brand me-2" href="../index.html">annex</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-6</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -167,9 +167,9 @@ all in one go.</p>
 <span class="r-in"><span>              tz <span class="op">=</span> <span class="st">"Europe/Berlin"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">res1</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              datetime   study room home year month   tod     T    RH</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2021-12-31 14:00:00 example  BED   ex 2021    12 07-23 20.95 82.08</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2021-12-31 15:00:00 example  BED   ex 2021    12 07-23 18.56 61.21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2021-12-31 16:00:00 example  BED   ex 2021    12 07-23 18.57 71.04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2021-12-31 14:00:00 example  BED   ex 2021    12 07-23 21.03 89.41</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2021-12-31 15:00:00 example  BED   ex 2021    12 07-23 20.83 48.22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2021-12-31 16:00:00 example  BED   ex 2021    12 07-23 23.23 89.39</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The meta information can also be added to `data` removing the need</span></span></span>
 <span class="r-in"><span><span class="co"># to specify the `meta` argument and allows to mix data from different</span></span></span>
@@ -180,19 +180,19 @@ all in one go.</p>
 <span class="r-in"><span>                  room  <span class="op">=</span> <span class="st">"BED"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              datetime     T    RH   study home room</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2021-12-31 14:00:00 20.95 82.08 example   ex  BED</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2021-12-31 15:00:00 18.56 61.21 example   ex  BED</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2021-12-31 16:00:00 18.57 71.04 example   ex  BED</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 2021-12-31 17:00:00 20.39 64.79 example   ex  BED</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2021-12-31 18:00:00 16.34 97.73 example   ex  BED</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 2021-12-31 19:00:00 16.87 69.82 example   ex  BED</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2021-12-31 14:00:00 21.03 89.41 example   ex  BED</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2021-12-31 15:00:00 20.83 48.22 example   ex  BED</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2021-12-31 16:00:00 23.23 89.39 example   ex  BED</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 2021-12-31 17:00:00 20.15 89.32 example   ex  BED</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2021-12-31 18:00:00 21.12 72.42 example   ex  BED</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 2021-12-31 19:00:00 19.50 72.55 example   ex  BED</span>
 <span class="r-in"><span><span class="va">res2</span> <span class="op">&lt;-</span> <span class="fu">annex</span><span class="op">(</span><span class="cn">T</span> <span class="op">+</span> <span class="va">RH</span> <span class="op">~</span> <span class="va">datetime</span> <span class="op">|</span> <span class="va">study</span> <span class="op">+</span> <span class="va">home</span> <span class="op">+</span> <span class="va">room</span>,</span></span>
 <span class="r-in"><span>              data <span class="op">=</span> <span class="va">data</span>, tz <span class="op">=</span> <span class="st">"Europe/Berlin"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">res2</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              datetime   study home room year month   tod     T    RH</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2021-12-31 14:00:00 example   ex  BED 2021    12 07-23 20.95 82.08</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2021-12-31 15:00:00 example   ex  BED 2021    12 07-23 18.56 61.21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2021-12-31 16:00:00 example   ex  BED 2021    12 07-23 18.57 71.04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2021-12-31 14:00:00 example   ex  BED 2021    12 07-23 21.03 89.41</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2021-12-31 15:00:00 example   ex  BED 2021    12 07-23 20.83 48.22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2021-12-31 16:00:00 example   ex  BED 2021    12 07-23 23.23 89.39</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

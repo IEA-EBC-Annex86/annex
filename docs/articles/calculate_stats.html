@@ -34,7 +34,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">annex</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-6</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -114,10 +114,10 @@
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/IEA-EBC-Annex86/annex/" class="external-link">"annex"</a></span><span class="op">)</span></span>
 <span><span class="va">prepared_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/annex_prepare.html">annex_prepare</a></span><span class="op">(</span><span class="va">raw_df</span>, <span class="va">config</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">prepared_df</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##              datetime study home room CO2   RH     T Other</span></span>
-<span><span class="co">## 1 2011-10-01 00:05:00  demo  W12 BED1 737 48.3 24.22    NA</span></span>
-<span><span class="co">## 2 2011-10-01 00:10:00  demo  W12 BED1 743 48.4 24.21    NA</span></span>
-<span><span class="co">## 3 2011-10-01 00:15:00  demo  W12 BED1 753 48.4 24.22    NA</span></span></code></pre>
+<pre><code><span><span class="co">##              datetime study    home room   RH SolRad     T CO2 Other</span></span>
+<span><span class="co">## 1 2011-10-01 00:05:00  demo General  AMB 88.4      3 13.35  NA    NA</span></span>
+<span><span class="co">## 2 2011-10-01 00:10:00  demo General  AMB 88.9      3 13.25  NA    NA</span></span>
+<span><span class="co">## 3 2011-10-01 00:15:00  demo General  AMB 89.2      3 13.17  NA    NA</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="performing-the-analysis">Performing the analysis<a class="anchor" aria-label="anchor" href="#performing-the-analysis"></a>
@@ -139,13 +139,13 @@
 <code class="sourceCode R"><span><span class="va">annex_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/annex.html">annex</a></span><span class="op">(</span><span class="va">RH</span> <span class="op">+</span> <span class="cn">T</span> <span class="op">+</span> <span class="va">CO2</span> <span class="op">~</span> <span class="va">datetime</span> <span class="op">|</span> <span class="va">study</span> <span class="op">+</span> <span class="va">home</span> <span class="op">+</span> <span class="va">room</span>,</span>
 <span>                  data <span class="op">=</span> <span class="va">prepared_df</span>, tz <span class="op">=</span> <span class="st">"Europe/Berlin"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">annex_df</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##              datetime study home room year month   tod   RH     T CO2</span></span>
-<span><span class="co">## 1 2011-10-01 00:05:00  demo  W12 BED1 2011    10 23-07 48.3 24.22 737</span></span>
-<span><span class="co">## 2 2011-10-01 00:10:00  demo  W12 BED1 2011    10 23-07 48.4 24.21 743</span></span>
-<span><span class="co">## 3 2011-10-01 00:15:00  demo  W12 BED1 2011    10 23-07 48.4 24.22 753</span></span>
-<span><span class="co">## 4 2011-10-01 00:20:00  demo  W12 BED1 2011    10 23-07 48.4 24.23 760</span></span>
-<span><span class="co">## 5 2011-10-01 00:25:00  demo  W12 BED1 2011    10 23-07 48.4 24.25 775</span></span>
-<span><span class="co">## 6 2011-10-01 00:30:00  demo  W12 BED1 2011    10 23-07 48.4 24.26 790</span></span></code></pre>
+<pre><code><span><span class="co">##              datetime study    home room year month   tod   RH     T CO2</span></span>
+<span><span class="co">## 1 2011-10-01 00:05:00  demo General  AMB 2011    10 23-07 88.4 13.35  NA</span></span>
+<span><span class="co">## 2 2011-10-01 00:10:00  demo General  AMB 2011    10 23-07 88.9 13.25  NA</span></span>
+<span><span class="co">## 3 2011-10-01 00:15:00  demo General  AMB 2011    10 23-07 89.2 13.17  NA</span></span>
+<span><span class="co">## 4 2011-10-01 00:20:00  demo General  AMB 2011    10 23-07 90.2 13.00  NA</span></span>
+<span><span class="co">## 5 2011-10-01 00:25:00  demo General  AMB 2011    10 23-07 90.9 12.86  NA</span></span>
+<span><span class="co">## 6 2011-10-01 00:30:00  demo General  AMB 2011    10 23-07 90.7 12.80  NA</span></span></code></pre>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">annex_df</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "annex"      "data.frame"</span></span></code></pre>
@@ -165,23 +165,23 @@
 <p>Based on the object returned by <code><a href="../reference/annex.html">annex()</a></code> the analysis can be performed by calling <code><a href="../reference/annex_stats.html">annex_stats()</a></code>. The function aggregates the data based on the formula provided above, calculates a series of statistical properties, and returns an object of class <code>annex_stats</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">annex_df</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##              datetime study home room year month   tod   RH     T CO2</span></span>
-<span><span class="co">## 1 2011-10-01 00:05:00  demo  W12 BED1 2011    10 23-07 48.3 24.22 737</span></span>
-<span><span class="co">## 2 2011-10-01 00:10:00  demo  W12 BED1 2011    10 23-07 48.4 24.21 743</span></span>
-<span><span class="co">## 3 2011-10-01 00:15:00  demo  W12 BED1 2011    10 23-07 48.4 24.22 753</span></span>
-<span><span class="co">## 4 2011-10-01 00:20:00  demo  W12 BED1 2011    10 23-07 48.4 24.23 760</span></span>
-<span><span class="co">## 5 2011-10-01 00:25:00  demo  W12 BED1 2011    10 23-07 48.4 24.25 775</span></span>
-<span><span class="co">## 6 2011-10-01 00:30:00  demo  W12 BED1 2011    10 23-07 48.4 24.26 790</span></span></code></pre>
+<pre><code><span><span class="co">##              datetime study    home room year month   tod   RH     T CO2</span></span>
+<span><span class="co">## 1 2011-10-01 00:05:00  demo General  AMB 2011    10 23-07 88.4 13.35  NA</span></span>
+<span><span class="co">## 2 2011-10-01 00:10:00  demo General  AMB 2011    10 23-07 88.9 13.25  NA</span></span>
+<span><span class="co">## 3 2011-10-01 00:15:00  demo General  AMB 2011    10 23-07 89.2 13.17  NA</span></span>
+<span><span class="co">## 4 2011-10-01 00:20:00  demo General  AMB 2011    10 23-07 90.2 13.00  NA</span></span>
+<span><span class="co">## 5 2011-10-01 00:25:00  demo General  AMB 2011    10 23-07 90.9 12.86  NA</span></span>
+<span><span class="co">## 6 2011-10-01 00:30:00  demo General  AMB 2011    10 23-07 90.7 12.80  NA</span></span></code></pre>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">stats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/annex_stats.html">annex_stats</a></span><span class="op">(</span><span class="va">annex_df</span>, format <span class="op">=</span> <span class="st">"long"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">stats</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##   study home room year month tod variable         stats value</span></span>
-<span><span class="co">## 1  demo  ABL  OTH 2011    10 all      CO2 quality_lower     0</span></span>
-<span><span class="co">## 2  demo  ABL  OTH 2011    10 all      CO2 quality_upper     0</span></span>
-<span><span class="co">## 3  demo  ABL  OTH 2011    10 all      CO2 quality_start 15248</span></span>
-<span><span class="co">## 4  demo  ABL  OTH 2011    10 all      CO2   quality_end 15253</span></span>
-<span><span class="co">## 5  demo  ABL  OTH 2011    10 all      CO2  interval_Min   300</span></span>
-<span><span class="co">## 6  demo  ABL  OTH 2011    10 all      CO2   interval_Q1   300</span></span></code></pre>
+<pre><code><span><span class="co">##   study    home room year month tod variable         stats value</span></span>
+<span><span class="co">## 1  demo General  AMB 2011    10 all       RH quality_lower     0</span></span>
+<span><span class="co">## 2  demo General  AMB 2011    10 all       RH quality_upper     0</span></span>
+<span><span class="co">## 3  demo General  AMB 2011    10 all       RH quality_start 15248</span></span>
+<span><span class="co">## 4  demo General  AMB 2011    10 all       RH   quality_end 15253</span></span>
+<span><span class="co">## 5  demo General  AMB 2011    10 all       RH  interval_Min   300</span></span>
+<span><span class="co">## 6  demo General  AMB 2011    10 all       RH   interval_Q1   300</span></span></code></pre>
 <p>By default, the argument format is set to <code>"wide"</code> which will return the statistics in a wide format, i.e. all calculated values as columns while <code>format = "long"</code> will create one line for every calculated value. The chosen format (long or wide) does not matter for the further analysis but a particular format may be convenient when processed manually.</p>
 </div>
 <div class="section level3">

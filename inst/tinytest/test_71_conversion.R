@@ -149,7 +149,7 @@ expect_equal(annex:::convert_unit_CO2(seq(50, 100, by = 10), from = "%"),
 
 
 # -------------------------------------------------------
-# NO2/NOX/TVOC/PM1/PM25/PM10 all use the same
+# NO2/NOX/VOC/TVOC/PM1/PM25/PM10 all use the same
 # conversion routine (convert_unit_ugm3)
 # -------------------------------------------------------
 expect_error(annex:::convert_unit_ugm3(),
@@ -192,6 +192,9 @@ expect_equal(annex:::convert_unit_ugm3(x, "mg/m3"),
 expect_equal(annex:::convert_unit_ugm3(x, "mg/m3"),
              annex:::convert_unit_TVOC(x, "mg/m3"),
              info = "Check that convert TVOC")
+expect_equal(annex:::convert_unit_ugm3(x, "mg/m3"),
+             annex:::convert_unit_VOC(x, "mg/m3"),
+             info = "Check that convert VOC")
 expect_equal(annex:::convert_unit_ugm3(x, "mg/m3"),
              annex:::convert_unit_PM1(x, "mg/m3"),
              info = "Check that convert PM1")

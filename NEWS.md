@@ -1,4 +1,19 @@
 
+# annex 0.2-6
+
+* An issue with [`openxlsx`](https://github.com/ycphs/openxlsx/pull/409#event-8839793513)
+  has been fixed, when using `openxlsx >= 4.2.5.9001` annex shoul work
+  as expected for those not using MS Excel.
+* In the mean time one small issue with `openxlsx` has been adressed (for those
+  opening/modifying their `.xlsx` files with openoffice). See
+  [issue 9](https://github.com/IEA-EBC-Annex86/annex/issues/9) for details.
+* Modified the variable definition. Minor renaming, modified/added lower and
+  upper bounds as well as allowed units. In addition ...
+* ... a series of unit conversion functions has been added.
+* Updated the vignettes (documentation) to the new code base.
+* Updated and extended the tinytests for the new release; mainly for unit
+  conversions.
+
 # annex 0.2-4
 
 Release candidate for testing in February 2023 with some major changes
