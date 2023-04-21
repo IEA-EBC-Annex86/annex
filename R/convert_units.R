@@ -1,5 +1,5 @@
-#' Set of functions to convert units for the variables in /inst/template/template.xlsx
-#' Reto Stauffer, Gabriel Rojas
+# Set of functions to convert units for the variables in /inst/template/template.xlsx
+# Reto Stauffer, Gabriel Rojas
 
 # CO2: convert to ppm
 convert_unit_CO2 <- function(x, from) {
@@ -22,11 +22,10 @@ convert_unit_CO <- function(x, from) {
   
   if (from == "mg/m3") {
     x <- x * 1000
-  } else if (from == "ppm") {
+  } else if (from == "ppm" | from == "ppb") {
     # conversion via ideal gas law: g/m3= ppm/1e6 * Molmass [g/mol]* assumed pressure for conversion / gas constant / assumed press for conversion
-    x <- round(x * 28.01 * 101325 / 8.314 / 298.15, 2)
-  } else if (from == "ppb") {
-    x <- round(x/1000 * 28.01 * 101325 / 8.314 / 298.15, 2)
+    x <- x * 28.01 * 101325 / 8.314 / 298.15
+    x <- if (from == "ppb") round(x / 1000, 2) else round(x, 2)
   }
   return(x)
 }
@@ -41,11 +40,10 @@ convert_unit_HCHO <- function(x, from) {
   
   if (from == "mg/m3") {
     x <- x * 1000
-  } else if (from == "ppm") {
+  } else if (from == "ppm" | from == "ppb") {
     # conversion via ideal gas law: g/m3= ppm/1e6 * Molmass [g/mol]* assumed pressure for conversion / gas constant / assumed press for conversion
-    x <- round(x * 30.03 * 101325 / 8.314 / 298.15, 2)
-  } else if (from == "ppb") {
-    x <- round(x/1000 * 30.03 * 101325 / 8.314 / 298.15, 2)
+    x <- x * 30.03 * 101325 / 8.314 / 298.15
+    x <- if (from == "ppb") round(x / 1000, 2) else round(x, 2)
   }
   return(x)
 }
@@ -61,72 +59,40 @@ convert_unit_UFP <- function(x, from) {
   return(x)
 }
 
-# PM1: convert to ug/m3
-convert_unit_PM1 <- function(x, from) {
+# Generic function mg/m3 to ug/m3
+convert_unit_ugm3 <- function(x, from) {
   stopifnot("input vector must be numeric" = is.numeric(x))
   stopifnot("argument \"from\" must be character" = is.character(from))
   stopifnot("argument \"from\" must be length 1" = length(from) == 1)
   if (!from %in% c("ug/m3", "mg/m3"))
     stop("Don't know how to convert from \"", from, "\" to ug/m3")
-  
   return(if (from == "mg/m3") x * 1000 else x)
 }
+  
+# NO2: convert to ug/m3
+convert_unit_NO2 <- function(x, from)
+    convert_unit_ugm3(x, from)
+
+# NOx: convert to ug/m3
+convert_unit_NOx <- function(x, from)
+    convert_unit_ugm3(x, from)
+
+# TVOC: convert to ug/m3
+convert_unit_TVOC <- function(x, from)
+    convert_unit_ugm3(x, from)
+
+# PM1: convert to ug/m3
+convert_unit_PM1 <- function(x, from)
+    convert_unit_ugm3(x, from)
 
 
 # PM25: convert to ug/m3
-convert_unit_PM25 <- function(x, from) {
-  stopifnot("input vector must be numeric" = is.numeric(x))
-  stopifnot("argument \"from\" must be character" = is.character(from))
-  stopifnot("argument \"from\" must be length 1" = length(from) == 1)
-  if (!from %in% c("ug/m3", "mg/m3"))
-    stop("Don't know how to convert from \"", from, "\" to ug/m3")
-  
-  return(if (from == "mg/m3") x * 1000 else x)
-}
+convert_unit_PM25 <- function(x, from)
+    convert_unit_ugm3(x, from)
 
 # PM10: convert to ug/m3
-convert_unit_PM10 <- function(x, from) {
-  stopifnot("input vector must be numeric" = is.numeric(x))
-  stopifnot("argument \"from\" must be character" = is.character(from))
-  stopifnot("argument \"from\" must be length 1" = length(from) == 1)
-  if (!from %in% c("ug/m3", "mg/m3"))
-    stop("Don't know how to convert from \"", from, "\" to ug/m3")
-  
-  return(if (from == "mg/m3") x * 1000 else x)
-}
-
-# NO2: convert to ug/m3
-convert_unit_NO2 <- function(x, from) {
-  stopifnot("input vector must be numeric" = is.numeric(x))
-  stopifnot("argument \"from\" must be character" = is.character(from))
-  stopifnot("argument \"from\" must be length 1" = length(from) == 1)
-  if (!from %in% c("ug/m3", "mg/m3"))
-    stop("Don't know how to convert from \"", from, "\" to ug/m3")
-  
-  return(if (from == "mg/m3") x * 1000 else x)
-}
-
-# NOx: convert to ug/m3
-convert_unit_NOx <- function(x, from) {
-  stopifnot("input vector must be numeric" = is.numeric(x))
-  stopifnot("argument \"from\" must be character" = is.character(from))
-  stopifnot("argument \"from\" must be length 1" = length(from) == 1)
-  if (!from %in% c("ug/m3", "mg/m3"))
-    stop("Don't know how to convert from \"", from, "\" to ug/m3")
-  
-  return(if (from == "mg/m3") x * 1000 else x)
-}
-
-# TVOC: convert to ug/m3
-convert_unit_TVOC <- function(x, from) {
-  stopifnot("input vector must be numeric" = is.numeric(x))
-  stopifnot("argument \"from\" must be character" = is.character(from))
-  stopifnot("argument \"from\" must be length 1" = length(from) == 1)
-  if (!from %in% c("ug/m3", "mg/m3"))
-    stop("Don't know how to convert from \"", from, "\" to ug/m3")
-  
-  return(if (from == "mg/m3") x * 1000 else x)
-}
+convert_unit_PM10 <- function(x, from)
+    convert_unit_ugm3(x, from)
 
 # O3: convert to ug/m3
 convert_unit_O3 <- function(x, from) {
@@ -138,11 +104,10 @@ convert_unit_O3 <- function(x, from) {
   
   if (from == "mg/m3") {
     x <- x * 1000
-  } else if (from == "ppm") {
+  } else if (from == "ppm" | from == "ppb") {
     # conversion via ideal gas law: g/m3= ppm/1e6 * Molmass [g/mol]* assumed pressure for conversion / gas constant / assumed press for conversion
-    x <- round(x * 48.0 * 101325 / 8.314 / 298.15, 2)
-  } else if (from == "ppb") {
-    x <- round(x/1000 * 48.0 * 101325 / 8.314 / 298.15, 2)
+    x <- x * 48.0 * 101325 / 8.314 / 298.15
+    x <- if (from == "ppb") round(x / 1000, 2) else round(x, 2)
   }
   return(x)
 }

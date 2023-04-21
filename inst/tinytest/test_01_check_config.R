@@ -78,7 +78,7 @@ expect_true(all(sapply(x3, function(x) is.numeric(x$upper))),
             info = "Test if all upper bounds are numeric")
 
 # Mixing lower/uppercase to test for non-case sensitivity
-to_test <- c("co2", "pM1", "RADON", "lIgHT")
+to_test <- c("co2", "pM1", "RADON", "sOLRaD")
 expect_error(annex:::check_for_allowed_variables(),
              info = "No input provided")
 expect_error(annex:::check_for_allowed_variables(3),
@@ -94,7 +94,7 @@ expect_error(annex:::check_for_allowed_variables(c("foo", "bar")),
              pattern = "Not allowed: 'foo', 'bar'",
              info = "Input is none of the allowed variable labels")
 expect_silent(x <- annex:::check_for_allowed_variables(to_test))
-expect_identical(c("CO2", "PM1", "Radon", "Light"),
+expect_identical(c("CO2", "PM1", "Radon", "SolRad"),
                  annex:::check_for_allowed_variables(to_test),
                  info = "Check if we get the corrected return if all variables are valid")
 
