@@ -139,7 +139,7 @@ convert_unit_T <- function(x, from) {
 # set. This 'convert' function simply checks that the unit
 # is set correctly and returns 'x' as is.
 # Used for Fungi, Ions, SolRad.
-# This function shall never used directly!
+# This function shall never be used directly!
 # --------------------------------------------------------------
 convert_unit_keepasis <- function(x, from, mustbe) {
   stopifnot("input vector must be numeric" = is.numeric(x))
@@ -169,7 +169,7 @@ convert_unit_SolRad <- function(x, from)
 # meter" (mg/m3) to "micrograms per cubic meter" (um/m3).
 # This is a generic function taking over this job used
 # for NO2, NOx, TVOC, PM* etc (see below)
-# This function shall never used directly!
+# This function shall never be used directly!
 # --------------------------------------------------------------
 convert_unit_ugm3 <- function(x, from) {
   stopifnot("input vector must be numeric" = is.numeric(x))
@@ -207,4 +207,32 @@ convert_unit_PM25 <- function(x, from)
 # PM10: convert to ug/m3
 convert_unit_PM10 <- function(x, from)
     convert_unit_ugm3(x, from)
+
+
+# --------------------------------------------------------------
+# Converting airflow from "cubic feet per minute" or
+# "cubic meter per hour" to "liters per second" (default unit)
+# This function shall never be used directly!
+# --------------------------------------------------------------
+convert_unit_Flowrate <- function(x, from) {
+  stopifnot("input vector must be numeric" = is.numeric(x))
+  stopifnot("argument \"from\" must be character" = is.character(from))
+  stopifnot("argument \"from\" must be length 1" = length(from) == 1)
+  if (!from %in% c("m3/h", "cfm"))
+    stop("Don't know how to convert from \"", from, "\" to l/s")
+  
+  if (from == "m3/h") {
+      x <- x / 3.6 ## x * 1000 l/m3 / 3600 s/h
+  } else {
+      x <- x * 0.471947
+  }
+  return(round(x, 3))
+}
+
+
+
+
+
+
+
 
