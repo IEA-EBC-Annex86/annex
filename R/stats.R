@@ -82,6 +82,8 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
     f <- annex_parse_formula(attr(object, "formula"))
 
     data_tz <- attr(object[[f$time]], "tz")
+    if (is.null(data_tz))
+        stop("Variable `", f$time, "` has no time zone attribute!")
 
     # To be able to calculate intevals between measurements we need
     # to split the data according to f$group, sort them, calculate differences,
