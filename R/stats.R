@@ -93,12 +93,18 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
         # Helper function
         fn <- function(x) {
             x <- x[order(x[[f$time]]), ]
+            # Adding a check for duplicated time information. Will only throw a warning.
+            if ((ndup <- sum(duplicated(x[[f$time]]), na.rm = TRUE)) > 0) {
+                warning("You have ", ndup, " duplicated entries in ", f$time, " for ",
+                        paste(f$group, as.vector(x[1, f$group]), sep = " = ", collapse = ", "),
+                        " which can lead to strange/wrong statistics. It is advised to fix that and run the analysis again!")
+            }
             for (v in f$vars) {
                 # New variable name: interval_<varaible_name> for "interval"
                 nv <- sprintf("interval_%s", v)
                 x[[nv]] <- NA_integer_
                 idx <- which(!is.na(x[[v]]))
-                x[idx, nv] <- as.integer(c(NA_integer_, as.numeric(diff(object$datetime[idx]), units = "secs")))
+                x[idx, nv] <- as.integer(c(NA_integer_, as.numeric(diff(x$datetime[idx]), units = "secs")))
             }
             return(x)
         }
