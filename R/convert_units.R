@@ -214,7 +214,7 @@ convert_unit_PM10 <- function(x, from)
 # "cubic meter per hour" to "liters per second" (default unit)
 # This function shall never be used directly!
 # --------------------------------------------------------------
-convert_unit_Flowrate <- function(x, from) {
+convert_unit_Flow <- function(x, from) {
   stopifnot("input vector must be numeric" = is.numeric(x))
   stopifnot("argument \"from\" must be character" = is.character(from))
   stopifnot("argument \"from\" must be length 1" = length(from) == 1)
