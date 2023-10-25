@@ -34,7 +34,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">annex</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-7</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -86,10 +86,12 @@
 
 
 
-<script src="config_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+
+<div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Config file/objects</h1>
-                        <h4 data-toc-skip class="author">Reto Stauffer</h4>
+                        <h4 data-toc-skip class="author">Reto
+Stauffer</h4>
             
       
       <small class="dont-index">Source: <a href="https://github.com/IEA-EBC-Annex86/annex/blob/HEAD/vignettes/config.Rmd" class="external-link"><code>vignettes/config.Rmd</code></a></small>
@@ -101,13 +103,20 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>To make the pre-processing of the data for the further analysis more user-friendly and easier to automatize, the <code>annex</code> package provides a configuration feature.</p>
-<p>Technically is just a regular <a href="https://discdown.org/rprogramming/dataframes.html" class="external-link"><code>data.frame</code></a> used as a lookup table to bring the data into the expected format which can come from any source (e.g., from a text file, XLSX file, created via script, …).</p>
+<p>To make the pre-processing of the data for the further analysis more
+user-friendly and easier to automatize, the <code>annex</code> package
+provides a configuration feature.</p>
+<p>Technically is just a regular <a href="https://discdown.org/rprogramming/dataframes.html" class="external-link"><code>data.frame</code></a>
+used as a lookup table to bring the data into the expected format which
+can come from any source (e.g., from a text file, XLSX file, created via
+script, …).</p>
 </div>
 <div class="section level2">
 <h2 id="configuration-content-and-purpose">Configuration content and purpose<a class="anchor" aria-label="anchor" href="#configuration-content-and-purpose"></a>
 </h2>
-<p>The following output shows the first <code>n = 6</code> lines from the configuration object used in the article <a href="articles/from_textfiles.html">Prepare data from textfiles</a>; the first six lines of a data.frame with <span class="math inline">\(6\)</span> variables (columns).</p>
+<p>The following output shows the first <code>n = 6</code> lines from
+the configuration object used in the article <a href="articles/from_textfiles.html">Prepare data from textfiles</a>; the
+first six lines of a data.frame with <span class="math inline">\(6\)</span> variables (columns).</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">config</span>, n <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##     column variable     study  unit        home room</span></span>
@@ -117,48 +126,84 @@
 <span><span class="co">## 4 pressure Pressure DEMO_STUD   hPa Casa_Blanca Bed1</span></span>
 <span><span class="co">## 5     temp        T DEMO_STUD     C Casa_Blanca Bed1</span></span>
 <span><span class="co">## 6      voc      VOC DEMO_STUD ug/m3 Casa_Blanca Bed1</span></span></code></pre>
-<p>This is used to tell the <code>annex</code> package which information needs to be processed, where to find the important information, and how to translate (rename) the variables to meet the <code>annex</code> standard format.</p>
+<p>This is used to tell the <code>annex</code> package which information
+needs to be processed, where to find the important information, and how
+to translate (rename) the variables to meet the <code>annex</code>
+standard format.</p>
 <div class="section level4">
 <h4 id="the-six-required-columns">The six required columns<a class="anchor" aria-label="anchor" href="#the-six-required-columns"></a>
 </h4>
 <ul>
 <li>
-<code>column</code>: The name of the column in the imported data set (e.g., from an <a href="articles/from_xlsx.html">XLSX file</a> or <a href="articles/from_textfiles.html">text file</a>).</li>
+<code>column</code>: The name of the column in the imported data set
+(e.g., from an <a href="articles/from_xlsx.html">XLSX file</a> or <a href="articles/from_textfiles.html">text file</a>).</li>
 <li>
-<code>variable</code>: Defines the <em>new variable name</em>; one of the different variables (parameters) expected by the annex package (see <a href="articles/lookupfunctions.html#variable-definition">Variable definition</a>).</li>
+<code>variable</code>: Defines the <em>new variable name</em>; one
+of the different variables (parameters) expected by the annex package
+(see <a href="articles/lookupfunctions.html#variable-definition">Variable
+definition</a>).</li>
 <li>
 <code>study</code>: Name of the study the data belong to.</li>
 <li>
-<code>home</code>: Name of the home (building) the data belong to.</li>
+<code>home</code>: Name of the home (building) the data belong
+to.</li>
 <li>
-<code>room</code>: Abbreviation of the type of room the data belong to (see <a href="articles/lookupfunctions.html#room-definition">Room definition</a>).</li>
+<code>room</code>: Abbreviation of the type of room the data belong
+to (see <a href="articles/lookupfunctions.html#room-definition">Room
+definition</a>).</li>
 <li>
-<code>unit</code>: Units of the input data (raw data); <code><a href="../reference/annex_prepare.html">annex_prepare()</a></code> will automatically convert to ’annex standard units (see <a href="articles/lookupfunctions.html#variable-definition">Variable definition</a>).</li>
+<code>unit</code>: Units of the input data (raw data);
+<code><a href="../reference/annex_prepare.html">annex_prepare()</a></code> will automatically convert to ’annex
+standard units (see <a href="articles/lookupfunctions.html#variable-definition">Variable
+definition</a>).</li>
 </ul>
-<p>While <code>column</code>, <code>study</code> and <code>home</code> can be chosen freely by the user, only a series of pre-defined values are available for <code>variable</code> (plus <code>unit</code>) and <code>room</code> (not case sensitive). See <a href="articles/lookupfunctions.html">Lookup functions</a> to get a full list of the defined values.</p>
+<p>While <code>column</code>, <code>study</code> and <code>home</code>
+can be chosen freely by the user, only a series of pre-defined values
+are available for <code>variable</code> (plus <code>unit</code>) and
+<code>room</code> (not case sensitive). See <a href="articles/lookupfunctions.html">Lookup functions</a> to get a full
+list of the defined values.</p>
 </div>
 <div class="section level4">
 <h4 id="the-required-rows">The required rows<a class="anchor" aria-label="anchor" href="#the-required-rows"></a>
 </h4>
-<p>There is one required row which must exist which is the one which defines where the date and time information can be found. This row defines the variable <code>"datetime"</code> and where it is located in the imported data set (in this case a variable called <code>"X"</code>).</p>
-<p>All other rows specify which column in the imported data set contains and which information should be processed. Variables not listed in this configuration (but available in the imported data set) will be ignored in the processing steps (namely when calling <code><a href="../reference/annex_prepare.html">annex_prepare()</a></code>).</p>
+<p>There is one required row which must exist which is the one which
+defines where the date and time information can be found. This row
+defines the variable <code>"datetime"</code> and where it is located in
+the imported data set (in this case a variable called
+<code>"X"</code>).</p>
+<p>All other rows specify which column in the imported data set contains
+and which information should be processed. Variables not listed in this
+configuration (but available in the imported data set) will be ignored
+in the processing steps (namely when calling
+<code><a href="../reference/annex_prepare.html">annex_prepare()</a></code>).</p>
 </div>
 <div class="section level4">
 <h4 id="purpose">Purpose<a class="anchor" aria-label="anchor" href="#purpose"></a>
 </h4>
-<p>The purpose of this object is to prepare an imported data set into the object expected by the <code>annex</code> package for the analysis before saving the data for later use.</p>
-<p>It is used to define where the required information is stored and used as a lookup table (translation table) to prepare/rename the variables, to format the data according to the <code>annex</code> standard format to be used for the further processing steps.</p>
+<p>The purpose of this object is to prepare an imported data set into
+the object expected by the <code>annex</code> package for the analysis
+before saving the data for later use.</p>
+<p>It is used to define where the required information is stored and
+used as a lookup table (translation table) to prepare/rename the
+variables, to format the data according to the <code>annex</code>
+standard format to be used for the further processing steps.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="readimport-configuration">Read/import configuration<a class="anchor" aria-label="anchor" href="#readimport-configuration"></a>
 </h2>
-<p>The two articles <a href="articles/from_xlsx.html">Prepare data from XLSX</a> <a href="from_textfiles.html">Prepare data from textfiles</a> show examples how to import (read) such a configuration from an XLSX file or a text file. Any file which can be imported into a data.frame via <em>R</em> can be used.</p>
+<p>The two articles <a href="articles/from_xlsx.html">Prepare data from
+XLSX</a> <a href="from_textfiles.html">Prepare data from textfiles</a>
+show examples how to import (read) such a configuration from an XLSX
+file or a text file. Any file which can be imported into a data.frame
+via <em>R</em> can be used.</p>
 </div>
 <div class="section level2">
 <h2 id="technical-note">Technical note<a class="anchor" aria-label="anchor" href="#technical-note"></a>
 </h2>
-<p>Note that the configuration is a convenience feature. Technically it can be bypassed by preparing the data set outside annex before starting with the analysis.</p>
+<p>Note that the configuration is a convenience feature. Technically it
+can be bypassed by preparing the data set outside annex before starting
+with the analysis.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

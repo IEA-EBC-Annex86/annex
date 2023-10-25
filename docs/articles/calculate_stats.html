@@ -34,7 +34,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">annex</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-7</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -86,10 +86,12 @@
 
 
 
-<script src="calculate_stats_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+
+<div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Calculate statistics</h1>
-                        <h4 data-toc-skip class="author">Reto Stauffer</h4>
+                        <h4 data-toc-skip class="author">Reto
+Stauffer</h4>
             
       
       <small class="dont-index">Source: <a href="https://github.com/IEA-EBC-Annex86/annex/blob/HEAD/vignettes/calculate_stats.Rmd" class="external-link"><code>vignettes/calculate_stats.Rmd</code></a></small>
@@ -101,8 +103,15 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>Once the data is prepared, the analysis can be performed. This article continues the example used in the article <a href="articles/from_xlsx.html">Prepare data from XLSX</a> but works the very same way with the other examples included in the documentation, e.g., <a href="articles/from_textfiles.html">Prepare data from textfiles</a>.</p>
-<p>Please have a look at <a href="articles/from_xlsx.html">this</a> article for more information on what the following lines of code do and/or to get the <code>"demo_UIBK.xlsx"</code> file to follow this article.</p>
+<p>Once the data is prepared, the analysis can be performed. This
+article continues the example used in the article <a href="articles/from_xlsx.html">Prepare data from XLSX</a> but works the
+very same way with the other examples included in the documentation,
+e.g., <a href="articles/from_textfiles.html">Prepare data from
+textfiles</a>.</p>
+<p>Please have a look at <a href="articles/from_xlsx.html">this</a>
+article for more information on what the following lines of code do
+and/or to get the <code>"demo_UIBK.xlsx"</code> file to follow this
+article.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://readxl.tidyverse.org" class="external-link">"readxl"</a></span><span class="op">)</span></span>
 <span><span class="co"># Importing data and config object (meta information)</span></span>
@@ -122,17 +131,26 @@
 <div class="section level2">
 <h2 id="performing-the-analysis">Performing the analysis<a class="anchor" aria-label="anchor" href="#performing-the-analysis"></a>
 </h2>
-<p>Once the data set is prepared properly (note that <code><a href="../reference/annex_prepare.html">annex_prepare()</a></code> is a convenience function, can also be done manually) the final object can be prepared.</p>
+<p>Once the data set is prepared properly (note that
+<code><a href="../reference/annex_prepare.html">annex_prepare()</a></code> is a convenience function, can also be done
+manually) the final object can be prepared.</p>
 <div class="section level4">
 <h4 id="prepare-annex-object">Prepare <code>annex</code> object<a class="anchor" aria-label="anchor" href="#prepare-annex-object"></a>
 </h4>
-<p><code><a href="../reference/annex.html">annex()</a></code> is the creator function which creates an object of class <code>annex</code> (S3) providing a series of methods and functions to conduct the final analysis. More information on object orientation system S3 can be found e.g. <a href="https://discdown.org/rprogramming/classes-and-methods.html#object-orientation" class="external-link">here</a></p>
-<p>The function expects a formula as input which describes how to process the data. The three parts of the formula are:</p>
+<p><code><a href="../reference/annex.html">annex()</a></code> is the creator function which creates an object
+of class <code>annex</code> (S3) providing a series of methods and
+functions to conduct the final analysis. More information on object
+orientation system S3 can be found e.g. <a href="https://discdown.org/rprogramming/classes-and-methods.html#object-orientation" class="external-link">here</a></p>
+<p>The function expects a formula as input which describes how to
+process the data. The three parts of the formula are:</p>
 <ul>
 <li><code>&lt;measurements to be processed&gt; ~ &lt;datetime&gt; | &lt;grouping variables&gt;</code></li>
-<li>The first part defines which variables (measurements) should be processed</li>
-<li>Part two is always <code>~ datetime</code>; the date and time information for the statistics</li>
-<li>Part three the grouping, typically <code>study + home + room</code>
+<li>The first part defines which variables (measurements) should be
+processed</li>
+<li>Part two is always <code>~ datetime</code>; the date and time
+information for the statistics</li>
+<li>Part three the grouping, typically
+<code>study + home + room</code>
 </li>
 </ul>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -149,7 +167,8 @@
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">annex_df</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "annex"      "data.frame"</span></span></code></pre>
-<p>A series of S3 methods exist for <code>annex</code> objects which might be extended in the future.</p>
+<p>A series of S3 methods exist for <code>annex</code> objects which
+might be extended in the future.</p>
 <ul>
 <li><code><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary()</a></code></li>
 <li>
@@ -162,7 +181,11 @@
 <div class="section level4">
 <h4 id="calculating-statistics">Calculating statistics<a class="anchor" aria-label="anchor" href="#calculating-statistics"></a>
 </h4>
-<p>Based on the object returned by <code><a href="../reference/annex.html">annex()</a></code> the analysis can be performed by calling <code><a href="../reference/annex_stats.html">annex_stats()</a></code>. The function aggregates the data based on the formula provided above, calculates a series of statistical properties, and returns an object of class <code>annex_stats</code>.</p>
+<p>Based on the object returned by <code><a href="../reference/annex.html">annex()</a></code> the analysis can
+be performed by calling <code><a href="../reference/annex_stats.html">annex_stats()</a></code>. The function
+aggregates the data based on the formula provided above, calculates a
+series of statistical properties, and returns an object of class
+<code>annex_stats</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">annex_df</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##              datetime study    home room year month   tod   RH     T CO2</span></span>
@@ -182,17 +205,27 @@
 <span><span class="co">## 4  demo General  AMB 2011    10 all       RH   quality_end 15253</span></span>
 <span><span class="co">## 5  demo General  AMB 2011    10 all       RH  interval_Min   300</span></span>
 <span><span class="co">## 6  demo General  AMB 2011    10 all       RH   interval_Q1   300</span></span></code></pre>
-<p>By default, the argument format is set to <code>"wide"</code> which will return the statistics in a wide format, i.e. all calculated values as columns while <code>format = "long"</code> will create one line for every calculated value. The chosen format (long or wide) does not matter for the further analysis but a particular format may be convenient when processed manually.</p>
+<p>By default, the argument format is set to <code>"wide"</code> which
+will return the statistics in a wide format, i.e. all calculated values
+as columns while <code>format = "long"</code> will create one line for
+every calculated value. The chosen format (long or wide) does not matter
+for the further analysis but a particular format may be convenient when
+processed manually.</p>
 </div>
 <div class="section level3">
 <h3 id="next-steps">Next steps<a class="anchor" aria-label="anchor" href="#next-steps"></a>
 </h3>
-<p>After calculating the statistics, the following steps can be performed:</p>
+<p>After calculating the statistics, the following steps can be
+performed:</p>
 <ul>
-<li><a href="visualization.html">Visualizing the data (optional)</a></li>
-<li><a href="write_and_validate.html#write">Write annex stats to final file</a></li>
-<li><a href="write_and_validate.html#meta">Update meta data in final file</a></li>
-<li><a href="write_and_validate.html#validate">Validate final file</a></li>
+<li><a href="visualization.html">Visualizing the data
+(optional)</a></li>
+<li><a href="write_and_validate.html#write">Write annex stats to final
+file</a></li>
+<li><a href="write_and_validate.html#meta">Update meta data in final
+file</a></li>
+<li><a href="write_and_validate.html#validate">Validate final
+file</a></li>
 </ul>
 </div>
 </div>
