@@ -1,4 +1,13 @@
 
+# annex 0.2-7
+
+* Fixed a **serious issue** with how the intervals (how often measurements are
+    reported) which also affects the estimate of how many observations we
+    estimate (we think should be there).
+* Added a new variable `Flow` (air flow) and it's conversions; defaults to
+    `l/s` (liters per second) allowing values (via annex config) for
+    `m3/h` (quibic meters per hour) and `cfm` (suare feet per minute).
+
 # annex 0.2-6
 
 * An issue with [`openxlsx`](https://github.com/ycphs/openxlsx/pull/409#event-8839793513)
