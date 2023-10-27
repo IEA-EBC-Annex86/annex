@@ -1,4 +1,8 @@
 
+# annex 0.2-8
+
+* Added additional ventilation type in definitions (Exhaust air)
+
 # annex 0.2-7
 
 * Fixed a **serious issue** with how the intervals (how often measurements are
