@@ -44,6 +44,21 @@ annex_prepare <- function(x, config, quiet = FALSE) {
     if (length(idx) <= 1) stop("no data columns in `config` found in object `x`")
     x <- x[, idx]
 
+    # Ensure that all "data columns" are numeric. 
+    # - if numeric: good
+    # - if not numeric and only contains missing values (e.g., NA but integer)
+    #   we coerce the entire variable/column to NA_real_.
+    # - else we will throw an error.
+    original_vars <- unique(subset(config, variable != "datetime", select = column, drop = TRUE))
+    for (ov in original_vars) {
+        if (!is.numeric(x[, ov]) && all(is.na(x[, ov]))) {
+            x[, ov] <- NA_real_
+        } else if (!is.numeric(x[, ov])) {
+            stop(sprintf("column/variable `%s` is not numeric (class %s). Please check and convert manually.",
+                         ov, paste(class(x[, ov]), collapse = ", ")))
+        }
+    }
+
     # Preparing the data set
     # (1) Find all unique variables
     vars <- unique(subset(config, variable != "datetime", select = variable, drop = TRUE))

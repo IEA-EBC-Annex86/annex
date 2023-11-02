@@ -1,4 +1,11 @@
 
+# annex 0.2-9
+
+* Added an additional check in `annex_prepare()` to ensure that all data columns
+  are numeric. If one of the variables provided is not numeric but only contains
+  missing values (e.g., logical NAs) the column is converted automatically
+  (to `NA_real_`). Else (not numeric or not all missing) an error will be thrown.
+
 # annex 0.2-8
 
 * Added additional ventilation type in definitions (Exhaust air)
