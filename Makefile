@@ -20,6 +20,9 @@ test:
 check:
 	Rscript -e "devtools::check()"
 
+coverage: install
+	Rscript -e 'covr::report(covr::package_coverage(), file = "annex_coverage.html")'
+
 .PHONY: all
 all:
 	make document
