@@ -6,6 +6,10 @@
   are numeric. If one of the variables provided is not numeric but only contains
   missing values (e.g., logical NAs) the column is converted automatically
   (to `NA_real_`). Else (not numeric or not all missing) an error will be thrown.
+* New feature: `annex()` has a new argument `duplicate.action` which allows
+    the user to specify how he would like to handle duplicated observations
+    (observations for the same date and time for a specific room). See
+    `?annex` section 'Duplicates' for details.
 
 # annex 0.2-8
 

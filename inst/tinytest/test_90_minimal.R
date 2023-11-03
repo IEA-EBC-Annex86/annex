@@ -1,7 +1,9 @@
 
 
-library("tinytest")
-library("annex")
+if (interactive()) {
+    library("tinytest")
+    library("annex")
+}
 
 # Serves as our CSV file for the configuration
 config_txt <- "
@@ -125,6 +127,7 @@ rm(config2)
 # -------------------------------------------------------------------
 expect_silent(annex_df <- annex(T + RH + CO2 ~ datetime | study + home + room, data = prep, tz = "CET"),
               info = "Create annex object")
+expect_true("annex_df" %in% ls())
 expect_inherits(annex_df, "annex",      info = "Checking class of annex object")
 expect_inherits(annex_df, "data.frame", info = "Checking class of annex object")
 expect_identical(dim(annex_df), c(60L, 10L), info = "Dimension of annex object")

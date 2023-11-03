@@ -11,8 +11,11 @@
 #' @param tz character, time zone definition (e.g., \code{"Europe/Berlin"} or
 #'        \code{"UTC"}); required.  \code{OlsonNames()} returns a list of possible
 #'        time zones. The correct time zone is important to properly calculate month and time of day.
+#' @param duplicate.action \code{NULL} or a function which returns
+#'        a single numeric value. Used to handle possible duplicates, see
+#'        'Details'.
 #' @param meta \code{NULL} (default) or a \code{list} with information
-#'        about study, home, and room (see 'Details').
+#'        about study, home, and room (see section 'Duplicates').
 #' @param verbose logical, defaults to \code{FALSE}. Can be set
 #'        to \code{TRUE} to increase verbosity.
 #'
@@ -43,6 +46,29 @@
 #' The latter allows to process observations from different studies, homes, and/or rooms
 #' all in one go.
 #'
+#' @section Duplicates:
+#'
+#' Duplicated records can distort the statistics and should be handled properly.
+#' For each unique \code{study, home, room} only one observation (row) for a specific
+#' date and time should exist.
+#'
+#' As there is no general way to deal with such duplicates, the function \code{annex}
+#' (as well as \code{annex_prepare}) by default throws a warning for the user if such
+#' duplicates exist (\code{duplicate.action = NULL}; default argument).
+#'
+#' However, the package allows the user to provide a custom \code{duplicate.action}
+#' function, e.g., \code{mean}, \code{min}, \code{max}, ... This function must return
+#' one single numeric value (or an NA) when applied to a vector. If a function is provided,
+#' the \code{annex} function does the following:
+#'
+#' * Checks if there are any duplicates. If not, no changes are made. Else ...
+#' * Checking if the function is valid (returns single numeric or NA). If not, 
+#'   an error will be thrown.
+#' * Takes the measurements of each duplicate; if all values are missing,
+#'   an `NA` will be returned. Else the users \code{duplicate.action} is applied
+#'   to all remaining non-missing values. I.e., if \code{duplicate.action = mean}
+#'   the average of all non-missing values will be used.
+#'
 #' @examples
 #' # Create artificial data set for testing; typically this information is read
 #' # from a file or any other data connection.
@@ -71,11 +97,12 @@
 #' @importFrom Formula is.Formula as.Formula
 #' @author Reto Stauffer
 #' @export
-annex <- function(formula, data, tz, meta = NULL, verbose = FALSE) {
+annex <- function(formula, data, tz, duplicate.action = NULL, meta = NULL, verbose = FALSE) {
     if (!is.Formula(formula)) formula <- as.Formula(formula)
     if (inherits(data, "tbl_df")) data <- as.data.frame(data)
     stopifnot(is.character(tz), length(tz) == 1L, nchar(tz) > 0)
     stopifnot(is.data.frame(data), isTRUE(verbose) | isFALSE(verbose))
+    stopifnot(is.null(duplicate.action) || is.function(duplicate.action))
 
     # -------------------------------------------------
     # Parsing formula
@@ -124,17 +151,12 @@ annex <- function(formula, data, tz, meta = NULL, verbose = FALSE) {
         if (!is.numeric(data[[n]])) stop("variable '", n, "' must be numeric")
     }
 
+    # Remove all columns from 'data' not needed
+    data <- data[, c(f$group, f$time, f$vars)]
+
     # -------------------------------------------------
-    # Checking for duplicated time stamps
     # Splitting the data; checking for duplicates
-    tmp <- split(data, formula(paste("~ ", paste(f$group, collapse = " + "))), drop = TRUE)
-    for (t in tmp) {
-        if (anyDuplicated(t[[f$time]])) {
-            t <- t[1, f$group]
-            warning("variable '", f$time, "' contains duplicated time stamps for ",
-                    paste(names(t), as.vector(t), sep = " = ", collapse = ", "))
-        }
-    }
+    data <- annex_handle_duplicates(data, formula, duplicate.action, verbose)
 
     # -------------------------------------------------
     # Appending month and tod
@@ -332,4 +354,87 @@ subset.annex <- function(x, ...)
 
 
 
+#' Internal Function for Handling Possible Duplicates
+#'
+#' This function is called inside `annex()`.
+#'
+#' @param x data.frame to be processed.
+#' @param formula object of class `Formula`, the formula provided to `annex()`.
+#' @param duplicate.action can be `NULL` (no dedicated handling for duplicates)
+#'        of a function. If function it must return a single numeric value,
+#'        will be tested to be able to provide a useful error for the user if needed.
+#' @param verbose logical, verbosity (defaults to `FALSE`).
+#'
+#' @return Returns a `data.frame` similar to argument `x` with possibly
+#' modified content (depending on how to deal with duplicates if any).
+#'
+#' @importFrom Formula is.Formula
+#
+#' @author Reto
+annex_handle_duplicates <- function(x, formula, duplicate.action, verbose = FALSE) {
+    stopifnot(is.data.frame(x))
+    stopifnot(is.null(duplicate.action) || is.function(duplicate.action))
+    stopifnot(is.Formula(formula))
+    stopifnot(isTRUE(verbose) || isFALSE(verbose))
 
+    # Deparsing the formula
+    f <- annex_parse_formula(formula)
+    stopifnot(all(unlist(f) %in% names(x)))
+
+    # Splitting data
+    x <- split(x, formula(paste("~ ", paste(f$group, collapse = " + "))), drop = TRUE)
+
+    # In any case we are first checking if there are any duplicates
+    dups <- vector("list", length(x))
+    for (i in seq_along(x)) {
+        if (anyDuplicated(x[[i]][[f$time]])) {
+            t <- x[[i]][1, f$group]
+            dups[i] <- paste0("variable '", f$time, "' contains duplicated time stamps for ",
+                             paste(names(t), as.vector(t), sep = " = ", collapse = ", "))
+        }
+    }
+
+    # If length(dups) == 0 we have no duplicates and can return x as is. Else proceed
+    if (length(dups) > 0) {
+        # If duplicate.action is NULL we throw a series of errors for the user,
+        # but leave the data set `x` untouched.
+        if (is.null(duplicate.action)) {
+            for (d in unlist(dups)) warning(d[[1]])
+        # Else we need to check the function, and then apply the function to deal
+        # with the duplicates we've found.
+        } else {
+            # Make sure the user provided a function which returns a single
+            # numeric (or NA) needed for handling the data.
+            test_data <- list(c(1), c(NA), c(NA, NA, NA), c(NA, 1, 2, 3), c(1, 2, 3))
+            for (td in test_data) {
+                res <- duplicate.action(td)
+                if (!length(res) == 1 || (!is.na(res) && !is.numeric(res))) {
+                    stop("the function provided on `duplicate.action` does not return a single numeric (or NA) ",
+                         "when calling `fun(", deparse(td), ")`. Please adjust.")
+                }
+            }
+            # We now assume the function does what we need.
+            dup_formula <- formula(sprintf("cbind(%s) ~ %s", paste(f$vars, collapse = ", "),
+                                   paste(c(f$time, f$group), collapse = " + ")))
+
+            # The function we use (removes missing values; then applies the user function)
+            fn <- function(x, fun) {
+                x <- na.omit(x)
+                if (length(x) == 0) NA_real_ else fun(x)
+            }
+
+            # Loop over the blocks and call `aggregate()` for those where duplicates exist
+            # If is.null(dups[[i]]) there are no duplicates, skip.
+            for (i in seq_along(x)) {
+                if (!is.null(dups[[i]])) {
+                    x[[i]] <- aggregate(dup_formula, data = x[[i]], FUN = fn, fun = duplicate.action, na.action = na.pass)
+                }
+            }
+        }
+    }
+
+    # Re-combine and return
+    x <- do.call(rbind, x)
+    rownames(x) <- NULL
+    return(x)
+}

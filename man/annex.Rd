@@ -10,7 +10,7 @@
 \alias{subset.annex_stats}
 \title{Annex Creator Function}
 \usage{
-annex(formula, data, tz, meta = NULL, verbose = FALSE)
+annex(formula, data, tz, duplicate.action = NULL, meta = NULL, verbose = FALSE)
 
 \method{head}{annex}(x, ...)
 
@@ -34,8 +34,12 @@ See 'Details' for more information.}
 \code{"UTC"}); required.  \code{OlsonNames()} returns a list of possible
 time zones. The correct time zone is important to properly calculate month and time of day.}
 
+\item{duplicate.action}{\code{NULL} or a function which returns
+a single numeric value. Used to handle possible duplicates, see
+'Details'.}
+
 \item{meta}{\code{NULL} (default) or a \code{list} with information
-about study, home, and room (see 'Details').}
+about study, home, and room (see section 'Duplicates').}
 
 \item{verbose}{logical, defaults to \code{FALSE}. Can be set
 to \code{TRUE} to increase verbosity.}
@@ -75,6 +79,32 @@ typically:
 The latter allows to process observations from different studies, homes, and/or rooms
 all in one go.
 }
+\section{Duplicates}{
+
+
+Duplicated records can distort the statistics and should be handled properly.
+For each unique \code{study, home, room} only one observation (row) for a specific
+date and time should exist.
+
+As there is no general way to deal with such duplicates, the function \code{annex}
+(as well as \code{annex_prepare}) by default throws a warning for the user if such
+duplicates exist (\code{duplicate.action = NULL}; default argument).
+
+However, the package allows the user to provide a custom \code{duplicate.action}
+function, e.g., \code{mean}, \code{min}, \code{max}, ... This function must return
+one single numeric value (or an NA) when applied to a vector. If a function is provided,
+the \code{annex} function does the following:
+\itemize{
+\item Checks if there are any duplicates. If not, no changes are made. Else ...
+\item Checking if the function is valid (returns single numeric or NA). If not,
+an error will be thrown.
+\item Takes the measurements of each duplicate; if all values are missing,
+an \code{NA} will be returned. Else the users \code{duplicate.action} is applied
+to all remaining non-missing values. I.e., if \code{duplicate.action = mean}
+the average of all non-missing values will be used.
+}
+}
+
 \examples{
 # Create artificial data set for testing; typically this information is read
 # from a file or any other data connection.
