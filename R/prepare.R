@@ -50,6 +50,7 @@ annex_prepare <- function(x, config, quiet = FALSE) {
     #   we coerce the entire variable/column to NA_real_.
     # - else we will throw an error.
     original_vars <- unique(subset(config, variable != "datetime", select = column, drop = TRUE))
+    original_vars <- original_vars[original_vars %in% names(x)]
     for (ov in original_vars) {
         if (!is.numeric(x[, ov]) && all(is.na(x[, ov]))) {
             x[, ov] <- NA_real_
