@@ -62,11 +62,11 @@ annex_validate <- function(file, user, quiet = FALSE, ...) {
     # Checking content of the different sheets using dedicated functions
     for (sheet in required_sheets) {
         if (sheet == "Definitions") next
-        cat(bold("Validating XLSX sheet", sheet, "\n"))
+        if (!quiet) cat(bold("Validating XLSX sheet", sheet, "\n"))
         FUN  <- get(sprintf("annex_validate_sheet_%s", sub("^META-", "meta", sheet)))
         args <- list(file = file, user = user, stat_meta = stat_meta, quiet = quiet)
         tmp  <- do.call(FUN, args)   # Calling function
-        if (tmp) cat(green("  Everything OK (no warnings)\n"))
+        if (!quiet & tmp) cat(green("  Everything OK (no warnings)\n"))
         checkflag <- checkflag * tmp # Store flag
     }
 
@@ -93,7 +93,7 @@ annex_validate_sheet_columns <- function(file, sheets, quiet = FALSE) {
     }
 
     # Looping over all sheets
-    cat(bold("Checking columns in all sheets\n"))
+    if (!quiet) cat(bold("Checking columns in all sheets\n"))
     for (sheet in sheets) {
         dots <- paste(rep(".", 20 - 2 - nchar(sheet)), collapse = "")
         if (!quiet) message(sprintf("  %-20s", sprintf("'%s' %s", sheet, dots)), appendLF = FALSE)

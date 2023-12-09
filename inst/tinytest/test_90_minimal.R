@@ -217,6 +217,30 @@ for (x in qtiles) {
 
 
 
+# -------------------------------------------------------------------
+# Write statistics to disc
+# -------------------------------------------------------------------
+tmpfile <- tempfile(fileext = ".xlsx")
+expect_silent(annex_write_stats(stats, tmpfile, user = 999),
+              info = "Writing statistics to XLSX")
+expect_error(annex_write_stats(stats, tmpfile, user = 999, overwrite = FALSE),
+             info = "Testing error as overwrite = FALSE and file exists")
+expect_error(annex_write_stats(stats, tmpfile, user = 999, overwrite = TRUE),
+             info = "Testing overwrite = TRUE")
+
+# Check if it properly validates
+#expect_true(annex_validate(tmpfile, user = 999, quiet = TRUE),
+#            info = "Checking validity of XLSX file")
+
+# TODO(R): Modify the xlsx file to make it valid,
+#          check validity, and then test the new annex_read_stats
+#          function.
+
+
+
+
+
+
 
 
 

@@ -10,6 +10,9 @@
     the user to specify how he would like to handle duplicated observations
     (observations for the same date and time for a specific room). See
     `?annex` section 'Duplicates' for details.
+* `annex_validate(..., quiet = FALSE)` is now quiet.
+* Adding new function `annex_read_stats()` which allows to import data
+    from one or multiple XLSX files written by `annex_write_stats()` (beta).
 
 # annex 0.2-8
 
