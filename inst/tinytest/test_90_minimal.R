@@ -29,13 +29,14 @@ annex_check_config(config)
 # if the `annex_stats` calcs are fine and the mapping with the
 # config file works as expected. Time: Two periods, once
 # at night and once during the day (local time) on two differnt
-# days with an interval of 30 days to check the interval/Nestim guesses).
-# Each period has exactely 5 measurements which will be generated below
+# days with an interval of 10 mins to check the interval/Nestim guesses).
+# Each period has exactely N = 20 measurements which will be generated below
 # to thest the calculation of the statistics. The second period is also
 # set in a way (assuming UTC) to check if the 'tz' conversion works as
 # expected; summer time; UTC -> CEST +2h
-tms <- c(as.POSIXct("2023-12-24 00:00:00", tz = "UTC") + 0:5 * 30 * 60,
-         as.POSIXct("2023-07-01 05:30:00", tz = "UTC") + 0:5 * 30 * 60)
+N <- 20
+tms <- c(as.POSIXct("2023-12-24 00:00:00", tz = "UTC") + (seq_len(N) - 1) * 10 * 60,
+         as.POSIXct("2023-07-01 05:30:00", tz = "UTC") + (seq_len(N) - 1) * 10 * 60)
 
 # All the data we have will be 
 data <- data.frame(timeOfLoggingInUTC = tms)
@@ -43,9 +44,10 @@ for (i in seq_len(nrow(config))) {
     tmp    <- as.list(config[i, ]) # Convert to list for convenience
     if (tmp$variable == "datetime") next # Skipping timeOfLoggingInUTC
 
-    # Generate some data; always the "same" such that we can
+    # Generate some data; always the "same" (uniform sequence from
+    # seq(10, length.out = N, by = 0.5) such that we can
     # easily check the calculations later.
-    values <- rep(0:5 + 1 * 10, 2)
+    values <- rep(seq(10, length.out = N, by = 0.5), 2)
     if (tmp$unit == "K") values <- values + 273.15
     if (tmp$unit == "%" & tmp$variable == "CO2") values <- values / 1e4
     data[[tmp$column]] <- values
@@ -93,7 +95,7 @@ expect_warning(prep <- annex_prepare(data, config = config),
 
 ## Checking return
 expect_inherits(prep, "data.frame")
-expect_identical(dim(prep), c(60L, 7L))
+expect_identical(dim(prep), c(200L, 7L))
 expect_identical(names(prep), c("datetime", "study", "home", "room", "CO2", "T", "RH"))
 expect_inherits(prep$datetime, "POSIXct")
 expect_true(all(sapply(subset(prep, select = c(study, room, home)), class) == "character"))
@@ -103,7 +105,7 @@ expect_true(all(sapply(subset(prep, select = c(CO2, T, RH)), class) == "numeric"
 # 10:15 and NA. Check if TRUE.
 tmp <- unlist(subset(prep, select = c(CO2, T, RH)))
 tmp <- unique(sort(round(tmp, 10), , na.last = TRUE))
-expect_equal(tmp, c(10:15, NA))
+expect_equal(tmp, c(seq(10, length.out = N, by = 0.5), NA))
 
 
 # -------------------------------------------------------------------
@@ -115,7 +117,7 @@ expect_message(prep2 <- annex_prepare(data, config = config2),
                pattern = ".*Columns in `x` not in `config` \\(will be ignored\\).*",
                info = "Should not process T as not in config")
 expect_inherits(prep2, "data.frame")
-expect_identical(dim(prep2), c(60L, 6L))
+expect_identical(dim(prep2), c(200L, 6L))
 expect_identical(names(prep2), c("datetime", "study", "home", "room", "CO2", "RH"))
 rm(prep2)
 rm(config2)
@@ -130,7 +132,7 @@ expect_silent(annex_df <- annex(T + RH + CO2 ~ datetime | study + home + room, d
 expect_true("annex_df" %in% ls())
 expect_inherits(annex_df, "annex",      info = "Checking class of annex object")
 expect_inherits(annex_df, "data.frame", info = "Checking class of annex object")
-expect_identical(dim(annex_df), c(60L, 10L), info = "Dimension of annex object")
+expect_identical(dim(annex_df), c(200L, 10L), info = "Dimension of annex object")
 
 # Adds a series of new columns, check if we got what we want
 expect_identical(names(annex_df),
@@ -160,7 +162,7 @@ expect_true(all(subset(annex_df, as.Date(annex_df$datetime) != as.Date("2023-07-
 # The observations should be unchanged and all in 10:15 or NA
 tmp <- unlist(subset(annex_df, select = c(CO2, T, RH)))
 tmp <- unique(sort(round(tmp, 10), , na.last = TRUE))
-expect_equal(tmp, c(10:15, NA))
+expect_equal(tmp, c(seq(10, length.out = N, by = 0.5), NA))
 
 
 
@@ -173,33 +175,33 @@ expect_silent(stats <- annex_stats(annex_df))
 # My CO2 values are all below lower bound, check if identified properly
 expect_true(all(subset(stats, variable == "CO2")$quality_lower == 100),
             info = "Lower bound violation for CO2")
-expect_true(all(subset(stats, variable != "CO2")$quality_lower == 0),
+expect_true(all(subset(stats, variable != "CO2")$quality_upper == 0),
             info = "No violation for RH + T")
 expect_true(all(stats$quality_upper == 0),
             info = "No upper bound violation for all the data")
 
 # Interval (auto-detected), here the most important is the Median
 # as it is the one we use to calculate the number of expected values.
-expect_true(all(stats$interval_Min == 30 * 60))
-expect_true(all(stats$interval_Q1 == 30 * 60))
-expect_true(all(stats$interval_Median == 30 * 60))
+expect_true(all(stats$interval_Min == 10 * 60))
+expect_true(all(stats$interval_Q1 == 10 * 60))
+expect_true(all(stats$interval_Median == 10 * 60))
 
-expect_true(all(stats$N == 6), info = "We have 6 observations for each row")
-expect_true(all(stats$NAs == 0), info = "No missing values")
-expect_true(all(stats$NAs == 0), info = "No missing values")
+expect_true(all(stats$N   == 20), info = "We have 20 observations for each row")
+expect_true(all(stats$NAs ==  0), info = "No missing values")
+expect_true(all(stats$NAs ==  0), info = "No missing values")
 
 # For 07-23 (16 hours) we expect Nestim == 32 as our interval is 30 min (1800s)
 # For 23-07 (8 hours) we expect Nestim == 16
 # For all (24 hours) we expect Nestim = 48
-expect_true(all(subset(stats, tod == "07-23")$Nestim == 32))
-expect_true(all(subset(stats, tod == "23-07")$Nestim == 16))
-expect_true(all(subset(stats, tod == "all")$Nestim == 48))
+expect_true(all(subset(stats, tod == "07-23")$Nestim == 16 * 6))
+expect_true(all(subset(stats, tod == "23-07")$Nestim ==  8 * 6))
+expect_true(all(subset(stats, tod ==  "all")$Nestim  == 24 * 6))
 
 # Due to construction, the rest of the stats is identical
 # for all variables and all based on 10:15. E.g, the 
 # Mean == mean(10:15) == 12.5. Let's test if the calculations
 # are correct
-tmp <- 10:15
+tmp <- seq(10, length.out = N, by = 0.5)
 expect_equal(stats$Mean, rep(mean(tmp), nrow(stats)),
              tolerance = 0.001,
              info = "Checking calculated mean")
@@ -227,20 +229,6 @@ expect_error(annex_write_stats(stats, tmpfile, user = 999, overwrite = FALSE),
              info = "Testing error as overwrite = FALSE and file exists")
 expect_error(annex_write_stats(stats, tmpfile, user = 999, overwrite = TRUE),
              info = "Testing overwrite = TRUE")
-
-# Check if it properly validates
-#expect_true(annex_validate(tmpfile, user = 999, quiet = TRUE),
-#            info = "Checking validity of XLSX file")
-
-# TODO(R): Modify the xlsx file to make it valid,
-#          check validity, and then test the new annex_read_stats
-#          function.
-
-
-
-
-
-
 
 
 

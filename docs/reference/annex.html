@@ -70,7 +70,7 @@ the statistics.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">annex</span><span class="op">(</span><span class="va">formula</span>, <span class="va">data</span>, <span class="va">tz</span>, meta <span class="op">=</span> <span class="cn">NULL</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">annex</span><span class="op">(</span><span class="va">formula</span>, <span class="va">data</span>, <span class="va">tz</span>, duplicate.action <span class="op">=</span> <span class="cn">NULL</span>, meta <span class="op">=</span> <span class="cn">NULL</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for annex</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
@@ -108,9 +108,15 @@ See 'Details' for more information.</p></dd>
 time zones. The correct time zone is important to properly calculate month and time of day.</p></dd>
 
 
+<dt>duplicate.action</dt>
+<dd><p><code>NULL</code> or a function which returns
+a single numeric value. Used to handle possible duplicates, see
+'Details'.</p></dd>
+
+
 <dt>meta</dt>
 <dd><p><code>NULL</code> (default) or a <code>list</code> with information
-about study, home, and room (see 'Details').</p></dd>
+about study, home, and room (see section 'Duplicates').</p></dd>
 
 
 <dt>verbose</dt>
@@ -146,6 +152,28 @@ typically:</p>
 all in one go.</p>
     </div>
     <div class="section level2">
+    <h2 id="duplicates">Duplicates<a class="anchor" aria-label="anchor" href="#duplicates"></a></h2>
+    
+
+
+<p>Duplicated records can distort the statistics and should be handled properly.
+For each unique <code>study, home, room</code> only one observation (row) for a specific
+date and time should exist.</p>
+<p>As there is no general way to deal with such duplicates, the function <code>annex</code>
+(as well as <code>annex_prepare</code>) by default throws a warning for the user if such
+duplicates exist (<code>duplicate.action = NULL</code>; default argument).</p>
+<p>However, the package allows the user to provide a custom <code>duplicate.action</code>
+function, e.g., <code>mean</code>, <code>min</code>, <code>max</code>, ... This function must return
+one single numeric value (or an NA) when applied to a vector. If a function is provided,
+the <code>annex</code> function does the following:</p><ul><li><p>Checks if there are any duplicates. If not, no changes are made. Else ...</p></li>
+<li><p>Checking if the function is valid (returns single numeric or NA). If not,
+an error will be thrown.</p></li>
+<li><p>Takes the measurements of each duplicate; if all values are missing,
+an <code>NA</code> will be returned. Else the users <code>duplicate.action</code> is applied
+to all remaining non-missing values. I.e., if <code>duplicate.action = mean</code>
+the average of all non-missing values will be used.</p></li>
+</ul></div>
+    <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>annex_prepare, annex_stats</p></div>
     </div>
@@ -167,9 +195,9 @@ all in one go.</p>
 <span class="r-in"><span>              tz <span class="op">=</span> <span class="st">"Europe/Berlin"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">res1</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              datetime   study room home year month   tod     T    RH</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2021-12-31 14:00:00 example  BED   ex 2021    12 07-23 21.90 94.09</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2021-12-31 15:00:00 example  BED   ex 2021    12 07-23 20.03 47.23</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2021-12-31 16:00:00 example  BED   ex 2021    12 07-23 19.99 72.39</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2021-12-31 14:00:00 example  BED   ex 2021    12 07-23 21.81 80.27</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2021-12-31 15:00:00 example  BED   ex 2021    12 07-23 17.71 78.26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2021-12-31 16:00:00 example  BED   ex 2021    12 07-23 20.29 46.02</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The meta information can also be added to `data` removing the need</span></span></span>
 <span class="r-in"><span><span class="co"># to specify the `meta` argument and allows to mix data from different</span></span></span>
@@ -180,19 +208,19 @@ all in one go.</p>
 <span class="r-in"><span>                  room  <span class="op">=</span> <span class="st">"BED"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              datetime     T    RH   study home room</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2021-12-31 14:00:00 21.90 94.09 example   ex  BED</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2021-12-31 15:00:00 20.03 47.23 example   ex  BED</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2021-12-31 16:00:00 19.99 72.39 example   ex  BED</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 2021-12-31 17:00:00 19.63 54.65 example   ex  BED</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2021-12-31 18:00:00 17.69 44.53 example   ex  BED</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 2021-12-31 19:00:00 21.12 98.15 example   ex  BED</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2021-12-31 14:00:00 21.81 80.27 example   ex  BED</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2021-12-31 15:00:00 17.71 78.26 example   ex  BED</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2021-12-31 16:00:00 20.29 46.02 example   ex  BED</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 2021-12-31 17:00:00 15.94 70.27 example   ex  BED</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2021-12-31 18:00:00 19.61 99.26 example   ex  BED</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 2021-12-31 19:00:00 18.72 55.28 example   ex  BED</span>
 <span class="r-in"><span><span class="va">res2</span> <span class="op">&lt;-</span> <span class="fu">annex</span><span class="op">(</span><span class="cn">T</span> <span class="op">+</span> <span class="va">RH</span> <span class="op">~</span> <span class="va">datetime</span> <span class="op">|</span> <span class="va">study</span> <span class="op">+</span> <span class="va">home</span> <span class="op">+</span> <span class="va">room</span>,</span></span>
 <span class="r-in"><span>              data <span class="op">=</span> <span class="va">data</span>, tz <span class="op">=</span> <span class="st">"Europe/Berlin"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">res2</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              datetime   study home room year month   tod     T    RH</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2021-12-31 14:00:00 example   ex  BED 2021    12 07-23 21.90 94.09</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2021-12-31 15:00:00 example   ex  BED 2021    12 07-23 20.03 47.23</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2021-12-31 16:00:00 example   ex  BED 2021    12 07-23 19.99 72.39</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2021-12-31 14:00:00 example   ex  BED 2021    12 07-23 21.81 80.27</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2021-12-31 15:00:00 example   ex  BED 2021    12 07-23 17.71 78.26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2021-12-31 16:00:00 example   ex  BED 2021    12 07-23 20.29 46.02</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

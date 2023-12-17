@@ -63,6 +63,13 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2-9" id="annex-02-9">annex 0.2-9<a class="anchor" aria-label="anchor" href="#annex-02-9"></a></h2>
 <ul><li>Added an additional check in <code><a href="../reference/annex_prepare.html">annex_prepare()</a></code> to ensure that all data columns are numeric. If one of the variables provided is not numeric but only contains missing values (e.g., logical NAs) the column is converted automatically (to <code>NA_real_</code>). Else (not numeric or not all missing) an error will be thrown.</li>
+<li>New feature: <code><a href="../reference/annex.html">annex()</a></code> has a new argument <code>duplicate.action</code> which allows the user to specify how he would like to handle duplicated observations (observations for the same date and time for a specific room). See <code><a href="../reference/annex.html">?annex</a></code> section ‘Duplicates’ for details.</li>
+<li>
+<code>annex_validate(..., quiet = FALSE)</code> is now quiet.</li>
+<li>Adding new function <code><a href="../reference/annex_read_stats.html">annex_read_stats()</a></code> which allows to import data from one or multiple XLSX files written by <code><a href="../reference/annex_write_stats.html">annex_write_stats()</a></code> (beta).</li>
+<li>Removing ventilation type ‘Exhaust air’ added in 0.2-8</li>
+<li>
+<code><a href="../reference/annex_stats.html">annex_stats()</a></code> returns <code>NAs</code> if less than 10 valid observations fall into one segment for most of the columns; <code><a href="../reference/annex_validate.html">annex_validate()</a></code> understands that, additional <code>test_92_smallN.R</code> added.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2-8" id="annex-02-8">annex 0.2-8<a class="anchor" aria-label="anchor" href="#annex-02-8"></a></h2>

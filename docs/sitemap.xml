@@ -67,10 +67,16 @@
     <loc>https://some.example-url.com/reference/annex_countries.html</loc>
   </url>
   <url>
+    <loc>https://some.example-url.com/reference/annex_handle_duplicates.html</loc>
+  </url>
+  <url>
     <loc>https://some.example-url.com/reference/annex_parse_formula.html</loc>
   </url>
   <url>
     <loc>https://some.example-url.com/reference/annex_prepare.html</loc>
+  </url>
+  <url>
+    <loc>https://some.example-url.com/reference/annex_read_stats.html</loc>
   </url>
   <url>
     <loc>https://some.example-url.com/reference/annex_room_definition.html</loc>

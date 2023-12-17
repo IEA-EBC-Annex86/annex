@@ -117,7 +117,7 @@ expect_identical(length(idx <- which(stats$N - stats$NAs < 10)), 12L,
                  info = "Find rows where N - NAs < 10")
 
 # Find 'inveral_*', 'Nestim', 'Mean', 'Sd' and all 'p*' cols.
-cols <- names(stats)[grepl("^(interval_.*|Nestim|Mean|p[0-9\\.]+)$", names(stats))]
+cols <- names(stats)[grepl("^(interval_.*|Nestim|Mean|Sd|p[0-9\\.]+)$", names(stats))]
 expect_identical(length(cols), 114L,
                  info = "Identify columns which should be NA")
 expect_true(all(is.na(stats[idx, cols])),
