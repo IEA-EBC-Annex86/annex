@@ -338,6 +338,14 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
     ## as the number of missing values, i.e., no data at all.
     res <- subset(res, N > NAs)
 
+    # Check if we have entries where N - NAs < 10 (less than 10 valid observations).
+    # In these cases we are setting a series of stats to NA (sample size too small)
+    idx <- which(res$N - res$NAs < 10)
+    if (length(idx) > 0) {
+        cols <- names(res)[grepl("^(interval_.*|Nestim|Mean|Sd|p[0-9\\.]+)$", names(res))]
+        res[idx, cols] <- NA
+    }
+
     # Reshape to long format if required
     if (format == "long") res <- annex_stats_reshape(res)
     return(res)

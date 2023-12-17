@@ -1,5 +1,6 @@
 
 
+
 # annex 0.2-9
 
 * Added an additional check in `annex_prepare()` to ensure that all data columns
@@ -13,6 +14,10 @@
 * `annex_validate(..., quiet = FALSE)` is now quiet.
 * Adding new function `annex_read_stats()` which allows to import data
     from one or multiple XLSX files written by `annex_write_stats()` (beta).
+* Removing ventilation type 'Exhaust air' added in 0.2-8
+* `annex_stats()` returns `NAs` if less than 10 valid observations fall
+    into one segment for most of the columns; `annex_validate()` understands
+    that, additional `test_92_smallN.R` added.
 
 # annex 0.2-8
 

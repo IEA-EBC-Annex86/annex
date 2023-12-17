@@ -159,7 +159,12 @@ annex_validate_sheet_STAT <- function(file, user, quiet, ...) {
 
     # Missing values
     for (col in required_cols) {
-        idx <- is.na(data[[col]])
+        # These can be empty if N - NAs < 10
+        if (grepl("^(interval_.*|Nestim|Mean|Sd|p[0-9\\.]+)$", col)) {
+            idx <- is.na(data[[col]]) & (data$N - data$NAs >= 10)
+        } else {
+            idx <- is.na(data[[col]])
+        }
         if (any(idx))
             stop(red $ bold("Found ", sum(idx), " missing values (empty cells) in column '", col,
                             "' in sheet 'STAT',\n", get_row_info(idx), sep = ""))
