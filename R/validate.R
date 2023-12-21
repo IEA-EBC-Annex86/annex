@@ -159,15 +159,51 @@ annex_validate_sheet_STAT <- function(file, user, quiet, ...) {
 
     # Missing values
     for (col in required_cols) {
-        # These can be empty if N - NAs < 10
-        if (grepl("^(interval_.*|Nestim|Mean|Sd|p[0-9\\.]+)$", col)) {
-            idx <- is.na(data[[col]]) & (data$N - data$NAs >= 10)
+        if (grepl("^(Nestim|N|NAs)$", col)) {
+            idx <- is.na(data[[col]] | data[[col]] < 0)
+            if (any(idx))
+                stop(red $ bold("Found ", sum(idx), " missing or negative values ",
+                                "(empty cells) in column '", col,
+                                "' in sheet 'STAT',\n", get_row_info(idx), sep = ""))
         } else {
             idx <- is.na(data[[col]])
+            if (any(idx))
+                stop(red $ bold("Found ", sum(idx), " missing values ",
+                                "(empty cells) in column '", col,
+                                "' in sheet 'STAT',\n", get_row_info(idx), sep = ""))
         }
-        if (any(idx))
-            stop(red $ bold("Found ", sum(idx), " missing values (empty cells) in column '", col,
-                            "' in sheet 'STAT',\n", get_row_info(idx), sep = ""))
+    }
+
+    # 'Mean' and 'Sd'. Both must be NA if "N - NAs < annex:::minsamplesize
+    # (less than 30 valid observations), else must be !NA. In addition,
+    # 'Sd' must be positive (if not NA, see above).
+    for (col in c("Mean", "Sd")) {
+        Ntosmall <- (data$N - data$NAs < annex:::minsamplesize)
+        # Ntoosmall: value must be NA
+        idx <- Ntosmall & !is.na(data[[col]])
+        if (any(idx) > 0) {
+            stop(red $ bold("`", col, "` must be empty (NA) if sample size ",
+                            "(N - NAs) is lower than ", annex:::minsamplesize, ".\n",
+                            "  Condition violated in sheet 'STAT',\n",
+                            get_row_info(idx), sep = ""))
+        }
+        # If !Ntosmall value must be provided. In case of `col == 'Mean'`
+        # only !is.na, else (`col == 'Sd'`) must be >= 0.
+        if (col == "Mean") {
+            idx <- !Ntosmall & is.na(data[[col]])
+            if (any(idx) > 0) {
+                stop(red $ bold("Found ", sum(idx), " missing values ",
+                                "(empty cells) in column '", col,
+                                "' in sheet 'STAT',\n", get_row_info(idx), sep = ""))
+            }
+        } else {
+            idx <- !Ntosmall & (is.na(data[[col]]) | data[[col]] < 0)
+            if (any(idx) > 0) {
+                stop(red $ bold("Found ", sum(idx), " missing values ",
+                                "(empty cells) or negative values in column '", col,
+                                "' in sheet 'STAT',\n", get_row_info(idx), sep = ""))
+            }
+        }
     }
 
     # 'tod' must be 'all' or 'XX-XX'
