@@ -50,6 +50,8 @@
 #' \code{p50} the median, \code{p100} the overall maximum of all non-missing values. Uses
 #' the empirical quantile function with \code{type = 7} (default; see \code{quantile}).
 #'
+#' Note: If \code{N - NAs} lower than 30, both \code{Mean} and \code{Sd} will be set to \code{NA}!
+#'
 #' @section Estimated number of observations:
 #'
 #' The value `Nestim` contains an _estimate_ for the number of possible observations
