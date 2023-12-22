@@ -25,18 +25,17 @@ abcd0304-home9_Radon, Radon,       Reto,     Bq/m3,    H9,       LAU
 config <- read.csv(text = config_txt, sep = ",", strip.white = TRUE)
 annex_check_config(config)
 
-# Serves as our data set; set up in a very specific way to check
-# if the `annex_stats` calcs are fine and the mapping with the
-# config file works as expected. Time: Two periods, once
-# at night and once during the day (local time) on two differnt
-# days with an interval of 10 mins to check the interval/Nestim guesses).
-# Each period has exactely N = 20 measurements which will be generated below
-# to thest the calculation of the statistics. The second period is also
-# set in a way (assuming UTC) to check if the 'tz' conversion works as
-# expected; summer time; UTC -> CEST +2h
-N <- 20
-tms <- c(as.POSIXct("2023-12-24 00:00:00", tz = "UTC") + (seq_len(N) - 1) * 10 * 60,
-         as.POSIXct("2023-07-01 05:30:00", tz = "UTC") + (seq_len(N) - 1) * 10 * 60)
+# Serves as our data set; set up in a very specific way to check if the
+# `annex_stats` calcs are fine and the mapping with the config file works as
+# expected. Time: Two periods, once at night and once during the day (local
+# time) on two differnt days with an interval of 1 min to check the
+# interval/Nestim guesses). Each period has exactely N = 30 (we need >= 30)
+# measurements which will be generated below to thest the calculation of the
+# statistics. The second period is also set in a way (assuming UTC) to check if
+# the 'tz' conversion works as expected; summer time; UTC -> CEST +2h
+N <- 61
+tms <- c(as.POSIXct("2023-12-24 00:00:00", tz = "UTC") + (seq_len(N) - 1) * 1 * 60,
+         as.POSIXct("2023-07-01 05:30:00", tz = "UTC") + (seq_len(N) - 1) * 1 * 60)
 
 # All the data we have will be 
 data <- data.frame(timeOfLoggingInUTC = tms)
@@ -47,11 +46,26 @@ for (i in seq_len(nrow(config))) {
     # Generate some data; always the "same" (uniform sequence from
     # seq(10, length.out = N, by = 0.5) such that we can
     # easily check the calculations later.
-    values <- rep(seq(10, length.out = N, by = 0.5), 2)
-    if (tmp$unit == "K") values <- values + 273.15
-    if (tmp$unit == "%" & tmp$variable == "CO2") values <- values / 1e4
+    #
+    # For CO2 we are going with seq(0.01, 0.03) % and
+    # seq(100, 300) ppm which is below our lower bound but
+    # allows us to check our lower bound violation calculation.
+    if (config$variable[i] == "CO2" & config$unit[i] == "%") {
+        # -> percent to ppm
+        values <- rep(seq(0.01, 0.03, length.out = N), 2)
+    } else if (config$variable[i] == "CO2") {
+        # ppm
+        values <- rep(seq(100, 300, length.out = N), 2)
+    } else {
+        values <- rep(seq(10, length.out = N, by = 0.5), 2)
+        if (tmp$unit == "K") values <- values + 273.15
+        if (tmp$unit == "%" & tmp$variable == "CO2") values <- values / 1e4
+    }
+
     data[[tmp$column]] <- values
 }
+summary(data)
+
 # Setting the data for the room = LAU columns to NA.
 # Once numeric NA, once logical NA, once character NA to check
 # the `annex_prepare` checks.
@@ -62,6 +76,7 @@ data[["abcd0303-home9_RH"]]   <- NA_character_
 # This should cause an error in annex_prepare.
 data[["abcd0304-home9_Radon"]] <- as.character(data[["abcd0304-home9_Radon"]])
 
+head(data)
 
 
 # -------------------------------------------------------------------
@@ -95,7 +110,7 @@ expect_warning(prep <- annex_prepare(data, config = config),
 
 ## Checking return
 expect_inherits(prep, "data.frame")
-expect_identical(dim(prep), c(200L, 7L))
+expect_identical(dim(prep), c(610L, 7L))
 expect_identical(names(prep), c("datetime", "study", "home", "room", "CO2", "T", "RH"))
 expect_inherits(prep$datetime, "POSIXct")
 expect_true(all(sapply(subset(prep, select = c(study, room, home)), class) == "character"))
@@ -103,10 +118,17 @@ expect_true(all(sapply(subset(prep, select = c(CO2, T, RH)), class) == "numeric"
 
 # We constructed 'data' in a way that we only expect values
 # 10:15 and NA. Check if TRUE.
-tmp <- unlist(subset(prep, select = c(CO2, T, RH)))
+tmp <- unlist(subset(prep, select = c(T, RH)))
 tmp <- unique(sort(round(tmp, 10), , na.last = TRUE))
 expect_equal(tmp, c(seq(10, length.out = N, by = 0.5), NA))
 
+# So far, the units are in % and ppm, thus we need
+# to compare against 0.04:0.10 and 0.04:0.10/1e5 here! 
+# This is all below the lower limit, but that's what we test later.
+tmp <- unlist(subset(prep, select = CO2))
+tmp <- round(tmp, 5) # five digits
+tmp <- unique(sort(tmp, na.last = TRUE))
+expect_equal(tmp, c(seq(100, 300, length.out = N), NA), tol = 1e-5)
 
 # -------------------------------------------------------------------
 # What if `config` does not contain all the information?
@@ -117,7 +139,7 @@ expect_message(prep2 <- annex_prepare(data, config = config2),
                pattern = ".*Columns in `x` not in `config` \\(will be ignored\\).*",
                info = "Should not process T as not in config")
 expect_inherits(prep2, "data.frame")
-expect_identical(dim(prep2), c(200L, 6L))
+expect_identical(dim(prep2), c(610L, 6L))
 expect_identical(names(prep2), c("datetime", "study", "home", "room", "CO2", "RH"))
 rm(prep2)
 rm(config2)
@@ -132,7 +154,7 @@ expect_silent(annex_df <- annex(T + RH + CO2 ~ datetime | study + home + room, d
 expect_true("annex_df" %in% ls())
 expect_inherits(annex_df, "annex",      info = "Checking class of annex object")
 expect_inherits(annex_df, "data.frame", info = "Checking class of annex object")
-expect_identical(dim(annex_df), c(200L, 10L), info = "Dimension of annex object")
+expect_identical(dim(annex_df), c(610L, 10L), info = "Dimension of annex object")
 
 # Adds a series of new columns, check if we got what we want
 expect_identical(names(annex_df),
@@ -160,10 +182,15 @@ expect_true(all(subset(annex_df, as.Date(annex_df$datetime) != as.Date("2023-07-
             info = "Checking time zone handling/conversion")
                 
 # The observations should be unchanged and all in 10:15 or NA
-tmp <- unlist(subset(annex_df, select = c(CO2, T, RH)))
+tmp <- unlist(subset(annex_df, select = c(T, RH)))
 tmp <- unique(sort(round(tmp, 10), , na.last = TRUE))
 expect_equal(tmp, c(seq(10, length.out = N, by = 0.5), NA))
 
+
+tmp <- unlist(subset(annex_df, select = CO2))
+tmp <- round(tmp, 5) # five digits
+tmp <- unique(sort(round(tmp, 10), na.last = TRUE))
+expect_equal(tmp, c(seq(100, 300, length.out = N), NA), tol = 1e-5)
 
 
 
@@ -182,41 +209,57 @@ expect_true(all(stats$quality_upper == 0),
 
 # Interval (auto-detected), here the most important is the Median
 # as it is the one we use to calculate the number of expected values.
-expect_true(all(stats$interval_Min == 10 * 60))
-expect_true(all(stats$interval_Q1 == 10 * 60))
-expect_true(all(stats$interval_Median == 10 * 60))
+expect_true(all(stats$interval_Min    == 1 * 60))
+expect_true(all(stats$interval_Q1     == 1 * 60))
+expect_true(all(stats$interval_Median == 1 * 60))
 
-expect_true(all(stats$N   == 20), info = "We have 20 observations for each row")
+expect_true(all(stats$N   == 61), info = "We have 61 observations for each row")
 expect_true(all(stats$NAs ==  0), info = "No missing values")
 expect_true(all(stats$NAs ==  0), info = "No missing values")
 
 # For 07-23 (16 hours) we expect Nestim == 32 as our interval is 30 min (1800s)
 # For 23-07 (8 hours) we expect Nestim == 16
 # For all (24 hours) we expect Nestim = 48
-expect_true(all(subset(stats, tod == "07-23")$Nestim == 16 * 6))
-expect_true(all(subset(stats, tod == "23-07")$Nestim ==  8 * 6))
-expect_true(all(subset(stats, tod ==  "all")$Nestim  == 24 * 6))
+expect_true(all(subset(stats, tod == "07-23")$Nestim == 16 * 60)) # 1/minute
+expect_true(all(subset(stats, tod == "23-07")$Nestim ==  8 * 60)) # 1/minute
+expect_true(all(subset(stats, tod ==  "all")$Nestim  == 24 * 60)) # 1/minute
 
 # Due to construction, the rest of the stats is identical
-# for all variables and all based on 10:15. E.g, the 
+# for all variables == T and all based on 10:15. E.g, the 
 # Mean == mean(10:15) == 12.5. Let's test if the calculations
 # are correct
-tmp <- seq(10, length.out = N, by = 0.5)
-expect_equal(stats$Mean, rep(mean(tmp), nrow(stats)),
+tmp_T   <- seq(10, length.out = N, by = 0.5)
+idx_T   <- which(stats$variable == "T")
+expect_equal(stats$Mean[idx_T], rep(mean(tmp_T), length(idx_T)),
              tolerance = 0.001,
-             info = "Checking calculated mean")
-expect_equal(stats$Sd, rep(sd(tmp), nrow(stats)),
+             info = "Checking calculated mean T")
+expect_equal(stats$Sd[idx_T], rep(sd(tmp_T), length(idx_T)),
              tolerance = 0.001,
-             info = "Checking calculated standard deviation")
+             info = "Checking calculated standard deviation T")
 
 qtiles <- 100 * sort(c(seq(0, 1, by = 0.01), 0.005, 0.025, 0.975, 0.995))
 for (x in qtiles) {
     n <- if (round(x - round(x), 2) == 0) sprintf("p%02.0f", x) else sprintf("p%04.1f", x)
-    expect_equivalent(stats[[n]], rep(quantile(tmp, x / 100), nrow(stats)),
-                 tolerance = 0.001, info = "Checking calculated percentiles")
+    expect_equivalent(stats[[n]][idx_T], rep(quantile(tmp_T, x / 100), length(idx_T)),
+                 tolerance = 0.001, info = "Checking calculated percentiles T")
 }
 
+# Same for variable == CO2 but with seq(100, 300)
+tmp_CO2 <- seq(100, 300, length.out = N)
+idx_CO2 <- which(stats$variable == "CO2")
+expect_equal(stats$Mean[idx_CO2], rep(mean(tmp_CO2), length(idx_CO2)),
+             tolerance = 0.001,
+             info = "Checking calculated mean CO2")
+expect_equal(stats$Sd[idx_CO2], rep(sd(tmp_CO2), length(idx_CO2)),
+             tolerance = 0.001,
+             info = "Checking calculated standard deviation CO2")
 
+qtiles <- 100 * sort(c(seq(0, 1, by = 0.01), 0.005, 0.025, 0.975, 0.995))
+for (x in qtiles) {
+    n <- if (round(x - round(x), 2) == 0) sprintf("p%02.0f", x) else sprintf("p%04.1f", x)
+    expect_equivalent(stats[[n]][idx_CO2], rep(quantile(tmp_CO2, x / 100), length(idx_CO2)),
+                 tolerance = 0.001, info = "Checking calculated percentiles CO2")
+}
 
 
 # -------------------------------------------------------------------
@@ -229,6 +272,9 @@ expect_error(annex_write_stats(stats, tmpfile, user = 999, overwrite = FALSE),
              info = "Testing error as overwrite = FALSE and file exists")
 expect_error(annex_write_stats(stats, tmpfile, user = 999, overwrite = TRUE),
              info = "Testing overwrite = TRUE")
+
+# Validation check (STAT only)
+#expect_false(annex:::annex_validate_sheet_STAT(tmpfile, user = 999))
 
 
 
