@@ -346,8 +346,7 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
     # cells in the final xlsx file (`annex_write_stats()`)
     idx <- which(res$N - res$NAs < annex:::minsamplesize)
     if (length(idx) > 0) {
-        cols <- names(res)[grepl("^(Mean|Sd)$", names(res))]
-        res[idx, cols] <- NA
+        res[idx, c("Mean", "Sd")] <- NA
     }
 
     # Reshape to long format if required

@@ -69,7 +69,14 @@
 <li>Adding new function <code><a href="../reference/annex_read_stats.html">annex_read_stats()</a></code> which allows to import data from one or multiple XLSX files written by <code><a href="../reference/annex_write_stats.html">annex_write_stats()</a></code> (beta).</li>
 <li>Removing ventilation type ‘Exhaust air’ added in 0.2-8</li>
 <li>
-<code><a href="../reference/annex_stats.html">annex_stats()</a></code> returns <code>NAs</code> if less than 10 valid observations fall into one segment for most of the columns; <code><a href="../reference/annex_validate.html">annex_validate()</a></code> understands that, additional <code>test_92_smallN.R</code> added.</li>
+<code><a href="../reference/annex_stats.html">annex_stats()</a></code> will return <code>NA</code>s for ‘Mean’ and ‘Sd’ in case the number of valid observations (<code>N - NAs</code>) are less than 30.</li>
+<li>
+<code><a href="../reference/annex_stats.html">annex_stats()</a></code> will return <code>NA</code>s for <code>interval_*</code> if <code>N - NAs == 1</code> (we have exactely one valid observation).</li>
+<li>
+<code><a href="../reference/annex_validate.html">annex_validate()</a></code> validates for the two conditions above.</li>
+<li>
+<code><a href="../reference/annex_validate.html">annex_validate()</a></code> now also throws an error if <code>Sd &lt; 0</code> (see condition above).</li>
+<li>Series of additional tests added.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2-8" id="annex-02-8">annex 0.2-8<a class="anchor" aria-label="anchor" href="#annex-02-8"></a></h2>

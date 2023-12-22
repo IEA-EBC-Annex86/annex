@@ -16,9 +16,12 @@
     from one or multiple XLSX files written by `annex_write_stats()` (beta).
 * Removing ventilation type 'Exhaust air' added in 0.2-8
 * `annex_stats()` will return `NA`s for 'Mean' and 'Sd' in case the number of
-    valid observations (`N - NAs`) are less than 30. `annex_validate()` will
-    test that.
-* `annes_validate()` now also throws an error if `Sd < 0` (see condition above).
+    valid observations (`N - NAs`) are less than 30.
+* `annex_stats()` will return `NA`s for `interval_*` if `N - NAs == 1` (we have
+    exactely one valid observation).
+* `annex_validate()` validates for the two conditions above.
+* `annex_validate()` now also throws an error if `Sd < 0` (see condition above).
+* Series of additional tests added.
 
 # annex 0.2-8
 

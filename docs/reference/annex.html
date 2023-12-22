@@ -195,9 +195,9 @@ the average of all non-missing values will be used.</p></li>
 <span class="r-in"><span>              tz <span class="op">=</span> <span class="st">"Europe/Berlin"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">res1</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              datetime   study room home year month   tod     T    RH</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2021-12-31 14:00:00 example  BED   ex 2021    12 07-23 21.81 80.27</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2021-12-31 15:00:00 example  BED   ex 2021    12 07-23 17.71 78.26</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2021-12-31 16:00:00 example  BED   ex 2021    12 07-23 20.29 46.02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2021-12-31 14:00:00 example  BED   ex 2021    12 07-23 19.14 78.29</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2021-12-31 15:00:00 example  BED   ex 2021    12 07-23 22.25 54.54</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2021-12-31 16:00:00 example  BED   ex 2021    12 07-23 18.73 97.39</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The meta information can also be added to `data` removing the need</span></span></span>
 <span class="r-in"><span><span class="co"># to specify the `meta` argument and allows to mix data from different</span></span></span>
@@ -208,19 +208,19 @@ the average of all non-missing values will be used.</p></li>
 <span class="r-in"><span>                  room  <span class="op">=</span> <span class="st">"BED"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              datetime     T    RH   study home room</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2021-12-31 14:00:00 21.81 80.27 example   ex  BED</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2021-12-31 15:00:00 17.71 78.26 example   ex  BED</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2021-12-31 16:00:00 20.29 46.02 example   ex  BED</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 2021-12-31 17:00:00 15.94 70.27 example   ex  BED</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2021-12-31 18:00:00 19.61 99.26 example   ex  BED</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 2021-12-31 19:00:00 18.72 55.28 example   ex  BED</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2021-12-31 14:00:00 19.14 78.29 example   ex  BED</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2021-12-31 15:00:00 22.25 54.54 example   ex  BED</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2021-12-31 16:00:00 18.73 97.39 example   ex  BED</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 2021-12-31 17:00:00 21.88 80.69 example   ex  BED</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2021-12-31 18:00:00 20.71 53.38 example   ex  BED</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 2021-12-31 19:00:00 16.49 40.21 example   ex  BED</span>
 <span class="r-in"><span><span class="va">res2</span> <span class="op">&lt;-</span> <span class="fu">annex</span><span class="op">(</span><span class="cn">T</span> <span class="op">+</span> <span class="va">RH</span> <span class="op">~</span> <span class="va">datetime</span> <span class="op">|</span> <span class="va">study</span> <span class="op">+</span> <span class="va">home</span> <span class="op">+</span> <span class="va">room</span>,</span></span>
 <span class="r-in"><span>              data <span class="op">=</span> <span class="va">data</span>, tz <span class="op">=</span> <span class="st">"Europe/Berlin"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">res2</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              datetime   study home room year month   tod     T    RH</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2021-12-31 14:00:00 example   ex  BED 2021    12 07-23 21.81 80.27</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2021-12-31 15:00:00 example   ex  BED 2021    12 07-23 17.71 78.26</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2021-12-31 16:00:00 example   ex  BED 2021    12 07-23 20.29 46.02</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2021-12-31 14:00:00 example   ex  BED 2021    12 07-23 19.14 78.29</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2021-12-31 15:00:00 example   ex  BED 2021    12 07-23 22.25 54.54</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2021-12-31 16:00:00 example   ex  BED 2021    12 07-23 18.73 97.39</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

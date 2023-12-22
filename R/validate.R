@@ -157,13 +157,29 @@ annex_validate_sheet_STAT <- function(file, user, quiet, ...) {
     # Checking user
     if (nrow(data) == 0) stop(red $ bold("No data in sheet 'STAT'"))
 
+    # NAs > N
+    idx <- data$N <= data$NAs
+    if (any(idx)) {
+        stop(red $ bold("Found ", sum(idx), " rows where N <= NAs (all or more than all missing)",
+                        " in sheet 'STAT',\n", get_row_info(idx), sep = ""))
+    }
+
     # Missing values
     for (col in required_cols) {
-        if (grepl("^(Nestim|N|NAs)$", col)) {
-            idx <- is.na(data[[col]] | data[[col]] < 0)
+        if (grepl("^(N|NAs)$", col)) {
+            tau <- if (col == "N") 1 else 0
+            idx <- is.na(data[[col]] | data[[col]] < tau)
             if (any(idx))
-                stop(red $ bold("Found ", sum(idx), " missing or negative values ",
-                                "(empty cells) in column '", col,
+                stop(red $ bold("Found ", sum(idx), " missing values (empty cells) or ",
+                                "values <", tau, "in column '", col,
+                                "' in sheet 'STAT',\n", get_row_info(idx), sep = ""))
+        # If interval-based columns (interval_* and Nestim): must be NA if
+        # N - NAs == 1, else must be filled and positive.
+        } else if (grepl("^(interval_.*|Nestim)$", col)) {
+            idx <- (data$N - data$NAs == 1 & !is.na(data[[col]]))
+            if (any(idx))
+                stop(red $ bold("Found ", sum(idx), " non-missing values ",
+                                "in column where `N-NAs == 1` '", col,
                                 "' in sheet 'STAT',\n", get_row_info(idx), sep = ""))
         } else {
             idx <- is.na(data[[col]])

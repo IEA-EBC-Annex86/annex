@@ -136,6 +136,7 @@ intervals. <code>interval_Median</code> is used to calculate estimate <code>Nest
 <strong>p:</strong> Probabilites for different quantiles. <code>p00</code> represents the overall minimum,
 <code>p50</code> the median, <code>p100</code> the overall maximum of all non-missing values. Uses
 the empirical quantile function with <code>type = 7</code> (default; see <code>quantile</code>).</p>
+<p>Note: If <code>N - NAs</code> lower than 30, both <code>Mean</code> and <code>Sd</code> will be set to <code>NA</code>!</p>
     </div>
     <div class="section level2">
     <h2 id="estimated-number-of-observations">Estimated number of observations<a class="anchor" aria-label="anchor" href="#estimated-number-of-observations"></a></h2>
