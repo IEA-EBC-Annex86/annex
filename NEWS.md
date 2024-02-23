@@ -1,5 +1,11 @@
 
+# annex 0.2-10
 
+* Fixing a bug; `interval_*` and `Nestim` now properly set to `NA` (missing)
+    if `N - NAs <= 1`.
+* Added new comment column to template sheet META-Home (non-mandatory field) 
+* `write_annex_stats()` adds the package version used to process the data as well
+    as the _R_ version string to the INFO sheet.
 
 # annex 0.2-9
 

@@ -349,6 +349,14 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
         res[idx, c("Mean", "Sd")] <- NA
     }
 
+    # Similar for interval_ and Nestim: If N - NAs <= 1
+    # we set all of them to NA (not able to properly estimate a time
+    # interval between observations)
+    idx <- which(res$N - res$NAs <= 1)
+    if (length(idx) > 0) {
+        res[idx, grep("^(interval_.*|Nestim)$", names(res))] <- NA
+    }
+
     # Reshape to long format if required
     if (format == "long") res <- annex_stats_reshape(res)
     return(res)

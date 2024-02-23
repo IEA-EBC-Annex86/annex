@@ -103,6 +103,7 @@ annex_template <- function(file, overwrite = FALSE) {
 #'
 #' @importFrom openxlsx loadWorkbook writeData saveWorkbook
 #' @importFrom openxlsx getSheetNames read.xlsx
+#' @importFrom utils packageVersion
 #' @author Reto Stauffer
 #' @export
 annex_write_stats <- function(x, file, user, mode = "write", ..., quiet = FALSE) {
@@ -191,6 +192,16 @@ annex_write_stats <- function(x, file, user, mode = "write", ..., quiet = FALSE)
     write_annex_metaRoom(workbook,      x, quiet, mode = mode)
     write_annex_metaVariable(workbook,  x, quiet, mode = mode)
     write_annex_STAT(file, f, workbook,    x, quiet, mode = mode)
+
+    # Adding current annex package version to INFO sheet
+    pkg_version <- packageVersion("annex")
+    if (!quiet) message(" - Adding version numbers")
+    info <- readWorkbook(workbook, sheet = "INFO", rowNames = FALSE,
+                         colNames = FALSE, skipEmptyRows = FALSE, skipEmptyCols = FALSE)
+    # Adding R and package version to B21/B22 (column 2, row 21/22)
+    info[21, 2] <- paste("annex package version", pkg_version)
+    info[22, 2] <- R.version$version.string
+    writeData(workbook, sheet = "INFO", x = info, colNames = FALSE, rowNames = FALSE, startRow = 3)
 
     # Saving final file
     if (!quiet) message(" - Saving file")
