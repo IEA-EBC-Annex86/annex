@@ -4,15 +4,30 @@
 \alias{plot.annex_stats}
 \title{Standard plot for annex_stats objects}
 \usage{
-\method{plot}{annex_stats}(x, ...)
+\method{plot}{annex_stats}(
+  x,
+  tod = c("07-23", "23-07", "all"),
+  by = c("year", "yearmon"),
+  ncol = 1L,
+  ask = NULL,
+  ...
+)
 }
 \arguments{
-\item{x}{an object of class \code{annex}.}
+\item{x}{an object of class \code{annex_stats}}
+
+\item{tod}{time of day}
+
+\item{by}{should the statistics be plotted across years or year + month}
+
+\item{ncol}{number of columns in plot}
+
+\item{ask}{one of \code{NULL}, \code{TRUE}, or \code{FALSE}. Auto-detected if \code{NULL}}
 
 \item{\dots}{currently unused.}
 }
 \description{
-TODO(R): How can one plot this 5d object?
+Experimental function for objects of class \code{annex_stats}.
 }
 \author{
 Reto Stauffer

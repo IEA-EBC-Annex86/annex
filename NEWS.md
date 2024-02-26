@@ -1,4 +1,13 @@
 
+# annex 0.2-11
+
+* Added experimental function for plotting objects of class `annex_stats` as
+  returned by `annex_stats()`.
+* Issue fixed; `annex()` now appends the user defined time zone to `datetime`
+  which is later used in `annex_stats()`. Before the fix the `tod` was correct,
+  however, the `quality_from`/`quality_to` was incorrect.
+* Note: The version used to process user 008.
+
 # annex 0.2-10
 
 * Fixing a bug; `interval_*` and `Nestim` now properly set to `NA` (missing)

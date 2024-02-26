@@ -34,7 +34,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">annex</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-11</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -262,7 +262,7 @@ convert the information to ‘US/Central’ and back to ‘UTC’.</p>
 <code class="sourceCode R"><span><span class="co"># Coerce to 'US/Central'</span></span>
 <span><span class="va">prepared_df</span><span class="op">$</span><span class="va">datetime</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">prepared_df</span><span class="op">$</span><span class="va">datetime</span><span class="op">)</span>, tz <span class="op">=</span> <span class="st">"US/Central"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">prepared_df</span><span class="op">$</span><span class="va">datetime</span>, n <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="co"># First three entries</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "2011-10-01 00:05:00 CDT" "2011-10-01 00:10:00 CDT"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "2011-10-01 00:05:00" "2011-10-01 00:10:00"</span></span></code></pre>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">prepared_df</span><span class="op">$</span><span class="va">datetime</span>, <span class="st">"tzone"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "US/Central"</span></span></code></pre>

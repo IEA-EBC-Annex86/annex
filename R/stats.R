@@ -267,8 +267,8 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
                 # Store the data
                 idx <- which(qual_ic == ic & qual$variable == v)
                 stopifnot(length(idx) == 1, !is.na(idx))
-                qual$quality_start[idx] <- as.Date(min(date_range), tz = data_tz)
-                qual$quality_end[idx]   <- as.Date(max(date_range), tz = data_tz)
+                qual$quality_start[idx] <- as.Date(format(min(date_range), format = "%Y-%m-%d", tz = data_tz))
+                qual$quality_end[idx]   <- as.Date(format(max(date_range), format = "%Y-%m-%d", tz = data_tz))
             }
         }
 

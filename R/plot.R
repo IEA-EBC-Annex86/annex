@@ -92,20 +92,95 @@ plot.annex <- function(x, bygroup = FALSE, start = NULL, end = NULL, ...) {
 
 #' Standard plot for annex_stats objects
 #'
-#' TODO(R): How can one plot this 5d object?
+#' Experimental function for objects of class \code{annex_stats}.
 #'
-#' @param x an object of class \code{annex}.
+#' @param x an object of class \code{annex_stats}
+#' @param tod time of day
+#' @param by should the statistics be plotted across years or year + month
+#' @param ncol number of columns in plot
+#' @param ask one of \code{NULL}, \code{TRUE}, or \code{FALSE}. Auto-detected if \code{NULL}
 #' @param \dots currently unused.
 #'
 #' @author Reto Stauffer
 #' @method plot annex_stats
-plot.annex_stats <- function(x, ...) {
+#' @importFrom zoo as.yearmon
+#' @export
+plot.annex_stats <- function(x, tod = c("07-23", "23-07", "all"), by = c("year", "yearmon"), ncol = 1L, ask = NULL, ...) {
     stopifnot(inherits(x, "annex_stats"))
-    f <- annex_parse_formula(attr(x, "formula"))
+    stopifnot(is.null(ask) || (isTRUE(ask) || isFALSE(ask)))
 
-    tmp <- split(x, formula(paste("~ ", paste(f$group, collapse = " + "))), drop = TRUE)
-    cat("This is a 5 dimensional data set; how to plot?")
+    # Experimental function
+    message("[!] Experimental function")
+
+    f <- annex_parse_formula(attr(x, "formula"))
+    mytod <- match.arg(tod)
+    by    <- match.arg(by)
+
+    # Keep user settings
+    hold  <- par(no.readonly = TRUE); on.exit(par(hold))
+
+    if (tod == "all" & by == "year")
+        stop("combination `tod = \"all\"` and `by = \"year\"` not allowed")
+
+    # Number of columns/rows to plot
+    ncol  <- as.integer(ncol)[1L]
+    stopifnot(is.integer(ncol), ncol >= 1L)
+
+    # home/room combinations
+    x$home_room <- interaction(x$home, x$room, drop = TRUE)
+    message("There are ", nlevels(x$home_room), " unique home/room 'units'")
+
+    if (nlevels(x$home_room) > 1 && is.null(ask)) ask <- TRUE
+    if (ask) par(ask = TRUE)
+
+    for (hr in levels(x$home_room)) {
+        # Current home/room
+        tmp <- subset(x, home_room == hr & tod == mytod)
+
+        # For x axis
+        if (by == "year") {
+            tmp <- subset(tmp, month == "all")
+            xat <- sort(unique(as.integer(as.character(tmp$year))))
+            xwidth <- 1
+        } else if (by == "yearmon") {
+            tmp <- subset(tmp, month != "all" & tod == mytod)
+            tmp$yearmon <- as.yearmon(paste(tmp$year, tmp$month, sep = "-"), format = "%Y-%m")
+            xat <- sort(unique(tmp$yearmon))
+            xwidth <- 1 / 12
+        }
+
+        vars <- unique(tmp$variable)
+        nrow <- ceiling(length(vars) / ncol) # Number of rows for plot
+        par(mfcol = c(nrow, ncol), oma = c(5.1, 0, 4.1, 2), mar = c(0, 5.1, 0, 0), xaxt = "n")
+
+        counter <- 0
+        for (v in vars) {
+            counter <- counter + 1L
+            ylim <- with(subset(tmp, variable == v), range(p00, p100))
+            plot(NA, xlim = as.numeric(range(xat)) + c(-.5, .5) * xwidth, ylim = ylim, ylab = NA)
+
+            sapply(xat, function(y) add_boxplot(subset(tmp[tmp[[by]] == y, ], variable == v), y, xwidth))
+            mtext(v, side = 2, line = 3)
+
+            if (counter %% nrow == 0 | counter == length(vars)) {
+                par(xaxt = "s"); axis(side = 1, line = 0, at = xat, labels = xat); par(xaxt = "n")
+            }
+        }
+
+        # Adding title
+        mtext(side = 3, line = 1, paste(tmp$home[1], tmp$room[1], sep = " - "), font = 2, cex = 1.2,
+              outer = TRUE)
+    }
 }
 
+add_boxplot <- function(x, y, w) {
+    if (nrow(x) == 0) return(NULL)
+    y <- as.numeric(y)
+    stopifnot(nrow(x) == 1)
+    lines(c(y, y), c(x$p00, x$p100))
+    sapply(c(x$p00, x$p100), function(xx) lines(y + c(-0.2, 0.2) * w, c(xx, xx)))
+    rect(y - w * 0.3, x$p25, y + w * 0.3, x$p75, col = "gray80")
+    lines(y + c(-0.3, 0.3) * w, c(x$p50, x$p50), lwd = 2)
+}
 
 

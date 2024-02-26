@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">annex</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-11</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,6 +60,19 @@
       <small>Source: <a href="https://github.com/IEA-EBC-Annex86/annex/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2-11" id="annex-02-11">annex 0.2-11<a class="anchor" aria-label="anchor" href="#annex-02-11"></a></h2>
+<ul><li>Added experimental function for plotting objects of class <code>annex_stats</code> as returned by <code><a href="../reference/annex_stats.html">annex_stats()</a></code>.</li>
+<li>Issue fixed; <code><a href="../reference/annex.html">annex()</a></code> now appends the user defined time zone to <code>datetime</code> which is later used in <code><a href="../reference/annex_stats.html">annex_stats()</a></code>. Before the fix the <code>tod</code> was correct, however, the <code>quality_from</code>/<code>quality_to</code> was incorrect.</li>
+<li>Note: The version used to process user 008.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2-10" id="annex-02-10">annex 0.2-10<a class="anchor" aria-label="anchor" href="#annex-02-10"></a></h2>
+<ul><li>Fixing a bug; <code>interval_*</code> and <code>Nestim</code> now properly set to <code>NA</code> (missing) if <code>N - NAs &lt;= 1</code>.</li>
+<li>Added new comment column to template sheet META-Home (non-mandatory field)</li>
+<li>
+<code>write_annex_stats()</code> adds the package version used to process the data as well as the <em>R</em> version string to the INFO sheet.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2-9" id="annex-02-9">annex 0.2-9<a class="anchor" aria-label="anchor" href="#annex-02-9"></a></h2>
 <ul><li>Added an additional check in <code><a href="../reference/annex_prepare.html">annex_prepare()</a></code> to ensure that all data columns are numeric. If one of the variables provided is not numeric but only contains missing values (e.g., logical NAs) the column is converted automatically (to <code>NA_real_</code>). Else (not numeric or not all missing) an error will be thrown.</li>

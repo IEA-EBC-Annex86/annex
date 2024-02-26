@@ -166,6 +166,8 @@ annex <- function(formula, data, tz, duplicate.action = NULL, meta = NULL, verbo
     # Reordering the data
     data <- subset(data, select = c(f$time, f$group, "year", "month", "tod", f$vars))
 
+    attr(data$datetime, "tzone") <- tz
+
     # -------------------------------------------------
     # Now the object should be ready
     # Appending class, formula information, return

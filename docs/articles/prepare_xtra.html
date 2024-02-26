@@ -34,7 +34,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">annex</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-11</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -209,9 +209,8 @@ format).</li>
 <span>                                tz <span class="op">=</span> <span class="st">"US/Central"</span><span class="op">)</span></span>
 <span><span class="co"># Checking the variable</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">raw_df</span><span class="op">$</span><span class="va">loggertime</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "2028-12-28 06:30:00 CST" "2028-12-28 06:40:00 CST"</span></span>
-<span><span class="co">## [3] "2028-12-28 06:50:00 CST" "2028-12-28 07:00:00 CST"</span></span>
-<span><span class="co">## [5] "2028-12-28 07:10:00 CST" "2028-12-28 07:20:00 CST"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "2028-12-28 06:30:00" "2028-12-28 06:40:00" "2028-12-28 06:50:00"</span></span>
+<span><span class="co">## [4] "2028-12-28 07:00:00" "2028-12-28 07:10:00" "2028-12-28 07:20:00"</span></span></code></pre>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">raw_df</span><span class="op">$</span><span class="va">loggertime</span>, <span class="st">"tz"</span><span class="op">)</span>   <span class="co"># Shows time zone abbreviation</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "US/Central"</span></span></code></pre>
@@ -389,9 +388,9 @@ can see the difference in the <code>tod</code> variable (also affects
 <span><span class="co">## 1 2028-12-28 06:30:00 demo_US top_flat  AMB 2028    12 23-07 NA NA 900.5433</span></span>
 <span><span class="co">## 2 2028-12-28 06:40:00 demo_US top_flat  AMB 2028    12 23-07 NA NA 901.9993</span></span>
 <span><span class="co">## 3 2028-12-28 06:50:00 demo_US top_flat  AMB 2028    12 23-07 NA NA 901.5005</span></span>
-<span><span class="co">## 4 2028-12-28 07:00:00 demo_US top_flat  AMB 2028    12 23-07 NA NA 904.6508</span></span>
-<span><span class="co">## 5 2028-12-28 07:10:00 demo_US top_flat  AMB 2028    12 23-07 NA NA 905.8652</span></span>
-<span><span class="co">## 6 2028-12-28 07:20:00 demo_US top_flat  AMB 2028    12 23-07 NA NA 903.9762</span></span></code></pre>
+<span><span class="co">## 4 2028-12-28 07:00:00 demo_US top_flat  AMB 2028    12 07-23 NA NA 904.6508</span></span>
+<span><span class="co">## 5 2028-12-28 07:10:00 demo_US top_flat  AMB 2028    12 07-23 NA NA 905.8652</span></span>
+<span><span class="co">## 6 2028-12-28 07:20:00 demo_US top_flat  AMB 2028    12 07-23 NA NA 903.9762</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="next-steps">Next steps<a class="anchor" aria-label="anchor" href="#next-steps"></a>

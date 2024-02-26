@@ -34,7 +34,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">annex</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-11</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -158,12 +158,12 @@ information for the statistics</li>
 <span>                  data <span class="op">=</span> <span class="va">prepared_df</span>, tz <span class="op">=</span> <span class="st">"Europe/Berlin"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">annex_df</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##              datetime study    home room year month   tod   RH     T CO2</span></span>
-<span><span class="co">## 1 2011-10-01 00:05:00  demo General  AMB 2011    10 23-07 88.4 13.35  NA</span></span>
-<span><span class="co">## 2 2011-10-01 00:10:00  demo General  AMB 2011    10 23-07 88.9 13.25  NA</span></span>
-<span><span class="co">## 3 2011-10-01 00:15:00  demo General  AMB 2011    10 23-07 89.2 13.17  NA</span></span>
-<span><span class="co">## 4 2011-10-01 00:20:00  demo General  AMB 2011    10 23-07 90.2 13.00  NA</span></span>
-<span><span class="co">## 5 2011-10-01 00:25:00  demo General  AMB 2011    10 23-07 90.9 12.86  NA</span></span>
-<span><span class="co">## 6 2011-10-01 00:30:00  demo General  AMB 2011    10 23-07 90.7 12.80  NA</span></span></code></pre>
+<span><span class="co">## 1 2011-10-01 02:05:00  demo General  AMB 2011    10 23-07 88.4 13.35  NA</span></span>
+<span><span class="co">## 2 2011-10-01 02:10:00  demo General  AMB 2011    10 23-07 88.9 13.25  NA</span></span>
+<span><span class="co">## 3 2011-10-01 02:15:00  demo General  AMB 2011    10 23-07 89.2 13.17  NA</span></span>
+<span><span class="co">## 4 2011-10-01 02:20:00  demo General  AMB 2011    10 23-07 90.2 13.00  NA</span></span>
+<span><span class="co">## 5 2011-10-01 02:25:00  demo General  AMB 2011    10 23-07 90.9 12.86  NA</span></span>
+<span><span class="co">## 6 2011-10-01 02:30:00  demo General  AMB 2011    10 23-07 90.7 12.80  NA</span></span></code></pre>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">annex_df</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "annex"      "data.frame"</span></span></code></pre>
@@ -189,12 +189,12 @@ series of statistical properties, and returns an object of class
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">annex_df</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##              datetime study    home room year month   tod   RH     T CO2</span></span>
-<span><span class="co">## 1 2011-10-01 00:05:00  demo General  AMB 2011    10 23-07 88.4 13.35  NA</span></span>
-<span><span class="co">## 2 2011-10-01 00:10:00  demo General  AMB 2011    10 23-07 88.9 13.25  NA</span></span>
-<span><span class="co">## 3 2011-10-01 00:15:00  demo General  AMB 2011    10 23-07 89.2 13.17  NA</span></span>
-<span><span class="co">## 4 2011-10-01 00:20:00  demo General  AMB 2011    10 23-07 90.2 13.00  NA</span></span>
-<span><span class="co">## 5 2011-10-01 00:25:00  demo General  AMB 2011    10 23-07 90.9 12.86  NA</span></span>
-<span><span class="co">## 6 2011-10-01 00:30:00  demo General  AMB 2011    10 23-07 90.7 12.80  NA</span></span></code></pre>
+<span><span class="co">## 1 2011-10-01 02:05:00  demo General  AMB 2011    10 23-07 88.4 13.35  NA</span></span>
+<span><span class="co">## 2 2011-10-01 02:10:00  demo General  AMB 2011    10 23-07 88.9 13.25  NA</span></span>
+<span><span class="co">## 3 2011-10-01 02:15:00  demo General  AMB 2011    10 23-07 89.2 13.17  NA</span></span>
+<span><span class="co">## 4 2011-10-01 02:20:00  demo General  AMB 2011    10 23-07 90.2 13.00  NA</span></span>
+<span><span class="co">## 5 2011-10-01 02:25:00  demo General  AMB 2011    10 23-07 90.9 12.86  NA</span></span>
+<span><span class="co">## 6 2011-10-01 02:30:00  demo General  AMB 2011    10 23-07 90.7 12.80  NA</span></span></code></pre>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">stats</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/annex_stats.html">annex_stats</a></span><span class="op">(</span><span class="va">annex_df</span>, format <span class="op">=</span> <span class="st">"long"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">stats</span><span class="op">)</span></span></code></pre></div>
