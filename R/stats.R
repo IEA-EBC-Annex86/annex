@@ -225,10 +225,15 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
         # ---------------------------------------
         # Create formula to aggregate and perform aggregation for the observations
         # fd: formula/aggregation for 'data' (the observations themselves)
-        fstats <- sprintf("cbind(%s) ~ %s", paste(f$vars, collapse = ", "),
-                          paste(c(f$group, gx), collapse = " + "))
-        stats  <- aggregate(formula(fstats), x, get_stats, na.action = na.pass)
-        stats  <- do.call(rbind, lapply(f$vars, convert, data = stats, f = f, gx = gx))
+        if (is.null(gx)) {
+            fstats <- sprintf("cbind(%s) ~ %s", paste(f$vars, collapse = ", "),
+                              paste(c(f$group), collapse = " + "))
+        } else {
+            fstats <- sprintf("cbind(%s) ~ %s", paste(f$vars, collapse = ", "),
+                              paste(c(f$group, gx), collapse = " + "))
+        }
+        stats <- aggregate(formula(fstats), x, get_stats, na.action = na.pass)
+        stats <- do.call(rbind, lapply(f$vars, convert, data = stats, f = f, gx = gx))
 
         # ---------------------------------------
         # Calculate quality information
@@ -296,12 +301,15 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
             tod_hours <- tod_to_hours(tmp$tod)
             tmp$Nestim <- ndays * tod_hours * 3600 / tmp$interval_Median
         # Else assume it is 'all day long' (24 hours of possible observations)
-        } else if (all(c("year") %in% names(tmp))) {
-            # No 'tod' (all day long) but on a monthly basis.
-            tmp$Nestim <- ndays * 86400 / tmp$interval_Median
         } else {
-            stop("Don't know how to handle this one [annex package needs to be extended]\n")
+            tmp$Nestim <- ndays * 86400 / tmp$interval_Median
         }
+        #} else if (all(c("year") %in% names(tmp))) {
+        #    # No 'tod' (all day long) but on a monthly basis.
+        #    tmp$Nestim <- ndays * 86400 / tmp$interval_Median
+        #} else {
+        #    stop("Don't know how to handle this one [annex package needs to be extended]\n")
+        #}
 
         # Enforce date
         tmp <- transform(tmp,
@@ -323,8 +331,21 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
     res_all_year <- aggfun(object, f, c("year", "tod"))
     res_all_year <- transform(res_all_year, month = "all")
 
+    # Same but grouping only by study|home|room|year|tod (all year long, entire day)
+    res_all_year_all_day <- aggfun(object, f, c("year"))
+    res_all_year_all_day <- transform(res_all_year_all_day, tod = "all", month = "all")
+
+    # Over full time period (all years) for day/night
+    res_overall_day <- aggfun(object, f, c("tod"))
+    res_overall_day <- transform(res_overall_day, year = "all", month = "all")
+
+    # Overall; full data set
+    res_overall <- aggfun(object, f, NULL)
+    res_overall <- transform(res_overall, year = "all", month = "all", tod = "all")
+
     # Combine results
-    res <- bind_rows(list(res_all_day, res_all_year, res))
+    res <- bind_rows(list(res_all_day, res_all_year, res_all_year_all_day, res,
+                          res_overall_day, res_overall))
 
     # Factorize and sort
     first <- c("study", "home", "room", "year", "month", "tod", "variable")

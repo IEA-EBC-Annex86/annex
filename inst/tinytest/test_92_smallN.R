@@ -116,12 +116,13 @@ expect_silent(stats <- annex_stats(prepared_df),
 # Check: if N - NAs < 10 we should not have certain statistics. This
 # includes 'Mean', 'Sd', and all percentiles, and we also removed
 # the guessed intervals (as this guess might be way off) including 'Nestim'.
-expect_identical(length(idx <- which(stats$N - stats$NAs < annex:::minsamplesize)), 12L,
-                 info = "Find rows where N - NAs < 10")
+expect_identical(length(idx <- which(stats$N - stats$NAs < annex:::minsamplesize)), 24L,
+                 info = "Count/check rows where N - NAs < 10")
 
 # If N - NAs is lower than annex:::minsamplesize, Mean and Sd must be NA
 idx <- which(stats$N - stats$NAs < annex:::minsamplesize)
-expect_identical(idx, as.integer(c(4, 5, 6, 7, 11, 12, 13, 14, 18, 19, 20, 21)),
+expect_identical(idx,
+                 as.integer(unlist(lapply(c(4, 11, 18, 25, 32, 39), function(x) x + seq.int(0, 3)))),
                  info = "Rows/entries where N - NAs is 'small' (smaller than annex:::minsamplesize)")
 # Check that Mean and Sd is missing
 expect_true(all(is.na(stats$Mean[idx])),

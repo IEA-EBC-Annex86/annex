@@ -1,4 +1,14 @@
 
+# annex 0.2-12
+
+* `annex_stats()` now also includes annual statistics for the whole day
+    (`tod = "all"`).
+* `annex_stats()` also includes overall stats (over the entire data set,
+    all years, all `tod`). If data is only available within one specific
+    year, this will be identical to the annual `tod = "all"` stats
+    (duplicated data but added for convenience).
+* Adjusted tinytests for new behaviour (extended stats).
+
 # annex 0.2-11
 
 * Added experimental function for plotting objects of class `annex_stats` as

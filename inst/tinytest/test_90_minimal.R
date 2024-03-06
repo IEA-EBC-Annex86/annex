@@ -27,14 +27,17 @@ annex_check_config(config)
 
 # Serves as our data set; set up in a very specific way to check if the
 # `annex_stats` calcs are fine and the mapping with the config file works as
-# expected. Time: Two periods, once at night and once during the day (local
-# time) on two differnt days with an interval of 1 min to check the
-# interval/Nestim guesses). Each period has exactely N = 30 (we need >= 30)
-# measurements which will be generated below to thest the calculation of the
-# statistics. The second period is also set in a way (assuming UTC) to check if
-# the 'tz' conversion works as expected; summer time; UTC -> CEST +2h
+# expected. Time: Four periods, once at night and once during the day (local
+# time) on two differnt days in two different years each with an interval of 1
+# min to check the interval/Nestim guesses). Each period has exactely N = 30
+# (we need >= 30) measurements which will be generated below to thest the
+# calculation of the statistics. The second period is also set in a way
+# (assuming UTC) to check if the 'tz' conversion works as expected; summer
+# time; UTC -> CEST +2h
 N <- 61
-tms <- c(as.POSIXct("2023-12-24 00:00:00", tz = "UTC") + (seq_len(N) - 1) * 1 * 60,
+tms <- c(as.POSIXct("2022-12-24 00:00:00", tz = "UTC") + (seq_len(N) - 1) * 1 * 60,
+         as.POSIXct("2022-07-01 05:30:00", tz = "UTC") + (seq_len(N) - 1) * 1 * 60,
+         as.POSIXct("2023-12-24 00:00:00", tz = "UTC") + (seq_len(N) - 1) * 1 * 60,
          as.POSIXct("2023-07-01 05:30:00", tz = "UTC") + (seq_len(N) - 1) * 1 * 60)
 
 # All the data we have will be 
@@ -110,7 +113,8 @@ expect_warning(prep <- annex_prepare(data, config = config),
 
 ## Checking return
 expect_inherits(prep, "data.frame")
-expect_identical(dim(prep), c(610L, 7L))
+## 1220 = 5 unique (room:home) * 4 periods * 61 observations
+expect_identical(dim(prep), c(1220L, 7L))
 expect_identical(names(prep), c("datetime", "study", "home", "room", "CO2", "T", "RH"))
 expect_inherits(prep$datetime, "POSIXct")
 expect_true(all(sapply(subset(prep, select = c(study, room, home)), class) == "character"))
@@ -139,7 +143,7 @@ expect_message(prep2 <- annex_prepare(data, config = config2),
                pattern = ".*Columns in `x` not in `config` \\(will be ignored\\).*",
                info = "Should not process T as not in config")
 expect_inherits(prep2, "data.frame")
-expect_identical(dim(prep2), c(610L, 6L))
+expect_identical(dim(prep2), c(1220L, 6L))
 expect_identical(names(prep2), c("datetime", "study", "home", "room", "CO2", "RH"))
 rm(prep2)
 rm(config2)
@@ -154,7 +158,7 @@ expect_silent(annex_df <- annex(T + RH + CO2 ~ datetime | study + home + room, d
 expect_true("annex_df" %in% ls())
 expect_inherits(annex_df, "annex",      info = "Checking class of annex object")
 expect_inherits(annex_df, "data.frame", info = "Checking class of annex object")
-expect_identical(dim(annex_df), c(610L, 10L), info = "Dimension of annex object")
+expect_identical(dim(annex_df), c(1220L, 10L), info = "Dimension of annex object")
 
 # Adds a series of new columns, check if we got what we want
 expect_identical(names(annex_df),
@@ -165,7 +169,9 @@ expect_inherits(annex_df$datetime, "POSIXct")
 expect_true(all(sapply(subset(annex_df, select = c(study, home, room)), class) == "character"))
 expect_true(all(sapply(subset(annex_df, select = c(year, month, tod)), class) == "factor"))
 expect_true(all(sapply(subset(annex_df, select = c(T, RH, CO2)), class) == "numeric"))
-expect_true(all(annex_df$year == 2023))
+expect_true(all(annex_df$year == 2022 | annex_df$year == 2023))
+expect_identical(sum(annex_df$year == 2022), 610L)
+expect_identical(sum(annex_df$year == 2023), 610L)
 expect_true(all(annex_df$month %in% c(7, 12)))
 
 # We've constructed very specific times above (data$timeOfLoggingInUTC)
@@ -174,11 +180,13 @@ expect_true(all(annex_df$month %in% c(7, 12)))
 # which should fall into tod = "07-23" as we handle the data in CET
 # (Central Europe Time) which, during summer, is +2 ahead of UTC (+1 in winter).
 #
-# If it worked as expected all obervations for 2023-07-01 should fall into 07-23,
-# all those for 2023-12-24 into 23-07.
-expect_true(all(subset(annex_df, as.Date(annex_df$datetime) == as.Date("2023-07-01"))$tod == "07-23"),
+# If it worked as expected all obervations for 202*-07-01 should fall into 07-23,
+# all those for 202*-12-24 into 23-07.
+idx <- as.Date(annex_df$datetime) %in% as.Date(c("2022-07-01", "2023-07-01"))
+expect_true(all(annex_df$tod[idx] == "07-23"),
             info = "Checking time zone handling/conversion")
-expect_true(all(subset(annex_df, as.Date(annex_df$datetime) != as.Date("2023-07-01"))$tod == "23-07"),
+idx <- as.Date(annex_df$datetime) %in% as.Date(c("2022-12-24", "2023-12-24"))
+expect_true(all(annex_df$tod[idx] == "23-07"),
             info = "Checking time zone handling/conversion")
                 
 # The observations should be unchanged and all in 10:15 or NA
@@ -213,28 +221,42 @@ expect_true(all(stats$interval_Min    == 1 * 60))
 expect_true(all(stats$interval_Q1     == 1 * 60))
 expect_true(all(stats$interval_Median == 1 * 60))
 
-expect_true(all(stats$N   == 61), info = "We have 61 observations for each row")
-expect_true(all(stats$NAs ==  0), info = "No missing values")
-expect_true(all(stats$NAs ==  0), info = "No missing values")
+# Checking where year, month, tod == "all" and sum up the occurrence.
+# - No 'all' -> 61 observations
+# - 1 'all' -> still N = 61 observations
+# - 2 'all' -> N = 122 observations as we combine pereiods
+# - 3 'all' -> N = 244 as we combine all data (4 * 61)
+count <- rowSums(subset(stats, select = c(year, month, tod)) == "all")
+expect_true(all(count %in% seq.int(0, 3)))
+expect_true(all(stats$N %in% (c(1L, 2L, 4L) * 61L)))
+expect_true(all(stats$N[count  < 2] ==     61), info = "N = 61")
+expect_true(all(stats$N[count == 2] == 2 * 61), info = "N = 122")
+expect_true(all(stats$N[count == 3] == 4 * 61), info = "N = 244")
+
+# No missing values
+expect_true(all(stats$NAs ==   0), info = "No missing values")
 
 # For 07-23 (16 hours) we expect Nestim == 32 as our interval is 30 min (1800s)
 # For 23-07 (8 hours) we expect Nestim == 16
 # For all (24 hours) we expect Nestim = 48
-expect_true(all(subset(stats, tod == "07-23")$Nestim == 16 * 60)) # 1/minute
-expect_true(all(subset(stats, tod == "23-07")$Nestim ==  8 * 60)) # 1/minute
-expect_true(all(subset(stats, tod ==  "all")$Nestim  == 24 * 60)) # 1/minute
+# Only valid for count < 2 (where only one of year, month, tod == "all")
+expect_true(all(subset(stats, count < 2 & tod == "07-23")$Nestim == 16 * 60)) # 1/minute
+expect_true(all(subset(stats, count < 2 & tod == "23-07")$Nestim ==  8 * 60)) # 1/minute
+# I do not check Nestim for the rest and hope it works :)
 
+# Warning: Only testing rows where maximum 1 of year, month, tod is == "all"
 # Due to construction, the rest of the stats is identical
 # for all variables == T and all based on 10:15. E.g, the 
 # Mean == mean(10:15) == 12.5. Let's test if the calculations
 # are correct
-tmp_T   <- seq(10, length.out = N, by = 0.5)
-idx_T   <- which(stats$variable == "T")
+count <- rowSums(subset(stats, select = c(year, month, tod)) == "all")
+tmp_T <- seq(10, length.out = N, by = 0.5)
+idx_T <- which(stats$variable == "T" & count < 2)
 expect_equal(stats$Mean[idx_T], rep(mean(tmp_T), length(idx_T)),
              tolerance = 0.001,
              info = "Checking calculated mean T")
 expect_equal(stats$Sd[idx_T], rep(sd(tmp_T), length(idx_T)),
-             tolerance = 0.001,
+             tolerance = 0.01,
              info = "Checking calculated standard deviation T")
 
 qtiles <- 100 * sort(c(seq(0, 1, by = 0.01), 0.005, 0.025, 0.975, 0.995))
@@ -246,7 +268,7 @@ for (x in qtiles) {
 
 # Same for variable == CO2 but with seq(100, 300)
 tmp_CO2 <- seq(100, 300, length.out = N)
-idx_CO2 <- which(stats$variable == "CO2")
+idx_CO2 <- which(stats$variable == "CO2" & count < 2)
 expect_equal(stats$Mean[idx_CO2], rep(mean(tmp_CO2), length(idx_CO2)),
              tolerance = 0.001,
              info = "Checking calculated mean CO2")

@@ -116,7 +116,7 @@ expect_warning(stats <- annex_stats(annex_df),
 expect_true("stats" %in% ls()) # Make sure object has been created
 
 
-expect_identical(dim(stats), c(12L, 127L), info = "Statistics dimension check")
+expect_identical(dim(stats), c(24L, 127L), info = "Statistics dimension check")
 expect_true(all(stats$N == 33),
             info = "Check if N == 33 (counts duplicates)")
 expect_true(all(stats$NAs == 1 | stats$NAs == 2),
@@ -126,23 +126,23 @@ expect_true(all(stats$NAs == 1 | stats$NAs == 2),
 # mean(..., na.rm = TRUE) for each of the two rooms. 
 b1 <- subset(data, room == "BED1")
 expect_equal(subset(stats, room == "BED1" & tod == "all" & variable == "T")$Mean,
-             mean(b1$T, na.rm = TRUE), tolerance = 0.001)
+             rep(mean(b1$T, na.rm = TRUE), 3), tolerance = 0.001)
 expect_equal(subset(stats, room == "BED1" & tod == "all" & variable == "T")$Sd,
-             sd(b1$T, na.rm = TRUE), tolerance = 0.001)
+             rep(sd(b1$T, na.rm = TRUE), 3), tolerance = 0.001)
 expect_equal(subset(stats, room == "BED1" & tod == "all" & variable == "CO2")$Mean,
-             mean(b1$CO2, na.rm = TRUE), tolerance = 0.001)
+             rep(mean(b1$CO2, na.rm = TRUE), 3), tolerance = 0.001)
 expect_equal(subset(stats, room == "BED1" & tod == "all" & variable == "CO2")$Sd,
-             sd(b1$CO2, na.rm = TRUE), tolerance = 0.001)
+             rep(sd(b1$CO2, na.rm = TRUE), 3), tolerance = 0.001)
 
 b2 <- subset(data, room == "BED2")
 expect_equal(subset(stats, room == "BED2" & tod == "all" & variable == "T")$Mean,
-             mean(b2$T, na.rm = TRUE), tolerance = 0.001)
+             rep(mean(b2$T, na.rm = TRUE), 3), tolerance = 0.001)
 expect_equal(subset(stats, room == "BED2" & tod == "all" & variable == "T")$Sd,
-             sd(b2$T, na.rm = TRUE), tolerance = 0.001)
+             rep(sd(b2$T, na.rm = TRUE), 3), tolerance = 0.001)
 expect_equal(subset(stats, room == "BED2" & tod == "all" & variable == "CO2")$Mean,
-             mean(b2$CO2, na.rm = TRUE), tolerance = 0.001)
+             rep(mean(b2$CO2, na.rm = TRUE), 3), tolerance = 0.001)
 expect_equal(subset(stats, room == "BED2" & tod == "all" & variable == "CO2")$Sd,
-             sd(b2$CO2, na.rm = TRUE), tolerance = 0.001)
+             rep(sd(b2$CO2, na.rm = TRUE), 3), tolerance = 0.001)
 
 rm(annex_df)
 rm(stats)
