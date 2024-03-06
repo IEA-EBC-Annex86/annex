@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">annex</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-12</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,6 +60,14 @@
       <small>Source: <a href="https://github.com/IEA-EBC-Annex86/annex/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2-12" id="annex-02-12">annex 0.2-12<a class="anchor" aria-label="anchor" href="#annex-02-12"></a></h2>
+<ul><li>
+<code><a href="../reference/annex_stats.html">annex_stats()</a></code> now also includes annual statistics for the whole day (<code>tod = "all"</code>).</li>
+<li>
+<code><a href="../reference/annex_stats.html">annex_stats()</a></code> also includes overall stats (over the entire data set, all years, all <code>tod</code>). If data is only available within one specific year, this will be identical to the annual <code>tod = "all"</code> stats (duplicated data but added for convenience).</li>
+<li>Adjusted tinytests for new behaviour (extended stats).</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2-11" id="annex-02-11">annex 0.2-11<a class="anchor" aria-label="anchor" href="#annex-02-11"></a></h2>
 <ul><li>Added experimental function for plotting objects of class <code>annex_stats</code> as returned by <code><a href="../reference/annex_stats.html">annex_stats()</a></code>.</li>
