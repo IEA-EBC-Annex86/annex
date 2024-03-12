@@ -44,7 +44,7 @@ annex_read_stats <- function(file, raw = FALSE, validate = TRUE) {
     stopifnot(isTRUE(raw) || isFALSE(raw))
     stopifnot(isTRUE(validate) || isFALSE(validate))
 
-    warning("This is a function used for development purposes for no (0.2-9; Dec 2023)")
+    warning("This is a function used for development purposes (0.2-9; Dec 2023)")
 
     file <- unique(file) # Avoid duplicated files
     xlsx_check  <- grepl("\\.xlsx$", file, ignore.case = TRUE)
