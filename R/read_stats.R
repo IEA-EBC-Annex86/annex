@@ -59,7 +59,8 @@ annex_read_stats <- function(file, raw = FALSE, validate = TRUE) {
     if (validate) {
         # Trying to get the user from the file first
         for (f in file) {
-            usr <- read.xlsx(f, sheet = "STAT", rows = 1:2, cols = 1)[[1]]
+            usr <- read.xlsx(f, sheet = "STAT", rows = 1:2, cols = 1,
+                             detectDates = TRUE)[[1]]
             if (!grepl("^[0-9]+$", usr))
                 stop("Problems identifying 'user' from 'STAT' sheet (not integer)")
             usr <- as.integer(usr)
@@ -75,7 +76,7 @@ annex_read_stats <- function(file, raw = FALSE, validate = TRUE) {
         if (!all(s %in% tmp))
             stop("File \"", f, "\" does not contain expected sheet ", s)
         # Reading all sheets as is
-        return(read.xlsx(f, sheet = s))
+        return(read.xlsx(f, sheet = s, detectDates = TRUE))
     }
 
     if (raw) {
