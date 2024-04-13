@@ -1,4 +1,11 @@
 
+# annex 0.2-13
+
+* `annex_validate()` will no longer throw an error for variables which have
+    no lower/upper bound set (`Other` and `PMOther`)
+* The XLSX template now has a dropdown and data validation for sheet META-Home,
+    column 'Type of building'. `annex_validate()` now checks for empty cells
+    and throws a warning (as for other columns, e.g., 'Ventilation type').
 
 # annex 0.2-12
 

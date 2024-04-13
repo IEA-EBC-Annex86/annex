@@ -164,6 +164,14 @@ annex_validate_sheet_STAT <- function(file, user, quiet, ...) {
                         " in sheet 'STAT',\n", get_row_info(idx), sep = ""))
     }
 
+    # We need to read the variable definition from the Definitions table, namely
+    # 'Variable', 'Lower bound', and 'Upper bound'. For some variables (Other, PMOther)
+    # no data bounds are specified, thus no $quality_lower/$quality_upper can be calculated.
+    # In this situations, it is OK that the cells are empty.
+    vardef <- subset(read.xlsx(file, sheet = "Definitions"), select = c("Variable", "Lower.bound", "Upper.bound"))
+    # Check for which variables no bounds are set; used further down when checking quality_*
+    vars_without_bounds <- vardef$Variable[is.na(vardef[["Lower.bound"]]) & is.na(vardef[["Upper.bound"]])]
+
     # Missing values
     for (col in required_cols) {
         if (grepl("^(N|NAs)$", col)) {
@@ -181,6 +189,15 @@ annex_validate_sheet_STAT <- function(file, user, quiet, ...) {
                 stop(red $ bold("Found ", sum(idx), " non-missing values ",
                                 "in column where `N-NAs == 1` '", col,
                                 "' in sheet 'STAT',\n", get_row_info(idx), sep = ""))
+        # Special check for quality_lower and quality_upper which are allowed to be empty
+        # if there are no bounds set (vars_without_bounds)
+        } else if (grepl("^quality_(lower|upper)$", col)) {
+            idx <- is.na(data[[col]] & !data$variable %in% vars_without_bounds)
+            if (any(idx))
+                stop(red $ bold("Found ", sum(idx), " missing values ",
+                                "(empty cells) in column '", col,
+                                "' in sheet 'STAT',\n", get_row_info(idx), sep = ""))
+        # Else check for missing values
         } else {
             idx <- is.na(data[[col]])
             if (any(idx))
@@ -608,7 +625,7 @@ get_required_columns <- function(sheet) {
 
     # Definition
     def <- list("META-Study" = c("Contact", "Institution"),
-                "META-Home"  = c("Location: Country", "Ventilation type"),
+                "META-Home"  = c("Location: Country", "Ventilation type", "Type of building"),
                 "META-Variable" = "Variable unit")
 
     return(if (sheet %in% names(def)) def[[sheet]] else NULL)
