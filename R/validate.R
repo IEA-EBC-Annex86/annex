@@ -625,7 +625,7 @@ get_required_columns <- function(sheet) {
 
     # Definition
     def <- list("META-Study" = c("Contact", "Institution"),
-                "META-Home"  = c("Location: Country", "Ventilation type", "Type of building"),
+                "META-Home"  = c("Location: Country", "Ventilation type"),
                 "META-Variable" = "Variable unit")
 
     return(if (sheet %in% names(def)) def[[sheet]] else NULL)
