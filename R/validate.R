@@ -286,7 +286,7 @@ annex_validate_sheet_STAT <- function(file, user, quiet, ...) {
     idx <- which(with(data, quality_lower > 5 | quality_upper > 5))
     if (length(idx) > 0) {
         message(yellow("  WARNING: data quality warnings triggered for the wollowing rows in 'STAT'"))
-        message(yellow("                                  lower bound    upper bound"))
+        message(yellow("                                  lower bound    upper bound    user-study-home-room-year-month-tod"))
         for (i in idx) {
             # Lower bound
             lo <- data$quality_lower[i] %/% 5 * 5
@@ -307,10 +307,12 @@ annex_validate_sheet_STAT <- function(file, user, quiet, ...) {
                 bold $ red(paste("exceeds", sprintf("%2d", hi), "%"))
             }
             # Generate message
+            lab <- with(as.list(data[i, ]), paste(c(study, home, room, year, month, tod), collapse = "-"))
+            lab <- sprintf("%04d-%s", user, lab)
             message(sprintf("   %-10s %-20s",
                             get_row_info(i, prefix = "Row"),
                             paste("(variable ", data$variable[i], ")", sep = "")),
-                    lo, "   ", hi)
+                    lo, "   ", hi, "   ", lab)
         }
         checkflag <- checkflag * FALSE
     }

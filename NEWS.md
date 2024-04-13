@@ -1,4 +1,5 @@
 
+
 # annex 0.2-12
 
 * `annex_stats()` now also includes annual statistics for the whole day
@@ -8,6 +9,9 @@
     year, this will be identical to the annual `tod = "all"` stats
     (duplicated data but added for convenience).
 * Adjusted tinytests for new behaviour (extended stats).
+* `annex_validate()` gives more details when quality violations (boundary violations)
+    are found; now shows `user-study-home-room-year-month-tod` in addition to
+    the XLSX row number for easier interpretability.
 
 # annex 0.2-11
 
