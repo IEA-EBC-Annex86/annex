@@ -1,4 +1,12 @@
 
+# annex 0.2-14
+
+* Altough not explicitly listed in `annex_variable_definition()` the software
+    now allows the user to specify multiple `Other` and `PMOther` variables
+    by specifying `Other`, `Other1`, `Other2`, ... `Other99` (maximum is 99),
+    same for `PMOther`, `PMOther1`, ... `PMOther99` if needed. Similar to
+    the room naming concept.
+
 # annex 0.2-13
 
 * `annex_validate()` will no longer throw an error for variables which have

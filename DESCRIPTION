@@ -1,7 +1,7 @@
 Package: annex
 Title: IEA EBC Annex86 Data Analysis Package
-Version: 0.2-13
-Date: 2024-04-13
+Version: 0.2-14
+Date: 2024-05-15
 Authors@R: 
     c(person(given = "Reto", family = "Stauffer", role = c("cre", "aut"),
              email = "reto.stauffer@uibk.ac.at",

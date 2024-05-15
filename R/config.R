@@ -96,8 +96,22 @@ annex_check_config <- function(x) {
 
     vars <- annex_variable_definition()
     for (i in seq_len(NROW(x))) {
+
+        # Skipping datetime
         if (x$variable[i] == "datetime") next
-        allowed <- split_allowed(subset(vars, name == x$variable[i], select = allowed_units, drop = TRUE))
+
+        # For Other and PMOther we allow the user to add an integer (e.g.,
+        # define Other1 and Other 2). Thus, we need a logical condition
+        # here.
+        tmp_name <- if (grepl(".*?Other[0-9]{1,2}$", x$variable[i])) {
+            sub("[0-9]+$", "", x$variable[i])
+        } else {
+            x$variable[i]
+        }
+        allowed <- split_allowed(subset(vars, name == tmp_name,
+                                        select = allowed_units, drop = TRUE))
+        rm(tmp_name)
+
         # Unit given but there are no allowed units
         if (all(is.na(allowed)) && !is.na(x$unit[i])) {
             stop("column \"", x$column[i], "\" variable \"", x$variable[i], "\" ",
@@ -168,7 +182,14 @@ check_for_allowed_variables <- function(x) {
     if (!all(is.na(idx_case))) x[which(!is.na(idx_case))] <- allowed_variables[na.omit(idx_case)]
 
     # Show error message of not-allowed variable names
-    idx <- which(!x == "datetime" & !x %in% allowed_variables)
+    # av_noothers: allowed variables not being 'Other', 'PMOther'
+    # av_other:    allowed variables of type 'Other', 'PMOther'
+    lidx <- grepl(".*?Other$", allowed_variables)
+    av_noothers <- allowed_variables[!lidx]
+    av_others   <- paste0(allowed_variables[lidx], "[0-9]{0,2}")
+    pattern <- sprintf("^(%s)$", paste(c(av_others, av_noothers), collapse = "|"))
+
+    idx <- which(!x == "datetime" & !grepl(pattern, x))
     if (length(idx) > 0)
         stop(red $ bold(sprintf("Found illegal variable name%s in 'STAT'.\n", ifelse(length(idx) == 1, "", "s")),
              "  Not allowed: ", paste(sprintf("'%s'", x[idx]), collapse = ", "), "\n",
