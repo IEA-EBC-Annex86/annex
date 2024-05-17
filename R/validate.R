@@ -168,7 +168,12 @@ annex_validate_sheet_STAT <- function(file, user, quiet, ...) {
     # 'Variable', 'Lower bound', and 'Upper bound'. For some variables (Other, PMOther)
     # no data bounds are specified, thus no $quality_lower/$quality_upper can be calculated.
     # In this situations, it is OK that the cells are empty.
-    vardef <- subset(read.xlsx(file, sheet = "Definitions"), select = c("Variable", "Lower.bound", "Upper.bound"))
+    vardef <- subset(read.xlsx(file, sheet = "Definitions"), select = c("Variable", "Allowed", "Lower.bound", "Upper.bound"))
+
+    # Checking 'Allowed' in Definitions, must be 1, 10, or 100
+    if (!all(log10(as.integer(vardef$Allowed)) %in% 0:2))
+        stop(red $ bold("Problem in 'Definitions' sheet, 'Allowed' must be 1, 10, or 100"))
+
     # Check for which variables no bounds are set; used further down when checking quality_*
     vars_without_bounds <- vardef$Variable[is.na(vardef[["Lower.bound"]]) & is.na(vardef[["Upper.bound"]])]
 
@@ -192,7 +197,7 @@ annex_validate_sheet_STAT <- function(file, user, quiet, ...) {
         # Special check for quality_lower and quality_upper which are allowed to be empty
         # if there are no bounds set (vars_without_bounds)
         } else if (grepl("^quality_(lower|upper)$", col)) {
-            idx <- is.na(data[[col]] & !data$variable %in% vars_without_bounds)
+            idx <- is.na(data[[col]] & !variable_basename(data$variable) %in% vars_without_bounds)
             if (any(idx))
                 stop(red $ bold("Found ", sum(idx), " missing values ",
                                 "(empty cells) in column '", col,

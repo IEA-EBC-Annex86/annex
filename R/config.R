@@ -101,16 +101,9 @@ annex_check_config <- function(x) {
         if (x$variable[i] == "datetime") next
 
         # For Other and PMOther we allow the user to add an integer (e.g.,
-        # define Other1 and Other 2). Thus, we need a logical condition
-        # here.
-        tmp_name <- if (grepl(".*?Other[0-9]{1,2}$", x$variable[i])) {
-            sub("[0-9]+$", "", x$variable[i])
-        } else {
-            x$variable[i]
-        }
-        allowed <- split_allowed(subset(vars, name == tmp_name,
-                                        select = allowed_units, drop = TRUE))
-        rm(tmp_name)
+        # define Other_1 and Other_2). Thus, we need a logical condition here.
+        allowed  <- split_allowed(subset(vars, name == variable_basename(x$variable[i]),
+                                         select = allowed_units, drop = TRUE))
 
         # Unit given but there are no allowed units
         if (all(is.na(allowed)) && !is.na(x$unit[i])) {
@@ -175,27 +168,28 @@ check_for_allowed_variables <- function(x) {
     stopifnot(is.character(x), length(x) > 0, !any(is.na(x)))
 
     # Path to XLSX file to be read
-    allowed_variables <- annex_variable_definition()$name
+    allowed_variables <- annex_variable_definition()
 
     # Fix casing
-    idx_case <- match(tolower(x), tolower(allowed_variables))
-    if (!all(is.na(idx_case))) x[which(!is.na(idx_case))] <- allowed_variables[na.omit(idx_case)]
+    idx_case <- match(tolower(x), tolower(allowed_variables$name))
+    if (!all(is.na(idx_case))) {
+        x[which(!is.na(idx_case))] <- allowed_variables$name[na.omit(idx_case)]
+    }
 
-    # Show error message of not-allowed variable names
-    # av_noothers: allowed variables not being 'Other', 'PMOther'
-    # av_other:    allowed variables of type 'Other', 'PMOther'
-    lidx <- grepl(".*?Other$", allowed_variables)
-    av_noothers <- allowed_variables[!lidx]
-    av_others   <- paste0(allowed_variables[lidx], "[0-9]{0,2}")
-    pattern <- sprintf("^(%s)$", paste(c(av_others, av_noothers), collapse = "|"))
+    # Show error message of not-allowed variable names Note that some variables
+    # can occur only once, others 10 or even 100 times. Thus, using `log10` to
+    # properly set up the regular expression.
+    pattern_elements <- with(allowed_variables, ifelse(allowed == 1, name,
+                             sprintf("%1$s|%1$s_[0-9]{0,%2$d}", name, log10(allowed))))
+    pattern <- sprintf("^(%s)$", paste(pattern_elements, collapse = "|"))
 
     idx <- which(!x == "datetime" & !grepl(pattern, x))
     if (length(idx) > 0)
         stop(red $ bold(sprintf("Found illegal variable name%s in 'STAT'.\n", ifelse(length(idx) == 1, "", "s")),
              "  Not allowed: ", paste(sprintf("'%s'", x[idx]), collapse = ", "), "\n",
              get_row_info(idx), "\n\n",
-             "  Allowed are: ",
-             paste(sprintf("'%s'", allowed_variables), collapse = ", "), ".", sep = ""))
+             "  Allowed are (regex): ",
+             paste(sprintf("'%s'", pattern_elements), collapse = ", "), ".", sep = ""))
 
     # Return
     return(x)
@@ -248,12 +242,12 @@ check_for_allowed_rooms <- function(x) {
 
 #' Variable definition information
 #'
-#' The template not only contains the definition of the allowed variables,
-#' it also states whether or not additional information is required (or
-#' optional), an upper and lower bound to be considered 'valid' plus
-#' (is specified) a series of allowed units.
-#' Used to prepare the data and convert to annex standard units, quality checks,
-#' as well as validation.
+#' The template not only contains the definition of the allowed variables, it
+#' also states whether or not additional information is required (or optional),
+#' how often the variable can occur (see section 'Allowed Occurrence') as well
+#' as an upper and lower bound to be considered 'valid' plus (is specified) a
+#' series of allowed units. Used to prepare the data and convert to annex
+#' standard units, quality checks, as well as validation.
 #'
 #' @param as_list logical. If \code{FALSE} (default) a \code{data.frame}
 #'        will be returned, if \code{TRUE} a list (see Details).
@@ -267,11 +261,29 @@ check_for_allowed_rooms <- function(x) {
 #' \code{lower} and \code{upper} bound which defines in which range
 #' an observation is considered to be valid. Can be \code{NA} if not
 #' specified (both or one of them). \code{allowed_units} contains \code{NA}
-#' (unspecified) or a character wich one or multiple comma separated units
+#' (unspecified) or a character which one or multiple comma separated units
 #' specifications.
 #'
 #' If \code{as_list = FALSE} (default) the same information is returned
 #' as a \code{data.frame} containing the same information.
+#'
+#' @section Allowed Occurrence:
+#'
+#' Some variables are allowed to occur multiple times, if needed. By default,
+#' the users are encouraged to take the variable as is (e.g., `Other`, `T`, `CO2`,
+#' `RH`) if his measurement is unique to a specific room (study - home - room).
+#'
+#' However, sometimes the same variable might be measured more than once in a room,
+#' or multiple "other" measurements are available. Thus, it is allowed to specify
+#' some variable multiple times (see `$allowed`), a classic example is
+#' `Other`. If allowed more than once (here described for variable `Other`),
+#' the user can specify:
+#'
+#' * `Other` (use this if you only have one)
+#' * `Other_0`, `Other_1`, \dots, `Other_99` if needed (if allowed up to 101 times)
+#'
+#' All variables are either `$allowed` to occur only once (`allowed = 1`), up to eleven times
+#' (`allowed = 10`) or up to one hundred and one times (`allowed = 100`).
 #'
 #' @return Returns either a \code{data.frame} or \code{list} of \code{lists}
 #' which contains the allowed (defined) variables.
@@ -287,6 +299,7 @@ annex_variable_definition <- function(as_list = FALSE) {
     tmp <- suppressMessages(read.xlsx(template_xlsx, sheet = "Definitions", sep.names = " "))
     required <- c("Variable" = "name",
                   "Additional information required" = "required",
+                  "Allowed" = "allowed",
                   "Lower bound" = "lower",
                   "Upper bound" = "upper",
                   "Allowed units" = "allowed_units")
@@ -297,8 +310,13 @@ annex_variable_definition <- function(as_list = FALSE) {
     names(res) <- unname(required)
     res <- transform(subset(res, !is.na(name)),
                      required = as.logical(required),
+                     allowed = as.integer(allowed),
                      lower = as.numeric(lower),
                      upper = as.numeric(upper))
+    # Check that $allowed is 1, 10, or 100
+    if (!all(log10(res$allowed) %in% 0:2)) {
+        stop("Problem with `Definition` table (template.xlsx), `Allowed` must be 1, 10, or 100.")
+    }
     if (as_list) {
         res <- setNames(lapply(seq_len(NROW(res)),
                                function(i) as.list(subset(res[i, ], select = -name))),
@@ -308,13 +326,33 @@ annex_variable_definition <- function(as_list = FALSE) {
 }
 
 
+#' Get variable basename
+#'
+#' It is possible that - for some variables - we do allow to occur more
+#' than once. This is defined in the 'Definitions' table of the XLSX file.
+#' E.g., if we allowe `Other` to occur 10 times, that allows to define measurements
+#' for `Other`, `Other_0`, `Other_1`, `Other_2`, \dots, `Other_99`.
+#'
+#' This function strips away the `_[0-9]+$` if needed and returns the basename.
+#' Used internally.
+#'
+#' @param x Name(s) of the variable (e.g., `Other_3`), character.
+#'
+#' @return Character vector of same length of `x` with variable basenames.
+#'
+#' @author Reto Stauffer
+variable_basename <- function(x) {
+    stopifnot(is.character(x))
+    return(sub("_[0-9]+$", "", x))
+}
+
 #' Room definition information
 #'
-#' The template contains a series of base abbrevations allowed to define
+#' The template contains a series of base abbreviations allowed to define
 #' a room alongside the 'long name'. This function returns the definition
 #' as a \code{data.frame}.
 #'
-#' @return \code{data.frame} with base room abbrevation, long description,
+#' @return \code{data.frame} with base room abbreviation, long description,
 #' plus a series of examples of valid room labels.
 #'
 #' @seealso annex_variable_definition, annex_room_definition, annex_country_definition

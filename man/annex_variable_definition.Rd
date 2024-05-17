@@ -15,12 +15,12 @@ Returns either a \code{data.frame} or \code{list} of \code{lists}
 which contains the allowed (defined) variables.
 }
 \description{
-The template not only contains the definition of the allowed variables,
-it also states whether or not additional information is required (or
-optional), an upper and lower bound to be considered 'valid' plus
-(is specified) a series of allowed units.
-Used to prepare the data and convert to annex standard units, quality checks,
-as well as validation.
+The template not only contains the definition of the allowed variables, it
+also states whether or not additional information is required (or optional),
+how often the variable can occur (see section 'Allowed Occurrence') as well
+as an upper and lower bound to be considered 'valid' plus (is specified) a
+series of allowed units. Used to prepare the data and convert to annex
+standard units, quality checks, as well as validation.
 }
 \details{
 If \code{as_list = TRUE} a list of lists is returned, else
@@ -32,12 +32,33 @@ information in the META sheet is \code{required} as well as a numeric
 \code{lower} and \code{upper} bound which defines in which range
 an observation is considered to be valid. Can be \code{NA} if not
 specified (both or one of them). \code{allowed_units} contains \code{NA}
-(unspecified) or a character wich one or multiple comma separated units
+(unspecified) or a character which one or multiple comma separated units
 specifications.
 
 If \code{as_list = FALSE} (default) the same information is returned
 as a \code{data.frame} containing the same information.
 }
+\section{Allowed Occurrence}{
+
+
+Some variables are allowed to occur multiple times, if needed. By default,
+the users are encouraged to take the variable as is (e.g., \code{Other}, \code{T}, \code{CO2},
+\code{RH}) if his measurement is unique to a specific room (study - home - room).
+
+However, sometimes the same variable might be measured more than once in a room,
+or multiple "other" measurements are available. Thus, it is allowed to specify
+some variable multiple times (see \verb{$allowed}), a classic example is
+\code{Other}. If allowed more than once (here described for variable \code{Other}),
+the user can specify:
+\itemize{
+\item \code{Other} (use this if you only have one)
+\item \code{Other_0}, \code{Other_1}, \dots, \code{Other_99} if needed (if allowed up to 101 times)
+}
+
+All variables are either \verb{$allowed} to occur only once (\code{allowed = 1}), up to eleven times
+(\code{allowed = 10}) or up to one hundred and one times (\code{allowed = 100}).
+}
+
 \seealso{
 annex_variable_definition, annex_room_definition, annex_country_definition
 }

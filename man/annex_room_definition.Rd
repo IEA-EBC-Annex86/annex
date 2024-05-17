@@ -7,11 +7,11 @@
 annex_room_definition()
 }
 \value{
-\code{data.frame} with base room abbrevation, long description,
+\code{data.frame} with base room abbreviation, long description,
 plus a series of examples of valid room labels.
 }
 \description{
-The template contains a series of base abbrevations allowed to define
+The template contains a series of base abbreviations allowed to define
 a room alongside the 'long name'. This function returns the definition
 as a \code{data.frame}.
 }

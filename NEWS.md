@@ -1,11 +1,14 @@
 
 # annex 0.2-14
 
-* Altough not explicitly listed in `annex_variable_definition()` the software
+* Although not explicitly listed in `annex_variable_definition()` the software
     now allows the user to specify multiple `Other` and `PMOther` variables
-    by specifying `Other`, `Other1`, `Other2`, ... `Other99` (maximum is 99),
-    same for `PMOther`, `PMOther1`, ... `PMOther99` if needed. Similar to
-    the room naming concept.
+    if allowed by the template XLSX file (Definitions table). Allows to define
+    how often a variable can occur (`Allowed` column). Must be 1 (so `T` must be `T`),
+    `10` (allows for `T`, `T_0` to `T_9`) as well as `100` (allowing up to `100`
+    occurrences).
+* Integrated the idea above into the annex config, preparation, stats, as well
+    as annex validate.
 
 # annex 0.2-13
 

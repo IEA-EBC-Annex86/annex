@@ -147,8 +147,7 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
         for (v in variables) {
             # We allow that the user specifies Other1, Other2, as well as PMOther1,
             # PMOther2 etc. Thus we need a condition here.
-            tmp_name <- if (grepl(".*Other[0-9]{1,2}$", v)) sub("[0-9]+$", "", v) else v
-            info     <- vinfo[[tmp_name]]
+            info     <- vinfo[[variable_basename(v)]]
             if (is.null(info)) stop(sprintf("got an invalid variable `%s`", v))
 
             # New variable name: quality_(lower|upper)_<varaible_name> for "quality flag"

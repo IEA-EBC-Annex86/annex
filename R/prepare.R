@@ -68,7 +68,7 @@ annex_prepare <- function(x, config, quiet = FALSE) {
     for (n in names(x)) {
         cnf <- as.list(subset(config, column == n))
         if (!is.na(cnf$unit)) {
-            x[, n] <- do.call(sprintf("convert_unit_%s", cnf$variable),
+            x[, n] <- do.call(sprintf("convert_unit_%s", variable_basename(cnf$variable)),
                               list(x = x[, n], from = cnf$unit))
         }
     }
