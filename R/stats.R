@@ -20,7 +20,7 @@
 #' by the user if needed, however, this no longer yields the standard statistics
 #' and the validation will report a problem.
 #'
-#' @section Statistics:
+#' # Statistics
 #'
 #' **Grouping:** Statistics are calculated on different subsets (or groups),
 #' typically `study`, `home`, `room`, `year`, `month`,
@@ -45,15 +45,15 @@
 #' **Nestim:** Number of estimated observations (see section below)
 #' **N:** Number of non-missing observations
 #' **NAs:** Number of missing observations (`NA` in the data set)
-#' **Mean:** \deqn{\bar{x` = \frac{1`{N` \sum_{i = 1`^N x_i`{x_bar = mean(x)` (arithmetic mean)
-#' **Sd:** \deqn{\text{sd`(x) = \sqrt{\frac{1`{N - 1` \sum_{i = 1`^N \big( (x_i - \bar{x`)^2\big)``{sd(x)`
+#' **Mean:** \deqn{\bar{x} = \frac{1}{N} \sum_{i = 1}^N x_i}{x_bar = mean(x)} (arithmetic mean)
+#' **Sd:** \deqn{\text{sd}(x)}
 #' **p:** Probabilities for different quantiles. `p00` represents the overall minimum,
 #' `p50` the median, `p100` the overall maximum of all non-missing values. Uses
 #' the empirical quantile function with `type = 7` (default; see `quantile`).
 #'
 #' Note: If `N - NAs` lower than 30, both `Mean` and `Sd` will be set to `NA`!
 #'
-#' @section Summary statistics:
+#' # Summary statistics
 #'
 #' If data is available for day-time and night-time (`tod`), over multiple months,
 #' and/or multiple years, additional summary statistics are returned. E.g.,
@@ -71,7 +71,7 @@
 #' row of statistics is returned per variable as there is no need for summary
 #' statistics.
 #'
-#' @section Estimated number of observations:
+#' # Estimated number of observations
 #'
 #' The value `Nestim` contains an _estimate_ for the number of possible observations
 #' for a specific group. This estimate is based on the first/last date an observation
