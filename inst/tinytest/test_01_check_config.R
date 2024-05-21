@@ -56,7 +56,8 @@ expect_silent(x3 <- annex_variable_definition(as_list = TRUE))  # return list
 expect_identical(x1, x2, info = "Testing default behaviour")
 expect_inherits(x1, "data.frame",
             info = "Testing return value")
-expect_identical(names(x1), c("name", "required", "lower", "upper", "allowed_units"),
+expect_identical(names(x1),
+            c("name", "required", "allowed", "lower", "upper", "allowed_units"),
             info = "Testing if return contains expected variables")
 expected_classes <- c("name" = "character", "required" = "logical",
                       "lower" = "numeric", "upper" = "numeric", "allowed_units" = "character")
