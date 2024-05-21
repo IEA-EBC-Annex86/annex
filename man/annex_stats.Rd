@@ -14,7 +14,7 @@ annex_stats(object, format = "wide", ..., probs = NULL)
 \item{\dots}{currently unused.}
 
 \item{probs}{\code{NULL} (default; see Details) or a numeric vector of probabilities
-with values in \code{[0,1]} (Values will be rounded to closest 3 digits).}
+with values in \verb{[0,1]} (Values will be rounded to closest 3 digits).}
 }
 \value{
 Returns an object of class \code{c("annex_stats", "data_frame")}.
@@ -36,12 +36,11 @@ by the user if needed, however, this no longer yields the standard statistics
 and the validation will report a problem.
 }
 \section{Statistics}{
-
-
 \strong{Grouping:} Statistics are calculated on different subsets (or groups),
 typically \code{study}, \code{home}, \code{room}, \code{year}, \code{month},
 \code{tod} (time of day).  However, this set can vary depending on the users
-function call to \code{annex} (see argument \code{formula}).
+function call to \code{annex} (see argument \code{formula}). In addition,
+summary statistics (see section 'Summary statistics') are calculated if possible.
 
 \code{annex_stats} calculates a series of data/quality flags as well as statistical
 measures.
@@ -61,35 +60,52 @@ intervals. \code{interval_Median} is used to calculate estimate \code{Nestim} (s
 \strong{N:} Number of non-missing observations
 \strong{NAs:} Number of missing observations (\code{NA} in the data set)
 \strong{Mean:} \deqn{\bar{x} = \frac{1}{N} \sum_{i = 1}^N x_i}{x_bar = mean(x)} (arithmetic mean)
-\strong{Sd:} \deqn{\text{sd}(x) = \sqrt{\frac{1}{N - 1} \sum_{i = 1}^N \big( (x_i - \bar{x})^2\big)}}{sd(x)}
-\strong{p:} Probabilites for different quantiles. \code{p00} represents the overall minimum,
+\strong{Sd:} \deqn{\text{sd}(x)}
+\strong{p:} Probabilities for different quantiles. \code{p00} represents the overall minimum,
 \code{p50} the median, \code{p100} the overall maximum of all non-missing values. Uses
 the empirical quantile function with \code{type = 7} (default; see \code{quantile}).
 
 Note: If \code{N - NAs} lower than 30, both \code{Mean} and \code{Sd} will be set to \code{NA}!
 }
 
+\section{Summary statistics}{
+If data is available for day-time and night-time (\code{tod}), over multiple months,
+and/or multiple years, additional summary statistics are returned. E.g.,
+if the input data contains hourly observations for two months (in one specific year),
+annex will, wherever possible, also return statistics:
+\itemize{
+\item over both months (\code{month = "all"}), full day (\code{tod = "all"})
+\item over both months (\code{month = "all"}), over day-time and night-time separately
+\item for each month but full day (\code{tod = "all"})
+}
+
+\dots and adds summary statistics over the entire period if there are multiple
+years as well. If not needed, these summary statistics is not calculated to not
+duplicate the data. As an example, if the data only contains measurements for
+one specific year, one specific month, and only during night-time, only one
+row of statistics is returned per variable as there is no need for summary
+statistics.
+}
+
 \section{Estimated number of observations}{
-
-
 The value \code{Nestim} contains an \emph{estimate} for the number of possible observations
 for a specific group. This estimate is based on the first/last date an observation
 was available (non-missing) as well as the \code{year}, \code{month}, and \code{tod}. Last but not least
 the \code{interval_Median} is used.
 
-As an example: Imagine the statistics for temperature observations for one speicifc
+As an example: Imagine the statistics for temperature observations for one specific
 year and month (monthly level aggregation) with \code{tod = "07-23"}. The first non-missing
 value has been reported on the first day of the month, the last one on day 10.
 Given that \code{tod = "07-23"} covers 16 hours, this indicates that observations could
 be available 16 hours over 10 days = 160 hours in total. Based on the best guess
 for \code{interval_median} this allows to calculate \code{Nestim}. E.g., if the median interval
 is 300 (300 seconds = 5 minutes) this would leas to a possible number of observations
-\verb{Nestim = 10 days * 16 hours per day * 3600 seonds per hour / 300 seconds = 1920}.
+\verb{Nestim = 10 days * 16 hours per day * 3600 seconds per hour / 300 seconds = 1920}.
 Keep in mind that this is only an estimate or best guess!
 }
 
 \seealso{
-annex_stats_reshape annes_write_stats
+annex_stats_reshape annex_write_stats
 }
 \author{
 Reto Stauffer
