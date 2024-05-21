@@ -348,8 +348,8 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
     # Aggregate 'all day', 'all year' only happens if we have observations
     # in different times of day or different years. Initialize all objects
     # with NULL and replace below - if needed.
-    res_all_day <- res_all_year <- res_all_year_all_day <- NULL
-    res_overall_day <- res_overall <- NULL
+    res_all_day <- res_all_year <- NULL
+    res_all_year_all_day <- res_overall_day <- res_overall <- NULL
 
     # Helper function; returns TRUE if the input vector contains only
     # one unique value (or empty for capturing all cases)
@@ -384,6 +384,12 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
         res_overall_day <- transform(res_overall_day, year = "all", month = "all")
     }
 
+    #### If we have multiple years, aggregate over all years but keep month/tod
+    ###if (!is_uniq(object$year)) {
+    ###    res_all_years <- aggfun(object, f, c("month", "tod"))
+    ###    res_all_years <- transform(res_all_years, year = "all")
+    ###}
+
     # Overall; full data set
     # Only if none of object$year, object$month, and object$tod is unique;
     # so we aggregate over all dimensions.
@@ -393,8 +399,8 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
     }
 
     # Combine results
-    res <- bind_rows(list(res_all_day, res_all_year, res_all_year_all_day, res,
-                          res_overall_day, res_overall))
+    res <- bind_rows(list(res_all_day, res_all_year,
+                          res_all_year_all_day, res, res_overall_day, res_overall))
 
     # Factorize and sort
     first <- c("study", "home", "room", "year", "month", "tod", "variable")
