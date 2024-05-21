@@ -1,56 +1,75 @@
 
 #' Calculate Statistics on Annex object
 #'
-#' @param object an object of class \code{annex}.
-#' @param format character, either \code{"wide"} (default) or \code{"long"}.
+#' @param object an object of class `annex`.
+#' @param format character, either `"wide"` (default) or `"long"`.
 #' @param \dots currently unused.
-#' @param probs \code{NULL} (default; see Details) or a numeric vector of probabilities 
-#'        with values in \code{[0,1]} (Values will be rounded to closest 3 digits).
+#' @param probs `NULL` (default; see Details) or a numeric vector of probabilities 
+#'        with values in `[0,1]` (Values will be rounded to closest 3 digits).
 #'
 #' @details
 #' The function allows to return the statistics in a wide format or long format.
 #' Both can be used when calling [annex::annex_write_stats()], but he long/wide
 #' format can be handy fur custom applications (e.g., plotting, ...).
 #'
-#' Argument \code{probs} will be forwarded to the [stats::quantile()] function.
-#' If \code{probs = NULL} (default) the empirical quantiles will be calculated
-#' from \code{0} (the minimum) up to \code{1} (the maximum) in an interval of
-#' \code{0.01} (one percent steps), including quantiles \code{0.005},
-#' \code{0.025}, \code{0.975} and \code{0.995}. Can be specified differently
+#' Argument `probs` will be forwarded to the [stats::quantile()] function.
+#' If `probs = NULL` (default) the empirical quantiles will be calculated
+#' from `0` (the minimum) up to `1` (the maximum) in an interval of
+#' `0.01` (one percent steps), including quantiles `0.005`,
+#' `0.025`, `0.975` and `0.995`. Can be specified differently
 #' by the user if needed, however, this no longer yields the standard statistics
 #' and the validation will report a problem.
 #'
 #' @section Statistics:
 #'
 #' **Grouping:** Statistics are calculated on different subsets (or groups),
-#' typically \code{study}, \code{home}, \code{room}, \code{year}, \code{month},
-#' \code{tod} (time of day).  However, this set can vary depending on the users
-#' function call to \code{annex} (see argument \code{formula}).
+#' typically `study`, `home`, `room`, `year`, `month`,
+#' `tod` (time of day).  However, this set can vary depending on the users
+#' function call to `annex` (see argument `formula`). In addition,
+#' summary statistics (see section 'Summary statistics') are calculated if possible.
 #'
-#' \code{annex_stats} calculates a series of data/quality flags as well as statistical
+#' `annex_stats` calculates a series of data/quality flags as well as statistical
 #' measures.
 #'
-#' **Quality:** \code{quality_lower} and \code{quality_upper} contain the fraction of
+#' **Quality:** `quality_lower` and `quality_upper` contain the fraction of
 #' observations (in percent) falling below the lower and upper defined threshold
-#' (see \code{annex_variable_definition}).
-#' \code{quality_start} and \code{quality_end} contain the day (date only)
+#' (see `annex_variable_definition`).
+#' `quality_start` and `quality_end` contain the day (date only)
 #' where the first non-missing observation was given for the current group; used to
-#' estimate \code{Nestim} (see below).
+#' estimate `Nestim` (see below).
 #'
 #' **Interval:** Time increments of all non-missing observations are calculated in seconds.
-#' The \code{interval_} columns show the five digit summary plus the arithmetic mean of these
-#' intervals. \code{interval_Median} is used to calculate estimate \code{Nestim} (see below).
+#' The `interval_` columns show the five digit summary plus the arithmetic mean of these
+#' intervals. `interval_Median` is used to calculate estimate `Nestim` (see below).
 #'
 #' **Nestim:** Number of estimated observations (see section below)
 #' **N:** Number of non-missing observations
-#' **NAs:** Number of missing observations (\code{NA} in the data set)
-#' **Mean:** \deqn{\bar{x} = \frac{1}{N} \sum_{i = 1}^N x_i}{x_bar = mean(x)} (arithmetic mean)
-#' **Sd:** \deqn{\text{sd}(x) = \sqrt{\frac{1}{N - 1} \sum_{i = 1}^N \big( (x_i - \bar{x})^2\big)}}{sd(x)}
-#' **p:** Probabilites for different quantiles. \code{p00} represents the overall minimum,
-#' \code{p50} the median, \code{p100} the overall maximum of all non-missing values. Uses
-#' the empirical quantile function with \code{type = 7} (default; see \code{quantile}).
+#' **NAs:** Number of missing observations (`NA` in the data set)
+#' **Mean:** \deqn{\bar{x` = \frac{1`{N` \sum_{i = 1`^N x_i`{x_bar = mean(x)` (arithmetic mean)
+#' **Sd:** \deqn{\text{sd`(x) = \sqrt{\frac{1`{N - 1` \sum_{i = 1`^N \big( (x_i - \bar{x`)^2\big)``{sd(x)`
+#' **p:** Probabilities for different quantiles. `p00` represents the overall minimum,
+#' `p50` the median, `p100` the overall maximum of all non-missing values. Uses
+#' the empirical quantile function with `type = 7` (default; see `quantile`).
 #'
-#' Note: If \code{N - NAs} lower than 30, both \code{Mean} and \code{Sd} will be set to \code{NA}!
+#' Note: If `N - NAs` lower than 30, both `Mean` and `Sd` will be set to `NA`!
+#'
+#' @section Summary statistics:
+#'
+#' If data is available for day-time and night-time (`tod`), over multiple months,
+#' and/or multiple years, additional summary statistics are returned. E.g.,
+#' if the input data contains hourly observations for two months (in one specific year),
+#' annex will, wherever possible, also return statistics:
+#'
+#' * over both months (`month = "all"`), full day (`tod = "all"`)
+#' * over both months (`month = "all"`), over day-time and night-time separately
+#' * for each month but full day (`tod = "all"`)
+#'
+#' \dots and adds summary statistics over the entire period if there are multiple
+#' years as well. If not needed, these summary statistics is not calculated to not
+#' duplicate the data. As an example, if the data only contains measurements for
+#' one specific year, one specific month, and only during night-time, only one
+#' row of statistics is returned per variable as there is no need for summary
+#' statistics.
 #'
 #' @section Estimated number of observations:
 #'
@@ -59,19 +78,19 @@
 #' was available (non-missing) as well as the `year`, `month`, and `tod`. Last but not least
 #' the `interval_Median` is used.
 #'
-#' As an example: Imagine the statistics for temperature observations for one speicifc
+#' As an example: Imagine the statistics for temperature observations for one specific
 #' year and month (monthly level aggregation) with `tod = "07-23"`. The first non-missing
 #' value has been reported on the first day of the month, the last one on day 10.
 #' Given that `tod = "07-23"` covers 16 hours, this indicates that observations could
 #' be available 16 hours over 10 days = 160 hours in total. Based on the best guess
 #' for `interval_median` this allows to calculate `Nestim`. E.g., if the median interval
 #' is 300 (300 seconds = 5 minutes) this would leas to a possible number of observations
-#' `Nestim = 10 days * 16 hours per day * 3600 seonds per hour / 300 seconds = 1920`.
+#' `Nestim = 10 days * 16 hours per day * 3600 seconds per hour / 300 seconds = 1920`.
 #' Keep in mind that this is only an estimate or best guess!
 #' 
-#' @return Returns an object of class \code{c("annex_stats", "data_frame")}.
+#' @return Returns an object of class `c("annex_stats", "data_frame")`.
 #'
-#' @seealso annex_stats_reshape annes_write_stats
+#' @seealso annex_stats_reshape annex_write_stats
 #'
 #' @importFrom dplyr bind_rows
 #' @importFrom tidyr pivot_longer
@@ -87,7 +106,7 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
     if (is.null(data_tz))
         stop("Variable `", f$time, "` has no time zone attribute!")
 
-    # To be able to calculate intevals between measurements we need
+    # To be able to calculate intervals between measurements we need
     # to split the data according to f$group, sort them, calculate differences,
     # and combine the object once again.
     # Adding interval since last observation; done on a variable level
@@ -136,7 +155,7 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
         return(round(setNames(quantile(x, probs = probs, na.rm = TRUE), names), digits = digits))
     }
 
-    # Helper function to caluclate the shape
+    # Helper function to calculate the shape
     shape <- function(x, na.rm = TRUE) {
         mean(x, na.rm = na.rm)^2 * ((1 - mean(x, na.rm = na.rm)) / var(x, na.rm = na.rm) - 1 / mean(x, na.rm = na.rm))
     }
@@ -167,7 +186,7 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
         return(res)
     }
 
-    # Helper functon to convert the 'tod' labels into hours.
+    # Helper function to convert the 'tod' labels into hours.
     # Input is expected to be converted to character and must
     # contain "^[0-9]+-[0-9]+$", e.g., "07-23" (7 to 23 o'clock)
     # or "23-07" (23 to 7 o'clock). Extracts this information
@@ -326,25 +345,52 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
     res <- lapply(object_split, aggfun, f = f)
     res <- if (length(res) == 1) res[[1]] else bind_rows(res)
 
+    # Aggregate 'all day', 'all year' only happens if we have observations
+    # in different times of day or different years. Initialize all objects
+    # with NULL and replace below - if needed.
+    res_all_day <- res_all_year <- res_all_year_all_day <- NULL
+    res_overall_day <- res_overall <- NULL
+
+    # Helper function; returns TRUE if the input vector contains only
+    # one unique value (or empty for capturing all cases)
+    is_uniq <- function(x) length(unique(x)) < 2
+
     # Same but grouping only by study|home|room|year|month (all day long)
-    res_all_day  <- aggfun(object, f, c("year", "month"))
-    res_all_day  <- transform(res_all_day, tod  = "all")
+    # Only if object$tod is not unique.
+    if (!is_uniq(object$tod)) {
+        res_all_day  <- aggfun(object, f, c("year", "month"))
+        res_all_day  <- transform(res_all_day, tod  = "all")
+    }
 
     # Same but grouping only by study|home|room|year|tod (all year long)
-    res_all_year <- aggfun(object, f, c("year", "tod"))
-    res_all_year <- transform(res_all_year, month = "all")
+    # Only if object$month is not unique.
+    if (!is_uniq(object$month)) {
+        res_all_year <- aggfun(object, f, c("year", "tod"))
+        res_all_year <- transform(res_all_year, month = "all")
+    }
 
     # Same but grouping only by study|home|room|year|tod (all year long, entire day)
-    res_all_year_all_day <- aggfun(object, f, c("year"))
-    res_all_year_all_day <- transform(res_all_year_all_day, tod = "all", month = "all")
+    # Only if object$tod is not unique but we have multiple object$months.
+    if (!is_uniq(object$tod) & !is_uniq(object$month)) {
+        res_all_year_all_day <- aggfun(object, f, c("year"))
+        res_all_year_all_day <- transform(res_all_year_all_day, tod = "all", month = "all")
+    }
 
     # Over full time period (all years) for day/night
-    res_overall_day <- aggfun(object, f, c("tod"))
-    res_overall_day <- transform(res_overall_day, year = "all", month = "all")
+    # Only if object$tod is not unique but we have data for
+    # multiple months or multiple years (or both).
+    if (!is_uniq(object$tod) & (!is_uniq(object$month) | !is_uniq(object$year))) {
+        res_overall_day <- aggfun(object, f, c("tod"))
+        res_overall_day <- transform(res_overall_day, year = "all", month = "all")
+    }
 
     # Overall; full data set
-    res_overall <- aggfun(object, f, NULL)
-    res_overall <- transform(res_overall, year = "all", month = "all", tod = "all")
+    # Only if none of object$year, object$month, and object$tod is unique;
+    # so we aggregate over all dimensions.
+    if (!is_uniq(object$year) & !is_uniq(object$month) & !is_uniq(object$tod)) {
+        res_overall <- aggfun(object, f, NULL)
+        res_overall <- transform(res_overall, year = "all", month = "all", tod = "all")
+    }
 
     # Combine results
     res <- bind_rows(list(res_all_day, res_all_year, res_all_year_all_day, res,
@@ -388,15 +434,15 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
 
 #' Reshaping Annex Stats Objects
 #'
-#' @param x object of class \code{annex_stats} as returned
+#' @param x object of class `annex_stats` as returned
 #'        by [annex::annex_stats()].
-#' @param format \code{NULL} by default or one of \code{"long"}
-#'        or \code{"wide"} (see Details).
+#' @param format `NULL` by default or one of `"long"`
+#'        or `"wide"` (see Details).
 #'
 #' @return Returns a reshaped version of the input. If the
-#' Object provided on `x` inherits \code{annex_stats_wide} (wide format)
-#' the long format will be returned and vice versa if \code{format = NULL}.
-#' If the format is specified as either \code{"long"} or \code{"wide"}
+#' Object provided on `x` inherits `annex_stats_wide` (wide format)
+#' the long format will be returned and vice versa if `format = NULL`.
+#' If the format is specified as either `"long"` or `"wide"`
 #' the long or wide format will be returned (possibly an unmodified version
 #' of the input if the input is already in the desired format).
 #'
@@ -442,7 +488,7 @@ annex_stats_reshape <- function(x, format = NULL) {
 # --------------------------------------------------
 # S3 classes to keep class and formula attribute
 
-#' @param x object of class \code{annex}.
+#' @param x object of class `annex`.
 #' @param \dots arguments to be passed to or from other methods.
 #' @importFrom utils head
 #' @author Reto Stauffer
@@ -451,7 +497,7 @@ annex_stats_reshape <- function(x, format = NULL) {
 head.annex_stats <- function(x, ...)
     structure(NextMethod(), class = class(x), formula = attr(x, "formula"))
 
-#' @param x object of class \code{annex}.
+#' @param x object of class `annex`.
 #' @param \dots arguments to be passed to or from other methods.
 #' @importFrom utils tail
 #' @author Reto Stauffer
@@ -460,7 +506,7 @@ head.annex_stats <- function(x, ...)
 tail.annex_stats <- function(x, ...)
     structure(NextMethod(), class = class(x), formula = attr(x, "formula"))
 
-#' @param x object of class \code{annex}.
+#' @param x object of class `annex`.
 #' @param \dots arguments to be passed to or from other methods.
 #' @author Reto Stauffer
 #' @rdname annex
