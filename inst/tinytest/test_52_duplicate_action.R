@@ -116,15 +116,18 @@ expect_true("stats" %in% ls()) # Make sure object has been created
 
 
 # As our data set only contains data during day (tod = 07-23) in
-# one specific month and one specific year, there should be no
-# "all" in any of tod, year, or month.
-expect_true(!any(stats$tod   == "all"), info = "Check that there is no `tod = \"all\"")
-expect_true(!any(stats$month == "all"), info = "Check that there is no `month = \"all\"")
-expect_true(!any(stats$year  == "all"), info = "Check that there is no `year = \"all\"")
+# one specific month and one specific year, there should be no "all"
+# in year, month, tod at all, or all three are "all" (overall summary).
+fn <- function(x) {
+    apply(subset(x, select = c(year, month, tod)), 1,
+          function(y) !any(y == "all") | all(y == "all"))
+}
+expect_true(all(fn(stats)), info = "Checking year/month/tod for occurrence of \"all\".")
+rm(fn)
 
 
 # As we have no sumary statistics we shall have only four rows.
-expect_identical(dim(stats), c(4L, 127L), info = "Statistics dimension check")
+expect_identical(dim(stats), c(8L, 127L), info = "Statistics dimension check")
 expect_true(all(stats$N == 33),
             info = "Check if N == 33 (counts duplicates)")
 expect_true(all(stats$NAs == 1 | stats$NAs == 2),

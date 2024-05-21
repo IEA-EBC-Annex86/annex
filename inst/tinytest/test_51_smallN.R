@@ -118,12 +118,12 @@ expect_silent(stats <- annex_stats(prepared_df),
 # the guessed intervals (as this guess might be way off) including 'Nestim'.
 # As we only have data during day-time for one specific month and year,
 # there shall be only four rows in the stats object.
-expect_identical(length(idx <- which(stats$N - stats$NAs < annex:::minsamplesize)), 4L,
+expect_identical(length(idx <- which(stats$N - stats$NAs < annex:::minsamplesize)), 8L,
                  info = "Count/check rows where N - NAs < 10")
 
 # If N - NAs is lower than annex:::minsamplesize, Mean and Sd must be NA
 idx <- which(stats$N - stats$NAs < annex:::minsamplesize)
-expect_identical(idx, 4:7,
+expect_identical(idx, c(4:7, 11:14),
             info = "Rows/entries where N - NAs is 'small' (smaller than annex:::minsamplesize)")
 # Check that Mean and Sd is missing
 expect_true(all(is.na(stats$Mean[idx])),

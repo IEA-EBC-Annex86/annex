@@ -33,14 +33,14 @@ stats       <- annex_stats(annex_df)
 head(stats[, 1:10])
 
 # One room, one variable, one month, one year, only day-time,
-# so `stats` must contain a single row.
-expect_identical(nrow(stats), 1L,
+# so `stats` must contain one row + overall statistics (= 2 rows)
+expect_identical(nrow(stats), 2L,
                  info = "(1) Number of rows in stats object.")
-expect_identical(as.character(stats$year), "2024",
+expect_identical(as.character(stats$year), c("2024", "all"),
                  info = "(1) Checking `year` in stats object.")
-expect_identical(as.character(stats$month), "1",
+expect_identical(as.character(stats$month), c("1", "all"),
                  info = "(1) Checking `month` in stats object.")
-expect_identical(as.character(stats$tod), "07-23",
+expect_identical(as.character(stats$tod), c("07-23", "all"),
                  info = "(1) Checking `tod` in stats object.")
 
 # Cleaning up
@@ -64,14 +64,14 @@ head(stats[, 1:10])
 
 # One room, one varaible, only day-time, but we have observations
 # for two months; thus expecting statistics for month 1, 2, and "all"
-# (over both months) = 3 rows of data
-expect_identical(nrow(stats), 3L,
+# (over both months) + the overall statistics = 4 rows of data
+expect_identical(nrow(stats), 4L,
                  info = "(2) Number of rows in stats object.")
-expect_identical(as.character(stats$year), rep("2024", 3L),
+expect_identical(as.character(stats$year), rep(c("2024", "all"), c(3L, 1L)),
                  info = "(2) Checking `year` in stats object.")
-expect_identical(as.character(stats$month), c("all", "1", "2"),
+expect_identical(as.character(stats$month), c("all", "1", "2", "all"),
                  info = "(2) Checking `month` in stats object.")
-expect_identical(as.character(stats$tod), rep("07-23", 3L),
+expect_identical(as.character(stats$tod), rep(c("07-23", "all"), c(3L, 1L)),
                  info = "(2) Checking `tod` in stats object.")
 
 # Cleaning up
@@ -96,14 +96,14 @@ head(stats[, 1:10])
 
 # One room, one varaible, only day-time, but we have observations,
 # same month, but we have multiple years. Thus expecting statistics
-# for 2024, 2025, and overall (year == "all") = 3 rows of data.
+# for 2024, 2025 + the overall statistics = 3 rows
 expect_identical(nrow(stats), 3L,
                  info = "(3) Number of rows in stats object.")
-expect_identical(as.character(stats$year), c("all", "2024", "2025"),
+expect_identical(as.character(stats$year), c("2024", "2025", "all"),
                  info = "(3) Checking `year` in stats object.")
-expect_identical(as.character(stats$month), rep("1", 3L),
+expect_identical(as.character(stats$month), rep(c("1", "all"), c(2L, 1L)),
                  info = "(3) Checking `month` in stats object.")
-expect_identical(as.character(stats$tod), rep("07-23", 3L),
+expect_identical(as.character(stats$tod), rep(c("07-23", "all"), c(2L, 1L)),
                  info = "(3) Checking `tod` in stats object.")
 
 # Cleaning up
@@ -126,14 +126,14 @@ stats       <- annex_stats(annex_df)
 head(stats[, 1:10])
 
 # One room, one variable, measurements for day-time and night-time,
-# so we expect tod = 'all'.
-expect_identical(nrow(stats), 3L,
+# so we expect tod = 'all' + overall statistics = 4 rows
+expect_identical(nrow(stats), 4L,
                  info = "(4) Number of rows in stats object.")
-expect_identical(as.character(stats$year), rep("2024", 3),
+expect_identical(as.character(stats$year), rep(c("2024", "all"), c(3L, 1L)),
                  info = "(4) Checking `year` in stats object.")
-expect_identical(as.character(stats$month), rep("1", 3L),
+expect_identical(as.character(stats$month), rep(c("1", "all"), c(3L, 1L)),
                  info = "(4) Checking `month` in stats object.")
-expect_identical(as.character(stats$tod), c("all", "07-23", "23-07"),
+expect_identical(as.character(stats$tod), c("all", "07-23", "23-07", "all"),
                  info = "(4) Checking `tod` in stats object.")
 
 # Cleaning up

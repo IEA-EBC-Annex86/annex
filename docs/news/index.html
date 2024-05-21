@@ -62,7 +62,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2-14" id="annex-02-14">annex 0.2-14<a class="anchor" aria-label="anchor" href="#annex-02-14"></a></h2>
-<ul><li>Altough not explicitly listed in <code><a href="../reference/annex_variable_definition.html">annex_variable_definition()</a></code> the software now allows the user to specify multiple <code>Other</code> and <code>PMOther</code> variables by specifying <code>Other</code>, <code>Other1</code>, <code>Other2</code>, … <code>Other99</code> (maximum is 99), same for <code>PMOther</code>, <code>PMOther1</code>, … <code>PMOther99</code> if needed. Similar to the room naming concept.</li>
+<ul><li>Although not explicitly listed in <code><a href="../reference/annex_variable_definition.html">annex_variable_definition()</a></code> the software now allows the user to specify multiple <code>Other</code> and <code>PMOther</code> variables if allowed by the template XLSX file (Definitions table). Allows to define how often a variable can occur (<code>Allowed</code> column). Must be 1 (so <code>T</code> must be <code>T</code>), <code>10</code> (allows for <code>T</code>, <code>T_0</code> to <code>T_9</code>) as well as <code>100</code> (allowing up to <code>100</code> occurrences).</li>
+<li>Integrated the idea above into the annex config, preparation, stats, as well as annex validate.</li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2-13" id="annex-02-13">annex 0.2-13<a class="anchor" aria-label="anchor" href="#annex-02-13"></a></h2>

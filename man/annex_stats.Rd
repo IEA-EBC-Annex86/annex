@@ -69,22 +69,20 @@ Note: If \code{N - NAs} lower than 30, both \code{Mean} and \code{Sd} will be se
 }
 
 \section{Summary statistics}{
-If data is available for day-time and night-time (\code{tod}), over multiple months,
-and/or multiple years, additional summary statistics are returned. E.g.,
-if the input data contains hourly observations for two months (in one specific year),
-annex will, wherever possible, also return statistics:
+If data is available for day-time and night-time (\code{tod}), over multiple
+months, additional summary statistics are returned. E.g., if the input data
+contains hourly observations for two months (in one specific year), annex
+will, wherever possible, also return statistics:
 \itemize{
 \item over both months (\code{month = "all"}), full day (\code{tod = "all"})
 \item over both months (\code{month = "all"}), over day-time and night-time separately
 \item for each month but full day (\code{tod = "all"})
+\item ...
 }
 
-\dots and adds summary statistics over the entire period if there are multiple
-years as well. If not needed, these summary statistics is not calculated to not
-duplicate the data. As an example, if the data only contains measurements for
-one specific year, one specific month, and only during night-time, only one
-row of statistics is returned per variable as there is no need for summary
-statistics.
+If not needed, these summary statistics is not calculated to not
+duplicate the data. For convenience, an overall statistics (entire measurement
+period) will always be included (\code{year = "all"}, \code{month = "all"}, \code{tod = "all"}).
 }
 
 \section{Estimated number of observations}{

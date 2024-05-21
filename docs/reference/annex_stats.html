@@ -110,13 +110,11 @@ and the validation will report a problem.</p>
     </div>
     <div class="section level2">
     <h2 id="statistics">Statistics<a class="anchor" aria-label="anchor" href="#statistics"></a></h2>
-    
-
-
-<p><strong>Grouping:</strong> Statistics are calculated on different subsets (or groups),
+    <p><strong>Grouping:</strong> Statistics are calculated on different subsets (or groups),
 typically <code>study</code>, <code>home</code>, <code>room</code>, <code>year</code>, <code>month</code>,
 <code>tod</code> (time of day).  However, this set can vary depending on the users
-function call to <code>annex</code> (see argument <code>formula</code>).</p>
+function call to <code>annex</code> (see argument <code>formula</code>). In addition,
+summary statistics (see section 'Summary statistics') are calculated if possible.</p>
 <p><code>annex_stats</code> calculates a series of data/quality flags as well as statistical
 measures.</p>
 <p><strong>Quality:</strong> <code>quality_lower</code> and <code>quality_upper</code> contain the fraction of
@@ -132,34 +130,44 @@ intervals. <code>interval_Median</code> is used to calculate estimate <code>Nest
 <strong>N:</strong> Number of non-missing observations
 <strong>NAs:</strong> Number of missing observations (<code>NA</code> in the data set)
 <strong>Mean:</strong> $$\bar{x} = \frac{1}{N} \sum_{i = 1}^N x_i$$ (arithmetic mean)
-<strong>Sd:</strong> $$\text{sd}(x) = \sqrt{\frac{1}{N - 1} \sum_{i = 1}^N \big( (x_i - \bar{x})^2\big)}$$
-<strong>p:</strong> Probabilites for different quantiles. <code>p00</code> represents the overall minimum,
+<strong>Sd:</strong> $$\text{sd}(x)$$
+<strong>p:</strong> Probabilities for different quantiles. <code>p00</code> represents the overall minimum,
 <code>p50</code> the median, <code>p100</code> the overall maximum of all non-missing values. Uses
 the empirical quantile function with <code>type = 7</code> (default; see <code>quantile</code>).</p>
 <p>Note: If <code>N - NAs</code> lower than 30, both <code>Mean</code> and <code>Sd</code> will be set to <code>NA</code>!</p>
     </div>
     <div class="section level2">
+    <h2 id="summary-statistics">Summary statistics<a class="anchor" aria-label="anchor" href="#summary-statistics"></a></h2>
+    <p>If data is available for day-time and night-time (<code>tod</code>), over multiple
+months, additional summary statistics are returned. E.g., if the input data
+contains hourly observations for two months (in one specific year), annex
+will, wherever possible, also return statistics:</p><ul><li><p>over both months (<code>month = "all"</code>), full day (<code>tod = "all"</code>)</p></li>
+<li><p>over both months (<code>month = "all"</code>), over day-time and night-time separately</p></li>
+<li><p>for each month but full day (<code>tod = "all"</code>)</p></li>
+<li><p>...</p></li>
+</ul><p>If not needed, these summary statistics is not calculated to not
+duplicate the data. For convenience, an overall statistics (entire measurement
+period) will always be included (<code>year = "all"</code>, <code>month = "all"</code>, <code>tod = "all"</code>).</p>
+    </div>
+    <div class="section level2">
     <h2 id="estimated-number-of-observations">Estimated number of observations<a class="anchor" aria-label="anchor" href="#estimated-number-of-observations"></a></h2>
-    
-
-
-<p>The value <code>Nestim</code> contains an <em>estimate</em> for the number of possible observations
+    <p>The value <code>Nestim</code> contains an <em>estimate</em> for the number of possible observations
 for a specific group. This estimate is based on the first/last date an observation
 was available (non-missing) as well as the <code>year</code>, <code>month</code>, and <code>tod</code>. Last but not least
 the <code>interval_Median</code> is used.</p>
-<p>As an example: Imagine the statistics for temperature observations for one speicifc
+<p>As an example: Imagine the statistics for temperature observations for one specific
 year and month (monthly level aggregation) with <code>tod = "07-23"</code>. The first non-missing
 value has been reported on the first day of the month, the last one on day 10.
 Given that <code>tod = "07-23"</code> covers 16 hours, this indicates that observations could
 be available 16 hours over 10 days = 160 hours in total. Based on the best guess
 for <code>interval_median</code> this allows to calculate <code>Nestim</code>. E.g., if the median interval
 is 300 (300 seconds = 5 minutes) this would leas to a possible number of observations
-<code>Nestim = 10 days * 16 hours per day * 3600 seonds per hour / 300 seconds = 1920</code>.
+<code>Nestim = 10 days * 16 hours per day * 3600 seconds per hour / 300 seconds = 1920</code>.
 Keep in mind that this is only an estimate or best guess!</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p>annex_stats_reshape annes_write_stats</p></div>
+    <div class="dont-index"><p>annex_stats_reshape annex_write_stats</p></div>
     </div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>

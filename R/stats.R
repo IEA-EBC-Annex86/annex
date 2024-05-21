@@ -55,21 +55,19 @@
 #'
 #' # Summary statistics
 #'
-#' If data is available for day-time and night-time (`tod`), over multiple months,
-#' and/or multiple years, additional summary statistics are returned. E.g.,
-#' if the input data contains hourly observations for two months (in one specific year),
-#' annex will, wherever possible, also return statistics:
+#' If data is available for day-time and night-time (`tod`), over multiple
+#' months, additional summary statistics are returned. E.g., if the input data
+#' contains hourly observations for two months (in one specific year), annex
+#' will, wherever possible, also return statistics:
 #'
 #' * over both months (`month = "all"`), full day (`tod = "all"`)
 #' * over both months (`month = "all"`), over day-time and night-time separately
 #' * for each month but full day (`tod = "all"`)
+#' * ...
 #'
-#' \dots and adds summary statistics over the entire period if there are multiple
-#' years as well. If not needed, these summary statistics is not calculated to not
-#' duplicate the data. As an example, if the data only contains measurements for
-#' one specific year, one specific month, and only during night-time, only one
-#' row of statistics is returned per variable as there is no need for summary
-#' statistics.
+#' If not needed, these summary statistics is not calculated to not
+#' duplicate the data. For convenience, an overall statistics (entire measurement
+#' period) will always be included (`year = "all"`, `month = "all"`, `tod = "all"`).
 #'
 #' # Estimated number of observations
 #'
@@ -391,12 +389,9 @@ annex_stats <- function(object, format = "wide", ..., probs = NULL) {
     ###}
 
     # Overall; full data set
-    # Only if none of object$year, object$month, and object$tod is unique;
-    # so we aggregate over all dimensions.
-    if (!is_uniq(object$year) & !is_uniq(object$month) & !is_uniq(object$tod)) {
-        res_overall <- aggfun(object, f, NULL)
-        res_overall <- transform(res_overall, year = "all", month = "all", tod = "all")
-    }
+    # Always included for convenience.
+    res_overall <- aggfun(object, f, NULL)
+    res_overall <- transform(res_overall, year = "all", month = "all", tod = "all")
 
     # Combine results
     res <- bind_rows(list(res_all_day, res_all_year,
