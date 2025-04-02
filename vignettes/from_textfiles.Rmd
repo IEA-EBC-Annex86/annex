@@ -35,7 +35,7 @@ To demonstrate this, two files are used called
 `r xfun::embed_file("demo_Bedroom.txt", text = "demo_Bedroom.txt")`
 (contains the measurement data) as well as
 `r xfun::embed_file("demo_Bedroom_config.TXT", text = "demo_Bedroom_config.TXT")`
-(contains configuration; see article [Config file](configfile.html)).
+(contains configuration; see article [Config file](config.html)).
 
 
 Both files can easily be read using base R functions, namely `read.table()` and its
@@ -74,13 +74,13 @@ The object `raw_df` contains variables (columns) named
 `r paste(sprintf("\"%s\"", names(raw_df)[1:4]), collapse = ", ")` which
 are the original names from the XLSX sheet, the `config` object contains
 the definition what the columns in `raw_df` contains and where they belong to.
-For more details read the article about the [Config file](configfile.html).
+For more details read the article about the [Config file](config.html).
 
 ### Checking the config object
 
 To check whether or not the `config` object is as expected by the `annex` package,
 the function `annex_check_config()` can be used. In case problems would
-be detected, an error will be thrown (see [Config file](configfile.html)).
+be detected, an error will be thrown (see [Config file](config.html)).
 Else, the function is silent as in this example:
 
 ```{r}
