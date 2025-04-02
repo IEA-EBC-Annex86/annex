@@ -26,8 +26,8 @@ suppressPackageStartupMessages(library("DT"))
 The package is using a series of 'lookup tables' and data sets to validate
 the correctness the data.
 
-This includes testing if the [config object](articles/config.html) are in the
-correct format or to [validate the XLSX file](articles/write_and_validate.html).
+This includes testing if the [config object](config.html) are in the
+correct format or to [validate the XLSX file](write_and_validate.html).
 In case problems are found, the error messages, warnings, and notes should include
 hints on what has been going wrong.
 
@@ -45,12 +45,12 @@ var_def <- annex_variable_definition()
 head(var_def, n = 3)
 ```
 
-* `name`: Name of the variable (as used in column `variable` in the [config object](articles/config.html))
+* `name`: Name of the variable (as used in column `variable` in the [config object](config.html))
 * `required`: Whether or not additional variable information is required (used by `annex_validate()`)
 * `lower`: Lower bound; observations below this threshold will be considered of bad quality. Used to calculate `quality_lower` by `annex_stats()`. `NA` if no bound defined.
 * `upper`: Upper bound; observations above this threshold will be considered of bad quality. Used to calculate `quality_upper` by `annex_stats()`. `NA` if no bound defined.
-* `allowed_units`: Comma separated list of allowed `unit`s as needed in the [config object](articles/config.html) or `NA` if not defined. If set, the first entry is the 'annex standard unit'
-    (see also [Unit conversion](articles/unitconversion.html)).
+* `allowed_units`: Comma separated list of allowed `unit`s as needed in the [config object](config.html) or `NA` if not defined. If set, the first entry is the 'annex standard unit'
+    (see also [Unit conversion](unitconversion.html)).
 
 The table below shows this table in a web-table form:
 
@@ -65,7 +65,7 @@ the names of all allowed room definitions. For each allowed room type
 there is a base name (e.g., `"BED"`; Bedroom) which can be extended by adding
 up to two numeric digits. This allows to define multiple bedrooms if needed
 (see `examples_valid_labels` included below).
-These are the labels as used in the [config object](articles/config.html).
+These are the labels as used in the [config object](config.html).
 
 ```{r room_def}
 require("annex")
@@ -90,7 +90,7 @@ In the output XLSX file (sheet "META-home") the user needs to specify
 the country (location) of each 'home' using the ISO3 (ISO3166 alpha-3) country codes.
 A list of all available country codes is shipped with the `annex` package and can
 be accessed using `annex_countries()`. This information is used when validating
-the output XLSX (see [Write and validate](articles/write_and_validate.xlsx)).
+the output XLSX (see [Write and validate](write_and_validate.xlsx)).
 
 ```{r iso3_def}
 require("annex")
