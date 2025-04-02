@@ -5,7 +5,6 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="annex">
 <title>Prepare data from XLSX • annex</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
@@ -14,29 +13,23 @@
 <link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
 <link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
 <meta property="og:title" content="Prepare data from XLSX">
-<meta property="og:description" content="annex">
-<meta property="og:image" content="https://some.example-url.com/logo.png">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-    
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
-    
+
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">annex</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-12</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2-13</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -44,43 +37,31 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="active nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/config.html">Config files/objects</a>
-    <a class="dropdown-item" href="../articles/from_xlsx.html">Prepare data from XLSX</a>
-    <a class="dropdown-item" href="../articles/from_textfiles.html">Prepare data from textfiles</a>
-    <a class="dropdown-item" href="../articles/prepare_xtra.html">Prepare with time zones &amp; units</a>
-    <a class="dropdown-item" href="../articles/calculate_stats.html">Calculate statistics</a>
-    <a class="dropdown-item" href="../articles/visualization.html">Visualization</a>
-    <a class="dropdown-item" href="../articles/write_and_validate.html">Write and validate output</a>
-    <a class="dropdown-item" href="../articles/lookupfunctions.html">Lookup functions/definitions</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/config.html">Config files/objects</a></li>
+    <li><a class="dropdown-item" href="../articles/from_xlsx.html">Prepare data from XLSX</a></li>
+    <li><a class="dropdown-item" href="../articles/from_textfiles.html">Prepare data from textfiles</a></li>
+    <li><a class="dropdown-item" href="../articles/prepare_xtra.html">Prepare with time zones &amp; units</a></li>
+    <li><a class="dropdown-item" href="../articles/calculate_stats.html">Calculate statistics</a></li>
+    <li><a class="dropdown-item" href="../articles/visualization.html">Visualization</a></li>
+    <li><a class="dropdown-item" href="../articles/write_and_validate.html">Write and validate output</a></li>
+    <li><a class="dropdown-item" href="../articles/lookupfunctions.html">Lookup functions/definitions</a></li>
+  </ul>
 </li>
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="../news/index.html">Changelog</a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="../contact.html">Contact</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
+<li class="nav-item"><a class="nav-link" href="../contact.html">Contact</a></li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/IEA-EBC-Annex86/annex/" aria-label="github">
-    <span class="fab fa fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/IEA-EBC-Annex86/annex/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-article">
 
@@ -114,8 +95,8 @@ is used (shipped with the package) which contains two sheets:</p>
 <strong>measurements</strong>: The data (e.g., from a logger or
 pre-processed)</li>
 <li>
-<strong>annex_configuration</strong>: Configuration (see article <a href="configfile.html">Config file</a>) Save the demo file and/or your
-xlsx data file in your R working directory.</li>
+<strong>annex_configuration</strong>: Configuration (see article <a href="config.html">Config file</a>) Save the demo file and/or your xlsx
+data file in your R working directory.</li>
 </ul>
 <p>Importing the data into R is up to the user, the <code>annex</code>
 package does not provide import functionality. For XLSX files a
@@ -132,25 +113,30 @@ well.</p>
 <code>config</code>):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://readxl.tidyverse.org" class="external-link">"readxl"</a></span><span class="op">)</span></span>
-<span><span class="va">raw_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_excel</a></span><span class="op">(</span><span class="st">"demo_UIBK.xlsx"</span>, sheet <span class="op">=</span> <span class="st">"measurements"</span><span class="op">)</span></span>
-<span><span class="va">config</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_excel</a></span><span class="op">(</span><span class="st">"demo_UIBK.xlsx"</span>, sheet <span class="op">=</span> <span class="st">"annex_configuration"</span><span class="op">)</span></span>
+<span><span class="va">raw_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_excel</a></span><span class="op">(</span><span class="st">"demo_UIBK.xlsx"</span>, sheet <span class="op">=</span> <span class="st">"measurements"</span><span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Error in get(paste0(generic, ".", class), envir = get_method_env()) : </span></span>
+<span><span class="co">##   object 'type_sum.accel' not found</span></span></code></pre>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">config</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html" class="external-link">read_excel</a></span><span class="op">(</span><span class="st">"demo_UIBK.xlsx"</span>, sheet <span class="op">=</span> <span class="st">"annex_configuration"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Class and dimension of the objects</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"raw_df"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">is.data.frame</a></span><span class="op">(</span><span class="va">raw_df</span><span class="op">)</span>, <span class="st">"config"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">is.data.frame</a></span><span class="op">(</span><span class="va">config</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## raw_df config </span></span>
 <span><span class="co">##   TRUE   TRUE</span></span></code></pre>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="st">"raw_df"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">raw_df</span><span class="op">)</span>, <span class="st">"config"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">config</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##      raw_df config</span></span>
 <span><span class="co">## [1,]   1500    106</span></span>
 <span><span class="co">## [2,]    106      7</span></span></code></pre>
 <p>Both objects are of class <code>data.frame</code> (tibble data frames
-to be precise) with a dimension of <span class="math inline">\(1500
-\times 106\)</span> (<code>raw_df</code>) and <span class="math inline">\(106 \times 7\)</span> (<code>config</code>)
-respectively.</p>
+to be precise) with a dimension of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1500</mn><mo>×</mo><mn>106</mn></mrow><annotation encoding="application/x-tex">1500 \times 106</annotation></semantics></math>
+(<code>raw_df</code>) and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>106</mn><mo>×</mo><mn>7</mn></mrow><annotation encoding="application/x-tex">106 \times 7</annotation></semantics></math>
+(<code>config</code>) respectively.</p>
 <p>The first few observations (rows) of the two objects look as
 follows:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">raw_df</span><span class="op">[</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="co"># First three columns only</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 3 × 3</span></span></span>
 <span><span class="co">##   `Zeitraum ab`       `T-WZ_W1 [°C] avg` `rH-WZ_W1 [% rH] avg`</span></span>
@@ -158,7 +144,7 @@ follows:</p>
 <span><span class="co">## <span style="color: #BCBCBC;">1</span> 2011-10-01 <span style="color: #949494;">00:05:00</span>               22.6                  55.6</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">2</span> 2011-10-01 <span style="color: #949494;">00:10:00</span>               22.6                  55.5</span></span>
 <span><span class="co">## <span style="color: #BCBCBC;">3</span> 2011-10-01 <span style="color: #949494;">00:15:00</span>               22.6                  55.4</span></span></code></pre>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">config</span>, n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## <span style="color: #949494;"># A tibble: 3 × 7</span></span></span>
 <span><span class="co">##   process column              variable unit  study home  room </span></span>
@@ -170,12 +156,12 @@ follows:</p>
 “Zeitraum ab”, “T-WZ_W1 [°C] avg”, “rH-WZ_W1 [% rH] avg” which are the
 original names from the XLSX sheet, the <code>config</code> object
 contains the definition what the columns in <code>raw_df</code> contains
-and where they belong to. For more details read the article about the <a href="configfile.html">Config file</a>.</p>
+and where they belong to. For more details read the article about the <a href="config.html">Config file</a>.</p>
 <p>The variable <code>config$process</code> is a custom column
 containing a logical value whether or not the column should be used for
 further processing. We would like to only process the rows where
 <code>config$proces == TRUE</code>.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">config</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">config</span>, <span class="va">process</span> <span class="op">==</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># Remove all rows process = FALSE</span></span></code></pre></div>
 <p>As <code>config</code> is a pure <code>data.frame</code>, any
 subsetting can be used.</p>
@@ -185,9 +171,9 @@ subsetting can be used.</p>
 <p>To check whether or not the <code>config</code> object is as expected
 by the <code>annex</code> package, the function
 <code><a href="../reference/annex_check_config.html">annex_check_config()</a></code> can be used. In case problems would be
-detected, an error will be thrown (see <a href="configfile.html">Config
+detected, an error will be thrown (see <a href="config.html">Config
 file</a>). Else, the function is silent as in this example:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/IEA-EBC-Annex86/annex/" class="external-link">"annex"</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/annex_check_config.html">annex_check_config</a></span><span class="op">(</span><span class="va">config</span><span class="op">)</span></span></code></pre></div>
 <p>… no errors, the <code>config</code> object meets the
@@ -203,7 +189,7 @@ necessary as it will be performed automatically when calling
 read from the XLSX file and the <code>config</code> object with the
 information about the renaming (and which columns to be used), the data
 set for further processing can be created.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">prepared_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/annex_prepare.html">annex_prepare</a></span><span class="op">(</span><span class="va">raw_df</span>, <span class="va">config</span>, quiet <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">prepared_df</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##              datetime study    home room   RH SolRad     T CO2 Other</span></span>
@@ -243,10 +229,10 @@ no notion of timezones, the information returned will always be in
 UTC!</p>
 </div>
 <p>Investigate the class and the time zone attribute attached:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">prepared_df</span><span class="op">$</span><span class="va">datetime</span><span class="op">)</span>         <span class="co"># Class of our first variable (Zeitraum ab)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "POSIXct" "POSIXt"</span></span></code></pre>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">prepared_df</span><span class="op">$</span><span class="va">datetime</span>, <span class="st">"tzone"</span><span class="op">)</span> <span class="co"># Time zone used</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "UTC"</span></span></code></pre>
 <p>To enforce a different time zone (assuming the data has been recorded
@@ -255,23 +241,23 @@ back into a character without time zone information (using
 <code><a href="https://rdrr.io/r/base/format.html" class="external-link">format()</a></code>) and back into <code>POSIXct</code> which allows
 to set the correct time zone. For demonstration (to show the command) we
 convert the information to ‘US/Central’ and back to ‘UTC’.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">prepared_df</span><span class="op">$</span><span class="va">datetime</span>, n <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="co"># First three entries</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "2011-10-01 00:05:00 UTC" "2011-10-01 00:10:00 UTC"</span></span></code></pre>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Coerce to 'US/Central'</span></span>
 <span><span class="va">prepared_df</span><span class="op">$</span><span class="va">datetime</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">prepared_df</span><span class="op">$</span><span class="va">datetime</span><span class="op">)</span>, tz <span class="op">=</span> <span class="st">"US/Central"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">prepared_df</span><span class="op">$</span><span class="va">datetime</span>, n <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="co"># First three entries</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "2011-10-01 00:05:00" "2011-10-01 00:10:00"</span></span></code></pre>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">prepared_df</span><span class="op">$</span><span class="va">datetime</span>, <span class="st">"tzone"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "US/Central"</span></span></code></pre>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Coerce back to 'UTC'</span></span>
 <span><span class="va">prepared_df</span><span class="op">$</span><span class="va">datetime</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.POSIXlt.html" class="external-link">as.POSIXct</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">prepared_df</span><span class="op">$</span><span class="va">datetime</span><span class="op">)</span>, tz <span class="op">=</span> <span class="st">"UTC"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">prepared_df</span><span class="op">$</span><span class="va">datetime</span>, n <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="co"># First three entries</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "2011-10-01 00:05:00 UTC" "2011-10-01 00:10:00 UTC"</span></span></code></pre>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">prepared_df</span><span class="op">$</span><span class="va">datetime</span>, <span class="st">"tzone"</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "UTC"</span></span></code></pre>
 <p>The time zone conversion can also be done on the <code>raw_df</code>
@@ -298,28 +284,26 @@ file</a></li>
 file</a></li>
 </ul>
 </div>
-  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p>
-<p>Developed by Reto Stauffer, Gabriel Rojas-Kopeinig, Tobias Grass.</p>
+  <p>Developed by Reto Stauffer, Gabriel Rojas-Kopeinig, Tobias Grass.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>
 </div>
 
-  
 
-  
+
+
 
   </body>
 </html>
