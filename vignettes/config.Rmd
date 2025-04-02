@@ -52,18 +52,18 @@ to meet the `annex` standard format.
 #### The six required columns
 
 * `column`: The name of the column in the imported data set (e.g., from an
-  [XLSX file](articles/from_xlsx.html) or [text file](articles/from_textfiles.html)).
+  [XLSX file](from_xlsx.html) or [text file](from_textfiles.html)).
 * `variable`: Defines the _new variable name_; one of the different variables (parameters)
-  expected by the annex package (see [Variable definition](articles/lookupfunctions.html#variable-definition)).
+  expected by the annex package (see [Variable definition](lookupfunctions.html#variable-definition)).
 * `study`: Name of the study the data belong to.
 * `home`: Name of the home (building) the data belong to.
-* `room`: Abbreviation of the type of room the data belong to (see [Room definition](articles/lookupfunctions.html#room-definition)).
+* `room`: Abbreviation of the type of room the data belong to (see [Room definition](lookupfunctions.html#room-definition)).
 * `unit`: Units of the input data (raw data); `annex_prepare()` will automatically
   convert to 'annex standard units (see [Variable definition](articles/lookupfunctions.html#variable-definition)).
 
 While `column`, `study` and `home` can be chosen freely by the user, only a series of
 pre-defined values are available for `variable` (plus `unit`) and `room` (not case sensitive).
-See [Lookup functions](articles/lookupfunctions.html) to get a full list of the defined
+See [Lookup functions](lookupfunctions.html) to get a full list of the defined
 values.
 
 #### The required rows
@@ -94,7 +94,7 @@ to be used for the further processing steps.
 ## Read/import configuration
 
 The two articles
-[Prepare data from XLSX](articles/from_xlsx.html)
+[Prepare data from XLSX](from_xlsx.html)
 [Prepare data from textfiles](from_textfiles.html)
 show examples how to import (read) such a configuration from an XLSX file
 or a text file. Any file which can be imported into a data.frame via _R_
