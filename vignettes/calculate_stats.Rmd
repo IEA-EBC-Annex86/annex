@@ -28,11 +28,11 @@ file.copy(file, "demo_UIBK.xlsx", overwrite = TRUE)
 # Introduction
 
 Once the data is prepared, the analysis can be performed. This article
-continues the example used in the article [Prepare data from XLSX](articles/from_xlsx.html)
+continues the example used in the article [Prepare data from XLSX](from_xlsx.html)
 but works the very same way with the other examples included in the documentation, e.g.,
-[Prepare data from textfiles](articles/from_textfiles.html).
+[Prepare data from textfiles](from_textfiles.html).
 
-Please have a look at [this](articles/from_xlsx.html) article for more information
+Please have a look at [this](from_xlsx.html) article for more information
 on what the following lines of code do and/or to get the `"demo_UIBK.xlsx"` file
 to follow this article.
 
