@@ -35,7 +35,7 @@ For this purpose, a demo data set called
 (shipped with the package) which contains two sheets:
 
 * **measurements**: The data (e.g., from a logger or pre-processed)
-* **annex_configuration**: Configuration (see article [Config file](configfile.html))
+* **annex_configuration**: Configuration (see article [Config file](config.html))
 Save the demo file and/or your xlsx data file in your R working directory.
 
 Importing the data into R is up to the user, the `annex` package does not provide
@@ -74,7 +74,7 @@ The object `raw_df` contains variables (columns) named
 `r paste(sprintf("\"%s\"", names(raw_df)[1:3]), collapse = ", ")` which
 are the original names from the XLSX sheet, the `config` object contains
 the definition what the columns in `raw_df` contains and where they belong to.
-For more details read the article about the [Config file](configfile.html).
+For more details read the article about the [Config file](config.html).
 
 The variable `config$process` is a custom column containing a logical
 value whether or not the column should be used for further processing.
@@ -92,7 +92,7 @@ As `config` is a pure `data.frame`, any subsetting can be used.
 
 To check whether or not the `config` object is as expected by the `annex` package,
 the function `annex_check_config()` can be used. In case problems would
-be detected, an error will be thrown (see [Config file](configfile.html)).
+be detected, an error will be thrown (see [Config file](config.html)).
 Else, the function is silent as in this example:
 
 ```{r checking_config}
