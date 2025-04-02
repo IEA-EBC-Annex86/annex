@@ -38,7 +38,7 @@ config <- read.table(file,
 ```
 
 The following output shows the first `n = 6` lines from the configuration object
-used in the article [Prepare data from textfiles](articles/from_textfiles.html);
+used in the article [Prepare data from textfiles](from_textfiles.html);
 the first six lines of a data.frame with $`r ncol(config)`$ variables (columns).
 
 ```{r}
