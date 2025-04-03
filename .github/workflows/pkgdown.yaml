@@ -3,8 +3,7 @@ name: Build and Deploy pkgdown Site
 on:
   push:
     branches:
-      #- main
-      - action
+      - main
 
 jobs:
   build-deploy:

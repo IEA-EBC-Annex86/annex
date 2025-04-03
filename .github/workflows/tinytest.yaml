@@ -3,8 +3,7 @@ name: Running automated tests
 on:
   push:
     branches:
-      #- main
-      - action
+      - '**'
 
 jobs:
   build-deploy:
