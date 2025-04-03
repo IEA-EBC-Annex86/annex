@@ -35,6 +35,11 @@ jobs:
           remotes::install_cran("openxlsx")
           remotes::install_cran("pkgdown")
           remotes::install_local(upgrade = TRUE, dependencies = TRUE)
+          # Additional packages required for the vignettes
+          remotes::install_cran("zoo")
+          remotes::install_cran("Formula")
+          remotes::install_cran("DT")
+          remotes::install_cran("readxl")
         shell: Rscript {0}
 
       - name: Build pkgdown site
