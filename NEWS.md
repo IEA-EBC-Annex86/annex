@@ -1,4 +1,9 @@
 
+# annex 0.2-14
+
+* No changes to the core of the package; implemented proper GitHub actions,
+  added development functions (not exported; TBD).
+
 # annex 0.2-13
 
 * `annex_validate()` will no longer throw an error for variables which have

@@ -9,3 +9,8 @@
 /*.R
 /*.Rmd
 /*.html
+
+# The 'docs' folder is created on the fly by the
+# GitHub action 'pkgdown.yaml' and published via
+# the gh-pages branch.
+docs/

@@ -1,7 +1,7 @@
 Package: annex
 Title: IEA EBC Annex86 Data Analysis Package
-Version: 0.2-13
-Date: 2024-04-13
+Version: 0.2-14
+Date: 2025-04-03
 Authors@R: 
     c(person(given = "Reto", family = "Stauffer", role = c("cre", "aut"),
              email = "reto.stauffer@uibk.ac.at",
@@ -31,5 +31,5 @@ URL: https://github.com/IEA-EBC-Annex86/annex/
 BugReports: https://github.com/IEA-EBC-Annex86/annex/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 NeedsCompilation: no
