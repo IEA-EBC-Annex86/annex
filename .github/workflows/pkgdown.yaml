@@ -40,6 +40,7 @@ jobs:
           remotes::install_cran("Formula")
           remotes::install_cran("DT")
           remotes::install_cran("readxl")
+          remotes::install_cran("ggplot2")
         shell: Rscript {0}
 
       - name: Build pkgdown site
