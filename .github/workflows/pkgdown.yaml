@@ -19,7 +19,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libcurl libcurl-devel
+          sudo apt-get install -y libcurl4-openssl-dev
           sudo apt-get install -y freetype2 libpng libtiff libjpeg
 
       - name: Install R and dependencies
