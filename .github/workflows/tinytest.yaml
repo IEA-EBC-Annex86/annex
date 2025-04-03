@@ -1,4 +1,4 @@
-name: Build and Deploy pkgdown Site
+name: Running automated tests
 
 on:
   push:
@@ -20,8 +20,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libcurl4-openssl-dev
-          sudo apt-get install -y libfreetype6-dev libfontconfig-dev
-          sudo apt-get install -y libpng-dev libtiff-dev libjpeg-dev
+          sudo apt-get install -y libfreetype6-dev
 
       - name: Install R and dependencies
         uses: r-lib/actions/setup-r@v2
@@ -29,21 +28,14 @@ jobs:
       - name: Install R package dependencies
         run: |
           install.packages("remotes")
-          remotes::install_cran("stringi")
-          remotes::install_cran("openxlsx")
-          remotes::install_cran("pkgdown")
-          install_local(upgrade = TRUE, dependencies = TRUE)
+          install.packages("tinytest")
+          remotes::install_local(upgrade = TRUE, dependencies = TRUE)
         shell: Rscript {0}
 
-      - name: Build pkgdown site
+      - name: Running tests
         run: |
-          pkgdown::build_site()
+          tinytest::test_all()
         shell: Rscript {0}
 
-      - name: Deploy to GitHub Pages
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          branch: gh-pages  # Deploy to the gh-pages branch
-          folder: docs  # Where pkgdown outputs the site
 
 
