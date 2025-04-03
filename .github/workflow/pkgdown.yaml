@@ -1,0 +1,42 @@
+name: Build and Deploy pkgdown Site
+
+on:
+  push:
+    branches:
+      - action
+      ##- main  # Adjust if you use a different default branch
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Ensure we fetch all history for proper versioning
+
+      - name: Install R and dependencies
+        uses: r-lib/actions/setup-r@v2
+
+      - name: Install dependencies
+        run: |
+          install.packages("remotes")
+          remotes::install_cran("stringi")
+          remotes::install_cran("openxlsx")
+          remotes::install_cran("pkgdown")
+          install_local(upgrade = TRUE, dependencies = TRUE)
+        shell: Rscript {0}
+
+      - name: Build pkgdown site
+        run: |
+          pkgdown::build_site()
+        shell: Rscript {0}
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages  # Deploy to the gh-pages branch
+          folder: docs  # Where pkgdown outputs the site
+
+
