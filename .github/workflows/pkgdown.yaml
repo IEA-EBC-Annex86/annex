@@ -3,7 +3,8 @@ name: Build and Deploy pkgdown Site
 on:
   push:
     branches:
-      - main  # Adjust if you use a different default branch
+      #- main
+      - action
 
 jobs:
   build-deploy:
