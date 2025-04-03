@@ -34,7 +34,7 @@ jobs:
 
       - name: Running tests
         run: |
-          tinytest::test_all()
+          library("annex"); tinytest::test_all()
         shell: Rscript {0}
 
 
