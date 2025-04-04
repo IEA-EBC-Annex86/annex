@@ -90,7 +90,7 @@ In the output XLSX file (sheet "META-home") the user needs to specify
 the country (location) of each 'home' using the ISO3 (ISO3166 alpha-3) country codes.
 A list of all available country codes is shipped with the `annex` package and can
 be accessed using `annex_countries()`. This information is used when validating
-the output XLSX (see [Write and validate](write_and_validate.xlsx)).
+the output XLSX (see [Write and validate](write_and_validate.html)).
 
 ```{r iso3_def}
 require("annex")
