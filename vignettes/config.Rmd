@@ -59,7 +59,7 @@ to meet the `annex` standard format.
 * `home`: Name of the home (building) the data belong to.
 * `room`: Abbreviation of the type of room the data belong to (see [Room definition](lookupfunctions.html#room-definition)).
 * `unit`: Units of the input data (raw data); `annex_prepare()` will automatically
-  convert to 'annex standard units (see [Variable definition](articles/lookupfunctions.html#variable-definition)).
+  convert to 'annex standard units (see [Variable definition](lookupfunctions.html#variable-definition)).
 
 While `column`, `study` and `home` can be chosen freely by the user, only a series of
 pre-defined values are available for `variable` (plus `unit`) and `room` (not case sensitive).
