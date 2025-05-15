@@ -1,13 +1,21 @@
 
+# Reading version number from the package DESCRIPTION file
+VERSION := $(shell grep '^Version:' DESCRIPTION | awk '{print $$2}')
 
 .PHONY: document
 document:
 	Rscript -e "devtools::document()"
 
-.PHONY: install
-install:
-	make document
-	Rscript -e "devtools::install()"
+.PHONY: build install check
+build: document
+	@echo Building current version: $(VERSION)
+	(cd ../ && R CMD build annex)
+install: build
+	@echo Installing current version: $(VERSION)
+	(cd ../ && R CMD INSTALL annex_$(VERSION).tar.gz)
+check: build
+	@echo Checking current version: $(VERSION)
+	(cd ../ && R CMD check --as-cran annex_$(VERSION).tar.gz)
 
 .PHONY: docs
 docs:
@@ -17,7 +25,7 @@ docs:
 test:
 	Rscript -e "devtools::load_all(); tinytest::test_all()"
 
-check:
+devcheck:
 	Rscript -e "devtools::check()"
 
 coverage: install
