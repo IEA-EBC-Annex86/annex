@@ -6,12 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Prepare with time zones &amp; units • annex</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
-<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
-<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
-<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
@@ -230,14 +229,14 @@ millimeter of mercury (<code>unit = 'mmHg'</code>) in the raw data.</p>
 data.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">raw_df</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##    loggertime                     temperature.kitchen rel.hum.kitchen </span></span>
-<span><span class="co">##  Min.   :2028-12-28 06:30:00.00   Min.   :60.49       Min.   :0.3300  </span></span>
-<span><span class="co">##  1st Qu.:2028-12-29 12:20:00.00   1st Qu.:62.86       1st Qu.:0.8200  </span></span>
-<span><span class="co">##  Median :2028-12-31 09:00:00.00   Median :67.93       Median :0.8900  </span></span>
-<span><span class="co">##  Mean   :2028-12-31 03:55:05.44   Mean   :68.00       Mean   :0.8928  </span></span>
-<span><span class="co">##  3rd Qu.:2029-01-01 14:50:00.00   3rd Qu.:73.15       3rd Qu.:0.9600  </span></span>
-<span><span class="co">##  Max.   :2029-01-03 00:20:00.00   Max.   :75.72       Max.   :1.1000  </span></span>
-<span><span class="co">##                                   NA's   :8           NA's   :33      </span></span>
+<pre><code><span><span class="co">##    loggertime                  temperature.kitchen rel.hum.kitchen </span></span>
+<span><span class="co">##  Min.   :2028-12-28 06:30:00   Min.   :60.49       Min.   :0.3300  </span></span>
+<span><span class="co">##  1st Qu.:2028-12-29 12:20:00   1st Qu.:62.86       1st Qu.:0.8200  </span></span>
+<span><span class="co">##  Median :2028-12-31 09:00:00   Median :67.93       Median :0.8900  </span></span>
+<span><span class="co">##  Mean   :2028-12-31 03:55:05   Mean   :68.00       Mean   :0.8928  </span></span>
+<span><span class="co">##  3rd Qu.:2029-01-01 14:50:00   3rd Qu.:73.15       3rd Qu.:0.9600  </span></span>
+<span><span class="co">##  Max.   :2029-01-03 00:20:00   Max.   :75.72       Max.   :1.1000  </span></span>
+<span><span class="co">##                                NA's   :8           NA's   :33      </span></span>
 <span><span class="co">##  exhaust.temperature..Cels.  air.pressure  </span></span>
 <span><span class="co">##  Min.   :39.52              Min.   :647.8  </span></span>
 <span><span class="co">##  1st Qu.:40.16              1st Qu.:677.2  </span></span>
@@ -282,14 +281,14 @@ variables the conversion is defined).</p>
 <span><span class="co">## 6 2028-12-28 07:20:00 demo_US top_flat  AMB 903.9762 NA NA</span></span></code></pre>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">prepared_df</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##     datetime                         study               home          </span></span>
-<span><span class="co">##  Min.   :2028-12-28 06:30:00.00   Length:2151        Length:2151       </span></span>
-<span><span class="co">##  1st Qu.:2028-12-29 12:20:00.00   Class :character   Class :character  </span></span>
-<span><span class="co">##  Median :2028-12-31 09:00:00.00   Mode  :character   Mode  :character  </span></span>
-<span><span class="co">##  Mean   :2028-12-31 03:55:05.44                                        </span></span>
-<span><span class="co">##  3rd Qu.:2029-01-01 14:50:00.00                                        </span></span>
-<span><span class="co">##  Max.   :2029-01-03 00:20:00.00                                        </span></span>
-<span><span class="co">##                                                                        </span></span>
+<pre><code><span><span class="co">##     datetime                      study               home          </span></span>
+<span><span class="co">##  Min.   :2028-12-28 06:30:00   Length:2151        Length:2151       </span></span>
+<span><span class="co">##  1st Qu.:2028-12-29 12:20:00   Class :character   Class :character  </span></span>
+<span><span class="co">##  Median :2028-12-31 09:00:00   Mode  :character   Mode  :character  </span></span>
+<span><span class="co">##  Mean   :2028-12-31 03:55:05                                        </span></span>
+<span><span class="co">##  3rd Qu.:2029-01-01 14:50:00                                        </span></span>
+<span><span class="co">##  Max.   :2029-01-03 00:20:00                                        </span></span>
+<span><span class="co">##                                                                     </span></span>
 <span><span class="co">##      room              Pressure           T               RH        </span></span>
 <span><span class="co">##  Length:2151        Min.   :863.7   Min.   :15.83   Min.   : 33.00  </span></span>
 <span><span class="co">##  Class :character   1st Qu.:902.8   1st Qu.:20.03   1st Qu.: 82.00  </span></span>
@@ -404,7 +403,7 @@ file</a></li>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
     </footer>
